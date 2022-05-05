@@ -17,6 +17,8 @@ jobs:
       - uses: php-actions/composer@v6
         with:
           php_version: 8.0
+          ssh_key: ${{ secrets.SSH_KEY }}
+          ssh_key_pub: ${{ secrets.SSH_KEY_PUB }}
       - name: PHPUnit Tests
         uses: php-actions/phpunit@v3
       - name: SonarCloud Scan
