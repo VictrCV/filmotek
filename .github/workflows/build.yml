@@ -5,7 +5,7 @@ on:
       - main
       - develop
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [ opened, synchronize, reopened ]
 jobs:
   test:
     name: PHPUnit Tests & SonarCloud Scan
@@ -15,6 +15,8 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - uses: php-actions/composer@v6
+        with:
+          php_version: 8.0
       - name: PHPUnit Tests
         uses: php-actions/phpunit@v3
       - name: SonarCloud Scan
