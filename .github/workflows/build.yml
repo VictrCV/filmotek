@@ -1,4 +1,4 @@
-name: Tests
+name: Build
 on:
   push:
     branches:
@@ -7,17 +7,13 @@ on:
   pull_request:
     types: [ opened, synchronize, reopened ]
 jobs:
-  test:
-    name: PHPUnit Tests & SonarCloud Scan
+  build:
+    name: SonarCloud Scan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Install Composer
-        run: composer install
-      - name: PHPUnit Tests
-        uses: php-actions/phpunit@v3
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
