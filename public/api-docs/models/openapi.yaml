@@ -4,7 +4,7 @@ info:
   version: 1.0.0
 servers:
   - url: '{schema}://{servername}:{port}/api/v1'
-    description: 'Filmotek Production server (uses live data)'
+    description: 'Filmotek server (uses live data)'
     variables:
       schema:
         enum:
