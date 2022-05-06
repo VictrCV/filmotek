@@ -36,7 +36,7 @@ class Rating
      *   @ORM\JoinColumn(name="seriesId", referencedColumnName="id")
      * })
      */
-    private $seriesId;
+    private $series;
 
     /**
      * @var User
@@ -46,7 +46,7 @@ class Rating
      *   @ORM\JoinColumn(name="userId", referencedColumnName="id")
      * })
      */
-    private $userid;
+    private $user;
 
     public function getId(): ?int
     {
@@ -65,26 +65,26 @@ class Rating
         return $this;
     }
 
-    public function getSeriesId(): ?Series
+    public function getSeries(): ?Series
     {
-        return $this->seriesId;
+        return $this->series;
     }
 
-    public function setSeriesId(?Series $seriesId): self
+    public function setSeries(?Series $seriesId): self
     {
-        $this->seriesId = $seriesId;
+        $this->series = $seriesId;
 
         return $this;
     }
 
-    public function getUserid(): ?User
+    public function getUser(): ?User
     {
-        return $this->userid;
+        return $this->user;
     }
 
-    public function setUserid(?User $userid): self
+    public function setUser(?User $user): self
     {
-        $this->userid = $userid;
+        $this->user = $user;
 
         return $this;
     }
