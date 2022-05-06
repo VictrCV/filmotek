@@ -1,0 +1,30 @@
+openapi: 3.0.2
+info:
+  title: 'Filmotek REST API'
+  version: 1.0.0
+servers:
+  - url: '{schema}://{servername}:{port}/api/v1'
+    description: 'Filmotek Production server (uses live data)'
+    variables:
+      schema:
+        enum:
+          - http
+          - https
+        default: https
+      servername:
+        default: 127.0.0.1
+      port:
+        default: '8000'
+paths:
+
+components:
+  headers:
+    ETag:
+      description: Entity Tag (unique identifier provided for cache validation)
+      schema: { type: string, pattern: "[0-9a-f]*" }
+    Location:
+      description: "`URI` of the new resource"
+      schema: { type: string, format: url }
+    Allow:
+      description: List of HTTP supported methods
+      schema: { type: string }
