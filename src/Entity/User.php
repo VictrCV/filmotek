@@ -59,10 +59,15 @@ class User
 
     public function setPassword(string $password): self
     {
-        $this->password = $password;
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $this->password = $hash;
 
         return $this;
     }
 
+    public function checkPassword(string $password): bool
+    {
+        return password_verify($password, $this->password);
+    }
 
 }

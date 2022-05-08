@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use InvalidArgumentException;
 
 /**
  * SeriesList
@@ -12,6 +13,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class SeriesList
 {
+    const FAVOURITES = "favourites";
+    const TO_WATCH = "toWatch";
+    const IN_PROGRESS = "inProgress";
+
     /**
      * @var int
      *
@@ -22,9 +27,9 @@ class SeriesList
     private $id;
 
     /**
-     * @var array
+     * @var string
      *
-     * @ORM\Column(name="type", type="simple_array", length=0, nullable=false)
+     * @ORM\Column(name="type", type="string", length=0, nullable=false)
      */
     private $type;
 
@@ -36,7 +41,7 @@ class SeriesList
      *   @ORM\JoinColumn(name="userId", referencedColumnName="id")
      * })
      */
-    private $userid;
+    private $user;
 
     /**
      * @var Series
@@ -46,45 +51,49 @@ class SeriesList
      *   @ORM\JoinColumn(name="seriesId", referencedColumnName="id")
      * })
      */
-    private $seriesid;
+    private $series;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getType(): ?array
+    public function getType(): ?string
     {
         return $this->type;
     }
 
-    public function setType(array $type): self
+    public function setType(string $type): self
     {
+        if (!in_array($type, array(self::FAVOURITES, self::TO_WATCH, self::IN_PROGRESS))) {
+            throw new InvalidArgumentException("Invalid series list type");
+        }
+
         $this->type = $type;
 
         return $this;
     }
 
-    public function getUserid(): ?User
+    public function getUser(): ?User
     {
-        return $this->userid;
+        return $this->user;
     }
 
-    public function setUserid(?User $userid): self
+    public function setUser(?User $user): self
     {
-        $this->userid = $userid;
+        $this->user = $user;
 
         return $this;
     }
 
-    public function getSeriesid(): ?Series
+    public function getSeries(): ?Series
     {
-        return $this->seriesid;
+        return $this->series;
     }
 
-    public function setSeriesid(?Series $seriesid): self
+    public function setSeries(?Series $series): self
     {
-        $this->seriesid = $seriesid;
+        $this->series = $series;
 
         return $this;
     }

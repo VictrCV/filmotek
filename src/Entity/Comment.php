@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Comment
  *
- * @ORM\Table(name="comment", indexes={@ORM\Index(name="FK_9474526CF891D8C1", columns={"serieId"}), @ORM\Index(name="FK_9474526C64B64DCC", columns={"userId"})})
+ * @ORM\Table(name="comment", indexes={@ORM\Index(name="FK_9474526CF891D8C1", columns={"seriesId"}), @ORM\Index(name="FK_9474526C64B64DCC", columns={"userId"})})
  * @ORM\Entity
  */
 class Comment
@@ -33,10 +33,10 @@ class Comment
      *
      * @ORM\ManyToOne(targetEntity="Series")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="serieId", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="seriesId", referencedColumnName="id")
      * })
      */
-    private $serieid;
+    private $series;
 
     /**
      * @var User
@@ -46,7 +46,7 @@ class Comment
      *   @ORM\JoinColumn(name="userId", referencedColumnName="id")
      * })
      */
-    private $userid;
+    private $user;
 
     public function getId(): ?int
     {
@@ -65,26 +65,26 @@ class Comment
         return $this;
     }
 
-    public function getSerieid(): ?Series
+    public function getSeries(): ?Series
     {
-        return $this->serieid;
+        return $this->series;
     }
 
-    public function setSerieid(?Series $serieid): self
+    public function setSeries(?Series $series): self
     {
-        $this->serieid = $serieid;
+        $this->series = $series;
 
         return $this;
     }
 
-    public function getUserid(): ?User
+    public function getUser(): ?User
     {
-        return $this->userid;
+        return $this->user;
     }
 
-    public function setUserid(?User $userid): self
+    public function setUser(?User $user): self
     {
-        $this->userid = $userid;
+        $this->user = $user;
 
         return $this;
     }
