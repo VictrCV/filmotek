@@ -27,7 +27,7 @@ class Series
      *
      * @ORM\Column(name="dataImdbId", type="string", length=9, nullable=false)
      */
-    private $dataimdbid;
+    private $dataImdbId;
 
     /**
      * @var string
@@ -41,7 +41,7 @@ class Series
      *
      * @ORM\Column(name="isFilm", type="boolean", nullable=false)
      */
-    private $isfilm;
+    private $isFilm;
 
     /**
      * @var string
@@ -55,7 +55,7 @@ class Series
      *
      * @ORM\Column(name="imageUrl", type="string", length=255, nullable=false)
      */
-    private $imageurl;
+    private $imageUrl;
 
     /**
      * @var int|null
@@ -83,14 +83,14 @@ class Series
         return $this->id;
     }
 
-    public function getDataimdbid(): ?string
+    public function getDataImdbId(): ?string
     {
-        return $this->dataimdbid;
+        return $this->dataImdbId;
     }
 
-    public function setDataimdbid(string $dataimdbid): self
+    public function setDataImdbId(string $dataImdbId): self
     {
-        $this->dataimdbid = $dataimdbid;
+        $this->dataImdbId = $dataImdbId;
 
         return $this;
     }
@@ -107,14 +107,14 @@ class Series
         return $this;
     }
 
-    public function getIsfilm(): ?bool
+    public function getIsFilm(): ?bool
     {
-        return $this->isfilm;
+        return $this->isFilm;
     }
 
-    public function setIsfilm(bool $isfilm): self
+    public function setIsFilm(bool $isFilm): self
     {
-        $this->isfilm = $isfilm;
+        $this->isFilm = $isFilm;
 
         return $this;
     }
@@ -131,14 +131,14 @@ class Series
         return $this;
     }
 
-    public function getImageurl(): ?string
+    public function getImageUrl(): ?string
     {
-        return $this->imageurl;
+        return $this->imageUrl;
     }
 
-    public function setImageurl(string $imageurl): self
+    public function setImageUrl(string $imageUrl): self
     {
-        $this->imageurl = $imageurl;
+        $this->imageUrl = $imageUrl;
 
         return $this;
     }
