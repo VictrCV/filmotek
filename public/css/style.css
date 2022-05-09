@@ -16,16 +16,22 @@
 
 .navbar-brand {
     font-family: 'Koulen', cursive;
-    color: var(--secondary-light);
+    color: var(--secondary-light) !important;
 }
 
 .navbar .nav-item .nav-link{
     color: var(--secondary-light);
+    margin-right: 15px;
 }
 
-.navbar-brand:hover,
+.navbar-brand:hover {
+    font-weight: bold;
+}
 .navbar .nav-item .nav-link:hover {
-    color: var(--secondary-light);
+    color: var(--primary-light);
+}
+
+.navbar .nav-item .nav-link.active {
     font-weight: bold;
 }
 
@@ -43,4 +49,17 @@
 
 .filmotek-logo {
     font-size: 100px !important;
+}
+
+.btn-sign-up,
+.btn-sign-up:focus {
+    background-color: var(--primary-light) !important;
+    color: var(--secondary-light) !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.btn-sign-up:hover {
+    color: var(--primary-color) !important
 }

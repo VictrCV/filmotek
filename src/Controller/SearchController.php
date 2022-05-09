@@ -5,13 +5,13 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class MainController extends AbstractController
+class SearchController extends AbstractController
 {
     /**
-     * @Route("/", name="index")
+     * @Route("/", name="search")
      */
-    public function index()
+    public function search()
     {
-        return $this->render('base.html.twig');
+        return $this->render('search/search.html.twig');
     }
 }
