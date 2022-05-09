@@ -1,0 +1,46 @@
+:root {
+    --background: #22223bff;
+    --primary-color: #4a4e69ff;
+    --primary-light: #9a8c98ff;
+    --secondary-color: #c9ada7ff;
+    --secondary-light: #f2e9e4ff;
+}
+
+.background {
+    background-color: var(--background);
+}
+
+.navbar {
+    background-color: var(--primary-color);
+}
+
+.navbar-brand {
+    font-family: 'Koulen', cursive;
+    color: var(--secondary-light);
+}
+
+.navbar .nav-item .nav-link{
+    color: var(--secondary-light);
+}
+
+.navbar-brand:hover,
+.navbar .nav-item .nav-link:hover {
+    color: var(--secondary-light);
+    font-weight: bold;
+}
+
+.filmotek-font {
+    font-family: 'Koulen', cursive;
+}
+
+.filmotek-title {
+    color: var(--secondary-light);
+    font-size: 100px;
+    text-align: center;
+    padding-top: 10%;
+    font-family: 'Koulen', cursive;
+}
+
+.filmotek-logo {
+    font-size: 100px !important;
+}
