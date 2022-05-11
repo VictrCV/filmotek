@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 /**
  * User
@@ -10,8 +12,12 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="user")
  * @ORM\Entity
  */
-class User
+class User implements PasswordAuthenticatedUserInterface
 {
+    public const USERNAME_ATTR = 'username';
+
+    private EntityManagerInterface $entityManager;
+
     /**
      * @var int
      *
@@ -24,7 +30,7 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(name="username", type="string", length=32, nullable=false)
+     * @ORM\Column(name="username", type="string", length=32, nullable=false, unique=true)
      */
     private $username;
 
@@ -59,15 +65,9 @@ class User
 
     public function setPassword(string $password): self
     {
-        $hash = password_hash($password, PASSWORD_DEFAULT);
-        $this->password = $hash;
+        $this->password = $password;
 
         return $this;
-    }
-
-    public function checkPassword(string $password): bool
-    {
-        return password_verify($password, $this->password);
     }
 
 }

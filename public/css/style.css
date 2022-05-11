@@ -63,3 +63,18 @@
 .btn-sign-up:hover {
     color: var(--primary-color) !important
 }
+
+.btn-sign-up-form,
+.btn-sign-up-form:focus {
+    background-color: var(--primary-color) !important;
+    color: var(--secondary-light) !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.sign-up-form {
+    padding-top: 50px;
+    width: 25%;
+    color: var(--secondary-light) !important;
+}
