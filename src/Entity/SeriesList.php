@@ -29,19 +29,9 @@ class SeriesList
     /**
      * @var string
      *
-     * @ORM\Column(name="type", type="string", length=0, nullable=false)
+     * @ORM\Column(name="type", type="string", length=255, nullable=false)
      */
     private $type;
-
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="userId", referencedColumnName="id")
-     * })
-     */
-    private $user;
 
     /**
      * @var Series
@@ -52,6 +42,16 @@ class SeriesList
      * })
      */
     private $series;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="userId", referencedColumnName="id")
+     * })
+     */
+    private $user;
 
     public function getId(): ?int
     {
@@ -74,18 +74,6 @@ class SeriesList
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
     public function getSeries(): ?Series
     {
         return $this->series;
@@ -94,6 +82,18 @@ class SeriesList
     public function setSeries(?Series $series): self
     {
         $this->series = $series;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

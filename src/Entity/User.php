@@ -2,22 +2,20 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 /**
  * User
  *
- * @ORM\Table(name="user")
+ * @ORM\Table(name="user", uniqueConstraints={@ORM\UniqueConstraint(name="UNIQ_8D93D649F85E0677", columns={"username"})})
  * @ORM\Entity
+ *
+ * @UniqueEntity(fields={"username"}, message="This username already exists.")
  */
 class User implements PasswordAuthenticatedUserInterface
 {
-    public const USERNAME_ATTR = 'username';
-
-    private EntityManagerInterface $entityManager;
-
     /**
      * @var int
      *
@@ -30,7 +28,7 @@ class User implements PasswordAuthenticatedUserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="username", type="string", length=32, nullable=false, unique=true)
+     * @ORM\Column(name="username", type="string", length=32, nullable=false)
      */
     private $username;
 
