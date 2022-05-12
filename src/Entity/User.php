@@ -16,6 +16,10 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
  */
 class User implements PasswordAuthenticatedUserInterface
 {
+    public const USER_ATTR = 'user';
+    public const USERNAME_ATTR = 'username';
+    public const PASSWORD_ATTR = 'password';
+
     /**
      * @var int
      *
