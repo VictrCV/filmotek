@@ -85,7 +85,6 @@ class UserApiControllerTest extends WebTestCase
         $user = json_decode(strval($response->getContent()), true);
         self::assertNotEmpty($user['user']['id']);
         self::assertSame($data[User::USERNAME_ATTR], $user['user'][User::USERNAME_ATTR]);
-        self::assertNotEmpty($user['user'][User::PASSWORD_ATTR]);
     }
 
     /**

@@ -13,8 +13,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class UserApiController
- * @package App\Controller
- * @Route(path=UserApiController::USER_API_ROUTE, name="api_user_")
+ * @package App\Controller\ApiController
+ * @Route(path=UserApiController::USER_API_ROUTE, name="user_api_")
  */
 class UserApiController extends AbstractController
 {

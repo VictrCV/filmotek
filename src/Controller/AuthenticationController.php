@@ -2,33 +2,31 @@
 
 namespace App\Controller;
 
+use App\Controller\ApiController\UserApiController;
 use App\Entity\User;
 use App\Form\UserType;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AuthenticationController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
+    private UserApiController $userApiController;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(UserApiController $userApiController)
     {
-        $this->entityManager = $em;
+        $this->userApiController = $userApiController;
     }
 
     /**
      * @Route("/sign-up", name="sign_up")
      * @param Request $request
-     * @param UserPasswordHasherInterface $passwordHasher
      * @return RedirectResponse|Response
      */
-    public function signUp(Request $request, UserPasswordHasherInterface $passwordHasher)
+    public function signUp(Request $request): RedirectResponse|Response
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
@@ -41,16 +39,33 @@ class AuthenticationController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $password = $passwordHasher->hashPassword($user, $user->getPassword());
-            $user->setPassword($password);
 
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
+            $data = [
+                User::USERNAME_ATTR => $user->getUsername(),
+                User::PASSWORD_ATTR => $user->getPassword()
+            ];
 
-            return $this->redirectToRoute('search', []);
+            $request = Request::create(
+                UserApiController::USER_API_ROUTE,
+                'POST',
+                [],
+                [],
+                [],
+                [],
+                strval(json_encode($data))
+            );
+
+            $response = $this->userApiController->postAction($request);
+
+            if ($response->getStatusCode() == Response::HTTP_CREATED) {
+                return $this->redirectToRoute('search', []);
+            } else {
+                $this->addFlash('error', 'Oops! Something went wrong and the registration could not be completed.');
+            }
         }
         return $this->render('authentication/sign-up.html.twig', [
             'form' => $form->createView(),
         ]);
     }
+
 }

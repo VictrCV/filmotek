@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
@@ -39,6 +40,7 @@ class User implements PasswordAuthenticatedUserInterface
     /**
      * @var string
      *
+     * @Serializer\Exclude()
      * @ORM\Column(name="password", type="string", length=255, nullable=false)
      */
     private $password;
