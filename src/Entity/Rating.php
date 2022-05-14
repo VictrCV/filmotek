@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Rating
  *
- * @ORM\Table(name="rating", indexes={@ORM\Index(name="FK_D8892622F891D8C1", columns={"seriesId"}), @ORM\Index(name="FK_D889262264B64DCC", columns={"userId"})})
+ * @ORM\Table(name="rating", indexes={@ORM\Index(name="FK_D889262264B64DCC", columns={"userId"}), @ORM\Index(name="FK_D8892622F891D8C1", columns={"seriesId"})})
  * @ORM\Entity
  */
 class Rating
@@ -70,9 +70,9 @@ class Rating
         return $this->series;
     }
 
-    public function setSeries(?Series $seriesId): self
+    public function setSeries(?Series $series): self
     {
-        $this->series = $seriesId;
+        $this->series = $series;
 
         return $this;
     }

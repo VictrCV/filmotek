@@ -10,12 +10,50 @@ servers:
         enum:
           - http
           - https
-        default: https
+        default: http
       servername:
         default: 127.0.0.1
       port:
         default: '8000'
+tags:
+  - name: 'Users'
+    description: 'User management'
 paths:
+  /users:
+    post:
+      tags: [ 'Users' ]
+      summary: Creates a User resource.
+      description: 'Creates a new user'
+      operationId: user_api_post
+      security:
+        - FilmotekApiSecurity: [ ]
+      requestBody:
+        $ref: '#/components/requestBodies/UserRequestBody'
+      responses:
+        '201':
+          description: '`Created`: user created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '400':
+          $ref: '#/components/responses/400_BadRequest_Response_Users'
+        '422':
+          $ref: '#/components/responses/422_UnprocessableEntity_Response_Users'
+    options:
+      tags: [ 'Users' ]
+      summary: Provides the list of HTTP supported methods.
+      description: 'Return a `Allow` header with a comma separated list of HTTP supported methods.'
+      operationId: user_api_options
+      responses:
+        '204':
+          description: '`Allow` header &lt;Response body is empty&gt;'
+          headers:
+            Allow:
+              $ref: '#/components/headers/Allow'
 
 components:
   headers:
@@ -28,3 +66,155 @@ components:
     Allow:
       description: List of HTTP supported methods
       schema: { type: string }
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          description: 'User Id'
+          type: integer
+          format: int64
+        username:
+          description: 'User username'
+          type: string
+          format: string
+        _links:
+          description: link relations
+          type: object
+          properties:
+            parent:
+              type: object
+              properties: { "href": { "type": "string", "format": "url" } }
+            self:
+              type: object
+              properties: { "href": { "type": "string", "format": "url" } }
+      example:
+        user:
+          id: 1508
+          username: 'fulanito90'
+          _links:
+            parent:
+              href: /api/v1/users
+            self:
+              href: /api/v1/users/1508
+    Message:
+      type: object
+      description: HTTP response message
+      properties:
+        code:
+          description: 'Response code'
+          type: integer
+          format: int64
+        message:
+          description: 'Response message'
+          type: string
+      example:
+        code: 200
+        message: Ok
+  responses:
+    400_BadRequest_Response_Users:
+      description: "`BAD REQUEST`: username already exists"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+          examples:
+            response-400:
+              $ref: '#/components/examples/response-400'
+    401_Unauthorized_Response:
+      description: '`Unauthorized`: invalid Authorization header'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+          examples:
+            response-401:
+              $ref: '#/components/examples/response-401'
+    403_Forbidden_Response:
+      description: '`Forbidden`: you don''t have permission to access'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+          examples:
+            response-403:
+              $ref: '#/components/examples/response-403'
+    404_Resource_Not_Found_Response:
+      description: '`Not found`: resource not found'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+          examples:
+            response-404:
+              $ref: '#/components/examples/response-404'
+    412_Precondition_Failed_Response:
+      description: '`PRECONDITION FAILED`: one or more conditions given evaluated to false'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+          examples:
+            response-412:
+              $ref: '#/components/examples/response-412'
+    422_UnprocessableEntity_Response_Users:
+      description: "`UNPROCESSABLE ENTITY`: username or password is left out"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+          examples:
+            response-422:
+              $ref: '#/components/examples/response-422-users'
+  requestBodies:
+    UserRequestBody:
+      description: '`User` data'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              username:
+                description: 'User username'
+                type: string
+                format: string
+              password:
+                description: 'User password'
+                type: string
+                format: password
+            example:
+              username: fulanito90
+              password: Us3rP4ssw0rd
+  examples:
+    response-400:
+      value:
+        code: 400
+        message: 'BAD REQUEST: username already exists'
+    response-401:
+      value:
+        code: 401
+        message: 'UNAUTHORIZED: invalid Authorization header'
+    response-403:
+      value:
+        code: 403
+        message: "FORBIDDEN You don't have permission to access"
+    response-404:
+      value:
+        code: 404
+        message: 'NOT FOUND: Resource not found'
+    response-412:
+      value:
+        code: 412
+        message: 'PRECONDITION FAILED: one or more conditions given evaluated to false'
+    response-422-users:
+      value:
+        code: 422
+        message: 'UNPROCESSABLE ENTITY: username or password is left out'
+    response-422-results:
+      value:
+        code: 422
+        message: 'UNPROCESSABLE ENTITY: user is left out'
+  securitySchemes:
+    FilmotekApiSecurity:
+      type: http

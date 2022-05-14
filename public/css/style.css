@@ -1,0 +1,80 @@
+:root {
+    --background: #22223bff;
+    --primary-color: #4a4e69ff;
+    --primary-light: #9a8c98ff;
+    --secondary-color: #c9ada7ff;
+    --secondary-light: #f2e9e4ff;
+}
+
+.background {
+    background-color: var(--background);
+}
+
+.navbar {
+    background-color: var(--primary-color);
+}
+
+.navbar-brand {
+    font-family: 'Koulen', cursive;
+    color: var(--secondary-light) !important;
+}
+
+.navbar .nav-item .nav-link{
+    color: var(--secondary-light);
+    margin-right: 15px;
+}
+
+.navbar-brand:hover {
+    font-weight: bold;
+}
+.navbar .nav-item .nav-link:hover {
+    color: var(--primary-light);
+}
+
+.navbar .nav-item .nav-link.active {
+    font-weight: bold;
+}
+
+.filmotek-font {
+    font-family: 'Koulen', cursive;
+}
+
+.filmotek-title {
+    color: var(--secondary-light);
+    font-size: 100px;
+    text-align: center;
+    padding-top: 10%;
+    font-family: 'Koulen', cursive;
+}
+
+.filmotek-logo {
+    font-size: 100px !important;
+}
+
+.btn-sign-up,
+.btn-sign-up:focus {
+    background-color: var(--primary-light) !important;
+    color: var(--secondary-light) !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.btn-sign-up:hover {
+    color: var(--primary-color) !important
+}
+
+.btn-sign-up-form,
+.btn-sign-up-form:focus {
+    background-color: var(--primary-color) !important;
+    color: var(--secondary-light) !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.sign-up-form {
+    padding-top: 50px;
+    width: 25%;
+    color: var(--secondary-light) !important;
+}

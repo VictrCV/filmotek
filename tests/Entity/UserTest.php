@@ -72,20 +72,7 @@ class UserTest extends TestCase
     {
         $password = self::$faker->password();
         self::$user->setPassword($password);
-        self::assertTrue(password_verify($password, self::$user->getPassword()));
+        self::assertEquals($password, self::$user->getPassword());
     }
 
-    /**
-     * Implement testCheckPassword().
-     *
-     * @covers ::checkPassword
-     * @return void
-     * @throws Exception
-     */
-    public function testCheckPassword(): void
-    {
-        $password = self::$faker->password();
-        self::$user->setPassword($password);
-        self::assertTrue(self::$user->checkPassword($password));
-    }
 }

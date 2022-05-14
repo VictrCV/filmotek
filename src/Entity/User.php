@@ -3,15 +3,24 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 /**
  * User
  *
- * @ORM\Table(name="user")
+ * @ORM\Table(name="user", uniqueConstraints={@ORM\UniqueConstraint(name="UNIQ_8D93D649F85E0677", columns={"username"})})
  * @ORM\Entity
+ *
+ * @UniqueEntity(fields={"username"}, message="This username already exists.")
  */
-class User
+class User implements PasswordAuthenticatedUserInterface
 {
+    public const USER_ATTR = 'user';
+    public const USERNAME_ATTR = 'username';
+    public const PASSWORD_ATTR = 'password';
+
     /**
      * @var int
      *
@@ -31,6 +40,7 @@ class User
     /**
      * @var string
      *
+     * @Serializer\Exclude()
      * @ORM\Column(name="password", type="string", length=255, nullable=false)
      */
     private $password;
@@ -59,15 +69,9 @@ class User
 
     public function setPassword(string $password): self
     {
-        $hash = password_hash($password, PASSWORD_DEFAULT);
-        $this->password = $hash;
+        $this->password = $password;
 
         return $this;
-    }
-
-    public function checkPassword(string $password): bool
-    {
-        return password_verify($password, $this->password);
     }
 
 }
