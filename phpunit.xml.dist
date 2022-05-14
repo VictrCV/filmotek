@@ -15,6 +15,12 @@
         <server name="SHELL_VERBOSITY" value="-1" />
         <server name="SYMFONY_PHPUNIT_REMOVE" value="" />
         <server name="SYMFONY_PHPUNIT_VERSION" value="9.5" />
+
+        <env name="DB_CONNECTION" value="mariadb"/>
+        <env name="DB_USERNAME" value="filmotek_tests"/>
+        <env name="DB_DATABASE" value="filmotek_tests"/>
+        <env name="DB_HOST" value="127.0.0.1" />
+        <env name="DB_PORT" value="3306" />
     </php>
 
     <testsuites>
