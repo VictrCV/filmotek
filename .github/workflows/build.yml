@@ -16,9 +16,9 @@ jobs:
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: filmotek_tests
-          MYSQL_USERNAME: filmotek_tests
+          MYSQL_USER: filmotek_tests
         ports:
-          - 3306:3306
+          - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v2
@@ -28,10 +28,18 @@ jobs:
       - name: Install dependencies with composer
         run: composer update --no-ansi --no-interaction --no-progress
 
+      - name: Verify MariaDB connection
+        env:
+          PORT: ${{ job.services.mariadb.ports[3306] }}
+        run: |
+          while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
+            sleep 1
+          done
+
       - name: Run tests with phpunit/phpunit
         run: vendor/bin/phpunit --coverage-clover=coverage.xml -dxdebug.mode=coverage
         env:
-          DB_PORT: ${{ job.services.mysql.ports[3306] }}
+          DB_PORT: ${{ job.services.mariadb.ports[3306] }}
 
       - name: Fix code coverage paths
         run: sed -i 's@'$GITHUB_WORKSPACE'@/github/workspace/@g' coverage.xml
