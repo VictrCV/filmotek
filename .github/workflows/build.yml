@@ -31,10 +31,7 @@ jobs:
       - name: Verify MariaDB connection
         env:
           PORT: ${{ job.services.mariadb.ports[3306] }}
-        run: |
-          while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" -u"filmotek_tests" --silent; do
-            sleep 1
-          done
+        run: mysqladmin ping -h"127.0.0.1" -P"3306" -u"filmotek_tests"
 
       - name: Run tests with phpunit/phpunit
         run: vendor/bin/phpunit --coverage-clover=coverage.xml -dxdebug.mode=coverage
