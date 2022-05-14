@@ -23,15 +23,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Set up MySQL
-        run: |
-          sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE filmotek_tests;' -u 'filmotek_tests' -p '*tests*'
-      - name: Setup PHP with Xdebug
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.0'
-          coverage: xdebug
 
       - name: Install dependencies with composer
         run: composer update --no-ansi --no-interaction --no-progress
