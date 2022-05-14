@@ -10,21 +10,14 @@ jobs:
   build:
     name: PHPUnit Tests & SonarCloud Scan
     runs-on: ubuntu-latest
-    services:
-      mysql-server:
-        image: mysql:5.7
-        env:
-          # MYSQL_ALLOW_EMPTY_PASSWORD: yes
-          MYSQL_ROOT_PASSWORD: db_password
-          MYSQL_DATABASE: db_name
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-
+      name: Set up MySQL
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql -e 'CREATE DATABASE filmotek_tests;' -u 'filmotek_tests' -p '*tests*'
       - name: Setup PHP with Xdebug
         uses: shivammathur/setup-php@v2
         with:
