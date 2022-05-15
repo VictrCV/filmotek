@@ -11,7 +11,7 @@ jobs:
     name: PHPUnit Tests & SonarCloud Scan
     runs-on: ubuntu-latest
     services:
-      mysql:
+      mariadb:
         image: mariadb:10.4.22
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
