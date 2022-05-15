@@ -21,8 +21,10 @@ jobs:
       - name: Set up MariaDB
         uses: getong/mariadb-action@v1.1
         with:
+          mariadb version: '10.4.22'
           mysql database: 'filmotek_tests'
           mysql user: 'filmotek_tests'
+          mysql password: '*tests*'
 
       - name: Install Composer dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
