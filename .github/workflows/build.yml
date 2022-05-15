@@ -16,8 +16,8 @@ jobs:
         image: mysql:5.7
         env:
           # MYSQL_ALLOW_EMPTY_PASSWORD: yes
-          MYSQL_ROOT_PASSWORD: db_password
-          MYSQL_DATABASE: db_name
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: filmotek
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -49,7 +49,9 @@ jobs:
         id: phpunit
         env:
           XDEBUG_MODE: "coverage"
-        run: php -dxdebug.mode=coverage ./vendor/bin/simple-phpunit --coverage-clover=coverage.xml
+        run: |
+          mysqladmin ping -h"127.0.0.1" -P${{ job.services.mysql.ports[3306] }}
+          php -dxdebug.mode=coverage ./vendor/bin/simple-phpunit --coverage-clover=coverage.xml
 
       - name: Fix code coverage paths
         run: sed -i 's@'$GITHUB_WORKSPACE'@/github/workspace/@g' coverage.xml
