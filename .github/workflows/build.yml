@@ -8,14 +8,38 @@ on:
     types: [ opened, synchronize, reopened ]
 jobs:
   build:
-    name: SonarCloud Scan
+    name: PHPUnit Tests & SonarCloud Scan
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: filmotek_tests
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-        #run: vendor/bin/phpunit --coverage-clover=/tests/coverage.xml -dxdebug.mode=coverage
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.0
+          tools: phpunit-bridge
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql
+          coverage: xdebug
+
+      - name: Run tests
+        run: vendor/bin/phpunit --coverage-clover=coverage.xml -dxdebug.mode=coverage
+
+      - name: Fix code coverage paths
+        run: sed -i 's@'$GITHUB_WORKSPACE'@/github/workspace/@g' coverage.xml
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
