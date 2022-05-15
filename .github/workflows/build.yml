@@ -14,11 +14,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set up MySQL
-        run: |
-          sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE test_db;' -uroot -proot
-          mysql -e 'SHOW DATABASES;' -uroot -proot
+
+      - name: Shutdown Ubuntu MySQL (SUDO)
+        run: sudo service mysql stop
+
+      - name: Set up MariaDB
+        uses: getong/mariadb-action@v1.1
+        with:
+          mysql database: 'filmotek_tests'
+          mysql user: 'filmotek_tests'
 
       - name: Install Composer dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
