@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1652637378">
-  <project timestamp="1652637378">
+<coverage generated="1652638738">
+  <project timestamp="1652638738">
     <file name="D:\Proyectos\filmotek\src\Controller\ApiController\UserApiController.php">
       <class name="App\Controller\ApiController\UserApiController" namespace="global">
         <metrics complexity="5" methods="3" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="23" coveredstatements="22" elements="26" coveredelements="24"/>
