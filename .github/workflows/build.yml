@@ -10,24 +10,15 @@ jobs:
   build:
     name: PHPUnit Tests & SonarCloud Scan
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: filmotek_tests
-        ports:
-          - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Verify MySQL connection from container
+      - name: Set up MySQL
         run: |
-          apt-get update
-          apt-get install -y mysql-client
-          mysql --host mydb -uroot -ppassword -e "SHOW DATABASES"
+        sudo /etc/init.d/mysql start
+        mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+
       - name: Install Composer dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
 
@@ -40,7 +31,7 @@ jobs:
           coverage: xdebug
 
       - name: Run tests
-        run: vendor/bin/phpunit --coverage-clover=coverage.xml -dxdebug.mode=coverage
+        run: vendor/bin/phpunit --coverage-clover=coverage.xml
 
       - name: Fix code coverage paths
         run: sed -i 's@'$GITHUB_WORKSPACE'@/github/workspace/@g' coverage.xml
