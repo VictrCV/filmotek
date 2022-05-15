@@ -1,4 +1,6 @@
 {
+    "name": "filmotek",
+    "description": "Filmotek web application",
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",
