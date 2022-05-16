@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Controller\ApiController;
+namespace App\Tests\ApiController;
 
 use App\Controller\ApiController\UserApiController;
 use App\Entity\User;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Class UserApiControllerTest
  *
- * @package App\Tests\Controller\ApiController
+ * @package App\Tests\ApiController
  * @group   controllers
  *
  * @coversDefaultClass \App\Controller\ApiController\UserApiController
@@ -37,6 +37,13 @@ class UserApiControllerTest extends WebTestCase
         self::$faker = FakerFactoryAlias::create();
     }
 
+    /**
+     * Implements testOptionsAction204NoContent()
+     *
+     * @covers ::optionsAction
+     * @return void
+     * @throws Exception
+     */
     public function testOptionsAction204NoContent(): void
     {
 
@@ -122,6 +129,35 @@ class UserApiControllerTest extends WebTestCase
         $response = self::$client->getResponse();
 
         self::assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
+
+    /**
+     * Implements testPostUserAction422UnprocessableEntity()
+     *
+     * @covers ::postAction
+     * @return void
+     * @throws Exception
+     */
+    public function testPostUserAction422UnprocessableEntity()
+    {
+
+        $data = [
+            User::USERNAME_ATTR => self::$faker->userName()
+        ];
+
+        self::$client->request(
+            'POST',
+            UserApiController::USER_API_ROUTE,
+            [],
+            [],
+            [],
+            strval(json_encode($data))
+        );
+
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
         self::assertFalse($response->isSuccessful());
     }
 }
