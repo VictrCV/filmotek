@@ -5,7 +5,6 @@
 > El objetivo de este TFM es desarrollar una aplicación web que permita gestionar películas y series, aplicando para ello los conocimientos adquiridos en el Máster en Ingeniería Web.
 
 ## Estado del código
-[![Build](https://github.com/victrcv/filmotek/actions/workflows/build.yml/badge.svg)](https://github.com/victrcv/filmotek/actions/workflows/build.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=VictrCV_filmotek&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=VictrCV_filmotek)
 
 ### Autor
@@ -15,4 +14,4 @@
 > Francisco Javier Gil Rubio
 
 ### Tecnologías necesarias
-`PHP` `GitHub`
+`PHP` `GitHub` `Symfony` `Doctrine` `API REST` `SonarCloud` `Swagger`
