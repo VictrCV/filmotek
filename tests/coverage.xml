@@ -1,74 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1652639220">
-  <project timestamp="1652639220">
+<coverage generated="1652665451">
+  <project timestamp="1652665451">
     <file name="D:\Proyectos\filmotek\src\Controller\ApiController\UserApiController.php">
       <class name="App\Controller\ApiController\UserApiController" namespace="global">
-        <metrics complexity="5" methods="3" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="23" coveredstatements="22" elements="26" coveredelements="24"/>
+        <metrics complexity="5" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="21" coveredstatements="21" elements="23" coveredelements="23"/>
       </class>
-      <line num="29" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="1"/>
-      <line num="31" type="stmt" count="1"/>
-      <line num="32" type="stmt" count="1"/>
-      <line num="40" type="method" name="postAction" visibility="public" complexity="3" crap="3.00" count="2"/>
-      <line num="42" type="stmt" count="2"/>
-      <line num="43" type="stmt" count="2"/>
-      <line num="45" type="stmt" count="2"/>
-      <line num="46" type="stmt" count="0"/>
-      <line num="49" type="stmt" count="2"/>
-      <line num="50" type="stmt" count="2"/>
-      <line num="51" type="stmt" count="2"/>
+      <line num="43" type="method" name="postAction" visibility="public" complexity="3" crap="3" count="3"/>
+      <line num="45" type="stmt" count="3"/>
+      <line num="46" type="stmt" count="3"/>
+      <line num="48" type="stmt" count="3"/>
+      <line num="49" type="stmt" count="1"/>
       <line num="52" type="stmt" count="2"/>
+      <line num="53" type="stmt" count="2"/>
       <line num="54" type="stmt" count="2"/>
       <line num="55" type="stmt" count="2"/>
-      <line num="56" type="stmt" count="2"/>
+      <line num="57" type="stmt" count="2"/>
       <line num="58" type="stmt" count="2"/>
-      <line num="59" type="stmt" count="1"/>
+      <line num="59" type="stmt" count="2"/>
       <line num="61" type="stmt" count="2"/>
-      <line num="62" type="stmt" count="2"/>
+      <line num="62" type="stmt" count="1"/>
       <line num="64" type="stmt" count="2"/>
-      <line num="66" type="stmt" count="2"/>
-      <line num="75" type="method" name="optionsAction" visibility="public" complexity="1" crap="1" count="1"/>
-      <line num="77" type="stmt" count="1"/>
-      <line num="78" type="stmt" count="1"/>
+      <line num="65" type="stmt" count="2"/>
+      <line num="67" type="stmt" count="2"/>
+      <line num="69" type="stmt" count="2"/>
+      <line num="78" type="method" name="optionsAction" visibility="public" complexity="1" crap="1" count="1"/>
       <line num="80" type="stmt" count="1"/>
-      <line num="84" type="stmt" count="1"/>
-      <metrics loc="90" ncloc="76" classes="1" methods="3" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="23" coveredstatements="22" elements="26" coveredelements="24"/>
+      <line num="81" type="stmt" count="1"/>
+      <line num="83" type="stmt" count="1"/>
+      <line num="87" type="stmt" count="1"/>
+      <metrics loc="93" ncloc="76" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="21" coveredstatements="21" elements="23" coveredelements="23"/>
     </file>
-    <file name="D:\Proyectos\filmotek\src\Controller\AuthenticationController.php">
-      <class name="App\Controller\AuthenticationController" namespace="global">
-        <metrics complexity="5" methods="2" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="21" coveredstatements="0" elements="23" coveredelements="0"/>
+    <file name="D:\Proyectos\filmotek\src\Controller\AppController\AuthenticationController.php">
+      <class name="App\Controller\AppController\AuthenticationController" namespace="global">
+        <metrics complexity="5" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
       </class>
-      <line num="19" type="method" name="__construct" visibility="public" complexity="1" crap="2" count="0"/>
-      <line num="21" type="stmt" count="0"/>
-      <line num="29" type="method" name="signUp" visibility="public" complexity="4" crap="20" count="0"/>
-      <line num="31" type="stmt" count="0"/>
-      <line num="32" type="stmt" count="0"/>
-      <line num="33" type="stmt" count="0"/>
-      <line num="40" type="stmt" count="0"/>
-      <line num="41" type="stmt" count="0"/>
-      <line num="43" type="stmt" count="0"/>
-      <line num="44" type="stmt" count="0"/>
-      <line num="45" type="stmt" count="0"/>
-      <line num="48" type="stmt" count="0"/>
-      <line num="51" type="stmt" count="0"/>
-      <line num="52" type="stmt" count="0"/>
-      <line num="53" type="stmt" count="0"/>
-      <line num="54" type="stmt" count="0"/>
-      <line num="55" type="stmt" count="0"/>
-      <line num="58" type="stmt" count="0"/>
-      <line num="60" type="stmt" count="0"/>
-      <line num="61" type="stmt" count="0"/>
-      <line num="63" type="stmt" count="0"/>
-      <line num="66" type="stmt" count="0"/>
-      <line num="67" type="stmt" count="0"/>
-      <metrics loc="71" ncloc="66" classes="1" methods="2" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="21" coveredstatements="0" elements="23" coveredelements="0"/>
+      <metrics loc="74" ncloc="66" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
     </file>
-    <file name="D:\Proyectos\filmotek\src\Controller\SearchController.php">
-      <class name="App\Controller\SearchController" namespace="global">
-        <metrics complexity="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="0" elements="2" coveredelements="0"/>
+    <file name="D:\Proyectos\filmotek\src\Controller\AppController\SearchController.php">
+      <class name="App\Controller\AppController\SearchController" namespace="global">
+        <metrics complexity="1" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
       </class>
-      <line num="14" type="method" name="search" visibility="public" complexity="1" crap="2" count="0"/>
-      <line num="16" type="stmt" count="0"/>
-      <metrics loc="18" ncloc="15" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="0" elements="2" coveredelements="0"/>
+      <metrics loc="21" ncloc="15" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
     </file>
     <file name="D:\Proyectos\filmotek\src\Entity\Comment.php">
       <class name="App\Entity\Comment" namespace="global">
@@ -209,35 +181,16 @@
     </file>
     <file name="D:\Proyectos\filmotek\src\Form\UserType.php">
       <class name="App\Form\UserType" namespace="global">
-        <metrics complexity="2" methods="2" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="0" elements="5" coveredelements="0"/>
+        <metrics complexity="2" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
       </class>
-      <line num="15" type="method" name="buildForm" visibility="public" complexity="1" crap="2" count="0"/>
-      <line num="18" type="stmt" count="0"/>
-      <line num="19" type="stmt" count="0"/>
-      <line num="27" type="method" name="configureOptions" visibility="public" complexity="1" crap="2" count="0"/>
-      <line num="29" type="stmt" count="0"/>
-      <metrics loc="34" ncloc="34" classes="1" methods="2" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="0" elements="5" coveredelements="0"/>
+      <metrics loc="37" ncloc="34" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
     </file>
     <file name="D:\Proyectos\filmotek\src\Utility\Utils.php">
       <class name="App\Utility\Utils" namespace="global">
-        <metrics complexity="4" methods="2" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="14" coveredelements="0"/>
+        <metrics complexity="4" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
       </class>
-      <line num="21" type="method" name="errorMessage" visibility="public" complexity="1" crap="2" count="0"/>
-      <line num="23" type="stmt" count="0"/>
-      <line num="27" type="stmt" count="0"/>
-      <line num="38" type="method" name="apiResponse" visibility="public" complexity="3" crap="12" count="0"/>
-      <line num="44" type="stmt" count="0"/>
-      <line num="45" type="stmt" count="0"/>
-      <line num="47" type="stmt" count="0"/>
-      <line num="48" type="stmt" count="0"/>
-      <line num="51" type="stmt" count="0"/>
-      <line num="52" type="stmt" count="0"/>
-      <line num="56" type="stmt" count="0"/>
-      <line num="57" type="stmt" count="0"/>
-      <line num="60" type="stmt" count="0"/>
-      <line num="62" type="stmt" count="0"/>
-      <metrics loc="64" ncloc="45" classes="1" methods="2" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="0" elements="14" coveredelements="0"/>
+      <metrics loc="65" ncloc="45" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
     </file>
-    <metrics files="10" loc="830" ncloc="608" classes="10" methods="53" coveredmethods="45" conditionals="0" coveredconditionals="0" statements="124" coveredstatements="86" elements="177" coveredelements="131"/>
+    <metrics files="10" loc="843" ncloc="608" classes="6" methods="45" coveredmethods="45" conditionals="0" coveredconditionals="0" statements="85" coveredstatements="85" elements="130" coveredelements="130"/>
   </project>
 </coverage>

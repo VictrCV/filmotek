@@ -26,6 +26,9 @@ class UserApiController extends AbstractController
     private EntityManagerInterface $entityManager;
     private UserPasswordHasherInterface $passwordHasher;
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function __construct(EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher)
     {
         $this->entityManager = $em;

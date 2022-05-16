@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Trait Utils
  *
+ * @codeCoverageIgnore
  * @package App\Controller
  */
 trait Utils
