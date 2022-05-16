@@ -16,3 +16,5 @@
 /tests/code-coverage/
 ###< symfony/phpunit-bridge ###
 
+.scannerwork
+
