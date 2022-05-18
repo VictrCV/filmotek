@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * User
@@ -15,7 +16,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
  *
  * @UniqueEntity(fields={"username"}, message="This username already exists.")
  */
-class User implements PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const USER_ATTR = 'user';
     public const USERNAME_ATTR = 'username';
@@ -74,4 +75,19 @@ class User implements PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getRoles(): array
+    {
+        $roles[] = 'ROLE_USER';
+        return $roles;
+    }
+
+    public function eraseCredentials()
+    {
+        $this->setPassword('');
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->getUsername();
+    }
 }
