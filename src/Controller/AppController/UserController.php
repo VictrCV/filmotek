@@ -6,7 +6,6 @@ use App\Controller\ApiController\UserApiController;
 use App\Entity\User;
 use App\Form\LoginType;
 use App\Form\UserType;
-use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationFailureResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -34,6 +33,7 @@ class UserController extends AbstractController
      */
     public function signUp(Request $request): RedirectResponse|Response
     {
+        $session = $request->getSession();
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->add('sign-up', SubmitType::class, [
@@ -54,16 +54,25 @@ class UserController extends AbstractController
             $request = Request::create(
                 UserApiController::USER_API_ROUTE,
                 'POST',
-                [],
-                [],
-                [],
-                [],
+                [], [], [], [],
                 strval(json_encode($data))
             );
 
             $response = $this->userApiController->postAction($request);
 
             if ($response->getStatusCode() == Response::HTTP_CREATED) {
+
+                $request = Request::create(
+                    UserApiController::LOGIN_API_ROUTE,
+                    'POST',
+                    [], [], [], [],
+                    strval(json_encode($data))
+                );
+                $response = $this->userApiController->loginAction($request);
+                $token = $response->headers->get('Authorization');
+                $session->set(self::JWT_SESSION_KEY, $token);
+                $session->set(User::USERNAME_ATTR, $user->getUsername());
+
                 return $this->redirectToRoute('search', []);
             } else {
                 $this->addFlash('error', 'Oops! Something went wrong and the registration could not be completed.');
@@ -96,10 +105,7 @@ class UserController extends AbstractController
             $request = Request::create(
                 UserApiController::LOGIN_API_ROUTE,
                 'POST',
-                [],
-                [],
-                [],
-                [],
+                [], [], [], [],
                 strval(json_encode($data))
             );
 
@@ -110,7 +116,7 @@ class UserController extends AbstractController
                 $session->set(self::JWT_SESSION_KEY, $token);
                 $session->set(User::USERNAME_ATTR, $formData['username']);
                 return $this->redirectToRoute('search', []);
-            } else if ($response->getStatusCode() == Response::HTTP_UNAUTHORIZED){
+            } else if ($response->getStatusCode() == Response::HTTP_UNAUTHORIZED) {
                 $this->addFlash('error', 'Wrong credentials.');
             } else {
                 $this->addFlash('error', 'Oops! Something went wrong and the login could not be completed.');
