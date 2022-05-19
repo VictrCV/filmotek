@@ -127,4 +127,17 @@ class UserController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    /**
+     * @Route("/logout", name="logout")
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
+    public function logout(Request $request): RedirectResponse|Response
+    {
+        $session = $request->getSession();
+        $session->clear();
+
+        return $this->redirectToRoute('search', []);
+    }
 }
