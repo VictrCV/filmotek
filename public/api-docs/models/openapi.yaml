@@ -42,7 +42,7 @@ paths:
         '400':
           $ref: '#/components/responses/400_BadRequest_Response_Users'
         '422':
-          $ref: '#/components/responses/422_UnprocessableEntity_Response_Users'
+          $ref: '#/components/responses/422_UnprocessableEntity_Response'
     options:
       tags: [ 'Users' ]
       summary: Provides the list of HTTP supported methods.
@@ -54,6 +54,46 @@ paths:
           headers:
             Allow:
               $ref: '#/components/headers/Allow'
+  /users/login:
+    post:
+      tags: [ 'Users' ]
+      summary: Returns Filmotek api token.
+      description: 'Returns Filmotek api authorization token (JWT).'
+      operationId: user_api_login
+      requestBody:
+        $ref: '#/components/requestBodies/UserRequestBody'
+      responses:
+        '200':
+          description: '_User access token_'
+          headers:
+            Authorization:
+              description: 'Authorization header with access token'
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token_type: { description: 'Bearer', type: string }
+                  access_token: { description: 'JSON web token', type: string }
+                  expires_in: { description: 'Expiration time (in seconds)', type: integer }
+              examples:
+                example-1:
+                  value:
+                    token_type: Bearer
+                    access_token: <JSON web token>
+                    expires_in: 7200
+          links:
+            AllEndPoints:
+              operationId: '*'
+              parameters:
+                token: '$response.body#/access_token'
+              description: 'The `access_token` value returned in the response must be appended to the `Authorization: Bearer ` header in all operations.'
+        '401':
+          $ref: '#/components/responses/401_Unauthorized_Response'
+        '422':
+          $ref: '#/components/responses/422_UnprocessableEntity_Response'
 
 components:
   headers:
@@ -157,15 +197,15 @@ components:
           examples:
             response-412:
               $ref: '#/components/examples/response-412'
-    422_UnprocessableEntity_Response_Users:
-      description: "`UNPROCESSABLE ENTITY`: username or password is left out"
+    422_UnprocessableEntity_Response:
+      description: "`UNPROCESSABLE ENTITY`: Missing data."
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Message'
           examples:
             response-422:
-              $ref: '#/components/examples/response-422-users'
+              $ref: '#/components/examples/response-422'
   requestBodies:
     UserRequestBody:
       description: '`User` data'
@@ -207,14 +247,12 @@ components:
       value:
         code: 412
         message: 'PRECONDITION FAILED: one or more conditions given evaluated to false'
-    response-422-users:
+    response-422:
       value:
         code: 422
-        message: 'UNPROCESSABLE ENTITY: username or password is left out'
-    response-422-results:
-      value:
-        code: 422
-        message: 'UNPROCESSABLE ENTITY: user is left out'
+        message: 'UNPROCESSABLE ENTITY: Missing data.'
   securitySchemes:
     FilmotekApiSecurity:
       type: http
+      bearerFormat: JWT
+      scheme: bearer
