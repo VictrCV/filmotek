@@ -206,4 +206,30 @@ class UserApiControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
         self::assertFalse($response->isSuccessful());
     }
+
+    /**
+     * Implements testLoginUserAction422UnprocessableEntity()
+     *
+     * @covers ::loginAction
+     * @return void
+     * @throws Exception
+     */
+    public function testLoginUserAction422UnprocessableEntity()
+    {
+        $data = [
+            User::PASSWORD_ATTR => self::$faker->password()
+        ];
+
+        self::$client->request(
+            'POST',
+            UserApiController::LOGIN_API_ROUTE,
+            [], [], [],
+            strval(json_encode($data))
+        );
+
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
 }

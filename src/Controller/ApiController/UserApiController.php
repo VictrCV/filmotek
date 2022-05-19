@@ -114,16 +114,19 @@ class UserApiController extends AbstractController
     {
         $body = $request->getContent();
         $data = json_decode($body, true);
+
+        if (!isset($data[User::USERNAME_ATTR], $data[User::PASSWORD_ATTR])) {
+            return Utils::errorMessage(Response::HTTP_UNPROCESSABLE_ENTITY, "Missing data.");
+        }
+
         $username = $data[User::USERNAME_ATTR];
         $password = $data[User::PASSWORD_ATTR];
 
-        $user = ($username !== null)
-            ? $this->entityManager
-                ->getRepository(User::class)
-                ->findOneBy([User::USERNAME_ATTR => $username])
-            : null;
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findOneBy([User::USERNAME_ATTR => $username]);
 
-        if (!isset($user, $password) || !$this->passwordHasher->isPasswordValid($user, strval($password))) {
+        if (!isset($user) || !$this->passwordHasher->isPasswordValid($user, strval($password))) {
             return $this->failureHandler->onAuthenticationFailure(
                 $request,
                 new BadCredentialsException()
