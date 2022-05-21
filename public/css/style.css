@@ -3,7 +3,7 @@
     --primary-color: #4a4e69ff;
     --primary-light: #9a8c98ff;
     --secondary-color: #c9ada7ff;
-    --secondary-light: #f2e9e4ff;
+    --secondary-light: #e4f2ef;
 }
 
 .background {
@@ -77,4 +77,10 @@
     padding-top: 50px;
     width: 25%;
     color: var(--secondary-light) !important;
+}
+
+.search-form {
+    width: 25% !important;
+    color: var(--secondary-light) !important;
+    text-align: center;
 }
