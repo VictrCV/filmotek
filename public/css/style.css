@@ -82,5 +82,14 @@
 .search-form {
     width: 25% !important;
     color: var(--secondary-light) !important;
-    text-align: center;
+}
+
+.cover {
+    height: 300px;
+    width: 200px;
+}
+
+.results {
+    color: var(--secondary-light) !important;
+    text-align-last: center;
 }
