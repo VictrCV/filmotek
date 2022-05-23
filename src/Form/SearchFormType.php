@@ -94,7 +94,7 @@ class SearchFormType extends AbstractType implements EventSubscriberInterface
             [
                 'headers' => [
                     'X-RapidAPI-Host' => SearchController::RAPIDAPI_HOST,
-                    'X-RapidAPI-Key' => SearchController::RAPIDAPI_KEY
+                    'X-RapidAPI-Key' => $_ENV['RAPIDAPI_KEY']
                 ]
             ]
         );
