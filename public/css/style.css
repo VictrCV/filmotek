@@ -89,7 +89,16 @@
     width: 200px;
 }
 
+.cover-large {
+    height: 600px;
+    width: 400px;
+}
+
 .results {
     color: var(--secondary-light) !important;
     text-align-last: center;
+}
+
+.color-text {
+    color: var(--secondary-light) !important;
 }

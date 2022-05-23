@@ -6,10 +6,12 @@
             {% if result.primaryImage is not null %}
                 <figure>
                     <figcaption>{{ result.titleText.text }}</figcaption>
-                    <img src="{{ result.primaryImage.url }}" class="mx-5 mb-4 mt-2 cover">
+                    <a href="{{ path('search_details', {'apiId': result.id}) }}">
+                        <img src="{{ result.primaryImage.url }}" class="mx-5 mb-4 mt-2 cover">
+                    </a>
                 </figure>
             {% endif %}
         {% endfor %}
     </div>
 {% endblock %}
-{% block sectiontitle %}Search{% endblock %}
+{% block sectiontitle %}Search results{% endblock %}
