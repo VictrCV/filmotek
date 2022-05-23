@@ -43,8 +43,9 @@ class SearchController extends AbstractController
             $type = $formData['type'];
 
             $url = self::BASE_URL . '/titles';
-            if (isset($title))
+            if (isset($title)) {
                 $url .= '/search/title/' . rawurlencode($title);
+            }
 
             $response = $this->client->request(
                 'GET',
