@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {{ parent() }}
+    <div class="d-flex flex-wrap justify-content-center mt-5 results">
+        {% for result in results %}
+            {% if result.primaryImage is not null %}
+                <figure>
+                    <figcaption>{{ result.titleText.text }}</figcaption>
+                    <a href="{{ path('search_details', {'apiId': result.id}) }}">
+                        <img src="{{ result.primaryImage.url }}" class="mx-5 mb-4 mt-2 cover">
+                    </a>
+                </figure>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}
+{% block sectiontitle %}Search results{% endblock %}

@@ -25,9 +25,9 @@ class Series
     /**
      * @var string
      *
-     * @ORM\Column(name="dataImdbId", type="string", length=9, nullable=false)
+     * @ORM\Column(name="apiId", type="string", length=9, nullable=false)
      */
-    private $dataImdbId;
+    private $apiId;
 
     /**
      * @var string
@@ -83,14 +83,14 @@ class Series
         return $this->id;
     }
 
-    public function getDataImdbId(): ?string
+    public function getApiId(): ?string
     {
-        return $this->dataImdbId;
+        return $this->apiId;
     }
 
-    public function setDataImdbId(string $dataImdbId): self
+    public function setApiId(string $apiId): self
     {
-        $this->dataImdbId = $dataImdbId;
+        $this->apiId = $apiId;
 
         return $this;
     }

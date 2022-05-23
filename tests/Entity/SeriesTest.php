@@ -108,18 +108,18 @@ class SeriesTest extends TestCase
     }
 
     /**
-     * Implement testGetSetDataImdbId().
+     * Implement testGetSetApiId().
      *
-     * @covers ::getDataImdbId
-     * @covers ::setDataImdbId
+     * @covers ::getApiId
+     * @covers ::setApiId
      * @return void
      * @throws Exception
      */
-    public function testGetSetDataImdbId(): void
+    public function testGetSetApiId(): void
     {
-        $dataImdbId = self::$faker->word();
-        self::$series->setDataImdbId($dataImdbId);
-        self::assertEquals($dataImdbId, self::$series->getDataImdbId());
+        $apiId = self::$faker->word();
+        self::$series->setApiId($apiId);
+        self::assertEquals($apiId, self::$series->getApiId());
     }
 
     /**
