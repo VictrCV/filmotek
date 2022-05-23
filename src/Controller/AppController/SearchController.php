@@ -17,7 +17,6 @@ class SearchController extends AbstractController
 {
     public const BASE_URL = 'https://moviesdatabase.p.rapidapi.com';
     public const RAPIDAPI_HOST = 'moviesdatabase.p.rapidapi.com';
-    public const RAPIDAPI_KEY = '6eba30a07dmsh958077cd42aab13p17bf28jsnf44b61beabc9';
 
     private HttpClientInterface $client;
 
@@ -53,7 +52,7 @@ class SearchController extends AbstractController
                 [
                     'headers' => [
                         'X-RapidAPI-Host' => self::RAPIDAPI_HOST,
-                        'X-RapidAPI-Key' => self::RAPIDAPI_KEY
+                        'X-RapidAPI-Key' => $_ENV['RAPIDAPI_KEY']
                     ],
                     'query' => [
                         'info' => 'base_info',
@@ -94,7 +93,7 @@ class SearchController extends AbstractController
             [
                 'headers' => [
                     'X-RapidAPI-Host' => self::RAPIDAPI_HOST,
-                    'X-RapidAPI-Key' => self::RAPIDAPI_KEY
+                    'X-RapidAPI-Key' => $_ENV['RAPIDAPI_KEY']
                 ],
                 'query' => [
                     'info' => 'base_info'
