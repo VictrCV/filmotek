@@ -18,6 +18,8 @@ servers:
 tags:
   - name: 'Users'
     description: 'User management'
+  - name: 'Series'
+    description: 'Series management'
 paths:
   /users:
     post:
@@ -94,12 +96,43 @@ paths:
           $ref: '#/components/responses/401_Unauthorized_Response'
         '422':
           $ref: '#/components/responses/422_UnprocessableEntity_Response'
-
+  /series:
+    post:
+      tags: [ 'Series' ]
+      summary: Creates a Series resource.
+      description: 'Creates a new series'
+      operationId: series_api_post
+      security:
+        - FilmotekApiSecurity: [ ]
+      requestBody:
+        $ref: '#/components/requestBodies/SeriesRequestBody'
+      responses:
+        '201':
+          description: '`Created`: series created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Series'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '400':
+          $ref: '#/components/responses/400_BadRequest_Response_Series'
+        '422':
+          $ref: '#/components/responses/422_UnprocessableEntity_Response'
+    options:
+      tags: [ 'Series' ]
+      summary: Provides the list of HTTP supported methods.
+      description: 'Return a `Allow` header with a comma separated list of HTTP supported methods.'
+      operationId: series_api_options
+      responses:
+        '204':
+          description: '`Allow` header &lt;Response body is empty&gt;'
+          headers:
+            Allow:
+              $ref: '#/components/headers/Allow'
 components:
   headers:
-    ETag:
-      description: Entity Tag (unique identifier provided for cache validation)
-      schema: { type: string, pattern: "[0-9a-f]*" }
     Location:
       description: "`URI` of the new resource"
       schema: { type: string, format: url }
@@ -151,9 +184,83 @@ components:
       example:
         code: 200
         message: Ok
+    Series:
+      type: object
+      properties:
+        id:
+          description: 'Series Id'
+          type: integer
+          format: int64
+        apiId:
+          description: 'Series apiId'
+          type: string
+          format: string
+        title:
+          description: 'Series title'
+          type: string
+          format: string
+        isFilm:
+          description: 'Series isFilm'
+          type: boolean
+          format: boolean
+        synopsis:
+          description: 'Series synopsis'
+          type: string
+          format: string
+        imageUrl:
+          description: 'Series imageUrl'
+          type: string
+          format: string
+        season:
+          description: 'Series season'
+          type: integer
+          format: int32
+        episode:
+          description: 'Series episode'
+          type: integer
+          format: int32
+        time:
+          description: 'Series time'
+          type: string
+          format: date-time
+        _links:
+          description: link relations
+          type: object
+          properties:
+            parent:
+              type: object
+              properties: { "href": { "type": "string", "format": "url" } }
+            self:
+              type: object
+              properties: { "href": { "type": "string", "format": "url" } }
+      example:
+        series:
+          id: 1212
+          apiId: 'tt0944947'
+          title: 'Game of Thrones'
+          isFilm: false
+          synopsis: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.'
+          imageUrl: 'https://m.media-amazon.com/images/M/MV5BYTRiNDQwYzAtMzVlZS00NTI5LWJjYjUtMzkwNTUzMWMxZTllXkEyXkFqcGdeQXVyNDIzMzcwNjc@._V1_.jpg'
+          season: 3
+          episode: 9
+          time: '00:35:00'
+          _links:
+            parent:
+              href: /api/v1/series
+            self:
+              href: /api/v1/series/1202
   responses:
     400_BadRequest_Response_Users:
       description: "`BAD REQUEST`: username already exists"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+          examples:
+            response-400:
+              $ref: '#/components/examples/response-400'
+    400_BadRequest_Response_Series:
+      description: "`BAD REQUEST`: series already exists"
       content:
         application/json:
           schema:
@@ -226,6 +333,55 @@ components:
             example:
               username: fulanito90
               password: Us3rP4ssw0rd
+    SeriesRequestBody:
+      description: '`Series` data'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              apiId:
+                description: 'Series apiId'
+                type: string
+                format: string
+              title:
+                description: 'Series title'
+                type: string
+                format: string
+              isFilm:
+                description: 'Series isFilm'
+                type: boolean
+                format: boolean
+              synopsis:
+                description: 'Series synopsis'
+                type: string
+                format: string
+              imageUrl:
+                description: 'Series imageUrl'
+                type: string
+                format: string
+              season:
+                description: 'Series season'
+                type: integer
+                format: int32
+              episode:
+                description: 'Series episode'
+                type: integer
+                format: int32
+              time:
+                description: 'Series time'
+                type: string
+                format: date-time
+            example:
+              apiId: 'tt0944947'
+              title: 'Game of Thrones'
+              isFilm: false
+              synopsis: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.'
+              imageUrl: 'https://m.media-amazon.com/images/M/MV5BYTRiNDQwYzAtMzVlZS00NTI5LWJjYjUtMzkwNTUzMWMxZTllXkEyXkFqcGdeQXVyNDIzMzcwNjc@._V1_.jpg'
+              season: 3
+              episode: 9
+              time: '00:35:00'
   examples:
     response-400:
       value:

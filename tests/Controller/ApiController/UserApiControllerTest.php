@@ -98,24 +98,13 @@ class UserApiControllerTest extends WebTestCase
     /**
      * Implements testPostUserAction400BadRequest()
      *
+     * @depends testPostUserAction201Created
      * @covers ::postAction
      * @return void
      * @throws Exception
      */
-    public function testPostUserAction400BadRequest()
+    public function testPostUserAction400BadRequest(array $data)
     {
-
-        $data = [
-            User::USERNAME_ATTR => self::$faker->userName(),
-            User::PASSWORD_ATTR => self::$faker->password()
-        ];
-
-        self::$client->request(
-            'POST',
-            UserApiController::USER_API_ROUTE,
-            [], [], [],
-            strval(json_encode($data))
-        );
         self::$client->request(
             'POST',
             UserApiController::USER_API_ROUTE,

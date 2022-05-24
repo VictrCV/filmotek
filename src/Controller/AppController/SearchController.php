@@ -15,7 +15,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  */
 class SearchController extends AbstractController
 {
-    public const BASE_URL = 'https://moviesdatabase.p.rapidapi.com';
+    public const RAPIDAPI_BASE_URL = 'https://moviesdatabase.p.rapidapi.com';
     public const RAPIDAPI_HOST = 'moviesdatabase.p.rapidapi.com';
 
     private HttpClientInterface $client;
@@ -41,7 +41,7 @@ class SearchController extends AbstractController
             $genre = $formData['genre'];
             $type = $formData['type'];
 
-            $url = self::BASE_URL . '/titles';
+            $url = self::RAPIDAPI_BASE_URL . '/titles';
             if (isset($title)) {
                 $url .= '/search/title/' . rawurlencode($title);
             }
@@ -89,7 +89,7 @@ class SearchController extends AbstractController
 
         $response = $this->client->request(
             'GET',
-            self::BASE_URL . '/titles/' . $apiId,
+            self::RAPIDAPI_BASE_URL . '/titles/' . $apiId,
             [
                 'headers' => [
                     'X-RapidAPI-Host' => self::RAPIDAPI_HOST,

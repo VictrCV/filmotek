@@ -63,18 +63,18 @@ class SeriesTest extends TestCase
     }
 
     /**
-     * Implement testGetSetChapter().
+     * Implement testGetSetEpisode().
      *
-     * @covers ::getChapter
-     * @covers ::setChapter
+     * @covers ::getEpisode
+     * @covers ::setEpisode
      * @return void
      * @throws Exception
      */
-    public function testGetSetChapter(): void
+    public function testGetSetEpisode(): void
     {
-        $chapter = self::$faker->randomNumber();
-        self::$series->setChapter($chapter);
-        self::assertEquals($chapter, self::$series->getChapter());
+        $episode = self::$faker->randomNumber();
+        self::$series->setEpisode($episode);
+        self::assertEquals($episode, self::$series->getEpisode());
     }
 
     /**
@@ -165,5 +165,32 @@ class SeriesTest extends TestCase
         $synopsis = self::$faker->paragraph();
         self::$series->setSynopsis($synopsis);
         self::assertEquals($synopsis, self::$series->getSynopsis());
+    }
+
+    /**
+     * Implement testJsonSerialize().
+     *
+     * @covers ::jsonSerialize
+     * @return void
+     * @throws Exception
+     */
+    public function testJsonSerialize(): void
+    {
+        $vars = [
+            'id' => self::$series->getId(),
+            Series::API_ID_ATTR => self::$series->getApiId(),
+            Series::TITLE_ATTR => self::$series->getTitle(),
+            Series::IS_FILM_ATTR => self::$series->getIsFilm(),
+            Series::SYNOPSIS_ATTR => self::$series->getSynopsis(),
+            Series::IMAGE_URL_ATTR => self::$series->getImageUrl(),
+            Series::SEASON_ATTR => self::$series->getSeason(),
+            Series::EPISODE_ATTR => self::$series->getEpisode(),
+            Series::TIME_ATTR => self::$series->getTime(),
+        ];
+        if(self::$series->getTime() !== null) {
+            $vars[Series::TIME_ATTR] = self::$series->getTime()->format('H:i:s');
+        }
+
+        self::assertEquals($vars, self::$series->jsonSerialize());
     }
 }

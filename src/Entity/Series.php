@@ -6,12 +6,15 @@ use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Series
  *
- * @ORM\Table(name="series")
+ * @ORM\Table(name="series", uniqueConstraints={@ORM\UniqueConstraint(name="UNIQ_API_ID", columns={"apiId"})})
  * @ORM\Entity
+ *
+ * @UniqueEntity(fields={"apiId"}, message="This series already exists.")
  */
 class Series implements JsonSerializable
 {
@@ -22,7 +25,7 @@ class Series implements JsonSerializable
     public const SYNOPSIS_ATTR = 'synopsis';
     public const IMAGE_URL_ATTR = 'imageUrl';
     public const SEASON_ATTR = 'season';
-    public const CHAPTER_ATTR = 'chapter';
+    public const EPISODE_ATTR = 'episode';
     public const TIME_ATTR = 'time';
 
     /**
@@ -79,9 +82,9 @@ class Series implements JsonSerializable
     /**
      * @var int|null
      *
-     * @ORM\Column(name="chapter", type="integer", nullable=true)
+     * @ORM\Column(name="episode", type="integer", nullable=true)
      */
-    private $chapter;
+    private $episode;
 
     /**
      * @var DateTime|null
@@ -167,14 +170,14 @@ class Series implements JsonSerializable
         return $this;
     }
 
-    public function getChapter(): ?int
+    public function getEpisode(): ?int
     {
-        return $this->chapter;
+        return $this->episode;
     }
 
-    public function setChapter(?int $chapter): self
+    public function setEpisode(?int $episode): self
     {
-        $this->chapter = $chapter;
+        $this->episode = $episode;
 
         return $this;
     }
@@ -193,6 +196,10 @@ class Series implements JsonSerializable
 
     public function jsonSerialize(): array
     {
-        return get_object_vars($this);
+        $vars = get_object_vars($this);
+        if($this->getTime() !== null) {
+            $vars[Series::TIME_ATTR] = $this->getTime()->format('H:i:s');
+        }
+        return $vars;
     }
 }

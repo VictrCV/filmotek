@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * User
  *
- * @ORM\Table(name="user", uniqueConstraints={@ORM\UniqueConstraint(name="UNIQ_8D93D649F85E0677", columns={"username"})})
+ * @ORM\Table(name="user", uniqueConstraints={@ORM\UniqueConstraint(name="UNIQ_USERNAME", columns={"username"})})
  * @ORM\Entity
  *
  * @UniqueEntity(fields={"username"}, message="This username already exists.")

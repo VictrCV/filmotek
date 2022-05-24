@@ -90,7 +90,7 @@ class SearchFormType extends AbstractType implements EventSubscriberInterface
     {
         $response = $this->client->request(
             'GET',
-            SearchController::BASE_URL . '/titles/utils/genres',
+            SearchController::RAPIDAPI_BASE_URL . '/titles/utils/genres',
             [
                 'headers' => [
                     'X-RapidAPI-Host' => SearchController::RAPIDAPI_HOST,
