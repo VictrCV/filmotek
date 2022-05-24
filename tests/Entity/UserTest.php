@@ -119,4 +119,20 @@ class UserTest extends TestCase
         self::assertEquals($user->getUsername(), $user->getUserIdentifier());
     }
 
+    /**
+     * Implement testJsonSerialize().
+     *
+     * @covers ::jsonSerialize
+     * @return void
+     * @throws Exception
+     */
+    public function testJsonSerialize(): void
+    {
+        $vars = [
+            'id' => self::$user->getId(),
+            User::USERNAME_ATTR => self::$user->getUsername()
+        ];
+        self::assertEquals($vars, self::$user->jsonSerialize());
+    }
+
 }
