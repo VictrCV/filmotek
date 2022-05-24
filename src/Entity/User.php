@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as Serializer;
+use JsonSerializable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -16,11 +16,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * @UniqueEntity(fields={"username"}, message="This username already exists.")
  */
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSerializable
 {
     public const USER_ATTR = 'user';
     public const USERNAME_ATTR = 'username';
     public const PASSWORD_ATTR = 'password';
+    public const ROLE_USER = 'ROLE_USER';
 
     /**
      * @var int
@@ -41,7 +42,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string
      *
-     * @Serializer\Exclude()
      * @ORM\Column(name="password", type="string", length=255, nullable=false)
      */
     private $password;
@@ -77,7 +77,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        $roles[] = 'ROLE_USER';
+        $roles[] = self::ROLE_USER;
         return $roles;
     }
 
@@ -89,5 +89,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return $this->getUsername();
+    }
+
+    public function jsonSerialize(): array
+    {
+        $vars = get_object_vars($this);
+        unset($vars[self::PASSWORD_ATTR]);
+        return $vars;
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Utility;
 
-use Hateoas\HateoasBuilder;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -45,8 +44,7 @@ trait Utils
         if (null === $messageBody) {
             $data = null;
         } else {
-            $hateoas = HateoasBuilder::create()->build();
-            $data = $hateoas->serialize($messageBody, 'json');
+            $data = json_encode($messageBody);
         }
 
         $response = new Response($data, $code);

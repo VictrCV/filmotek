@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * Series
@@ -11,8 +13,18 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="series")
  * @ORM\Entity
  */
-class Series
+class Series implements JsonSerializable
 {
+    public const SERIES_ATTR = 'series';
+    public const API_ID_ATTR = 'apiId';
+    public const TITLE_ATTR = 'title';
+    public const IS_FILM_ATTR = 'isFilm';
+    public const SYNOPSIS_ATTR = 'synopsis';
+    public const IMAGE_URL_ATTR = 'imageUrl';
+    public const SEASON_ATTR = 'season';
+    public const CHAPTER_ATTR = 'chapter';
+    public const TIME_ATTR = 'time';
+
     /**
      * @var int
      *
@@ -167,17 +179,20 @@ class Series
         return $this;
     }
 
-    public function getTime(): ?\DateTimeInterface
+    public function getTime(): ?DateTimeInterface
     {
         return $this->time;
     }
 
-    public function setTime(?\DateTimeInterface $time): self
+    public function setTime(?DateTimeInterface $time): self
     {
         $this->time = $time;
 
         return $this;
     }
 
-
+    public function jsonSerialize(): array
+    {
+        return get_object_vars($this);
+    }
 }
