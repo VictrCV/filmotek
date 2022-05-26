@@ -25,6 +25,9 @@ class SeriesApiController extends AbstractController
 
     private EntityManagerInterface $entityManager;
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function __construct(EntityManagerInterface $em)
     {
         $this->entityManager = $em;
@@ -52,9 +55,15 @@ class SeriesApiController extends AbstractController
         $series->setSynopsis($data[Series::SYNOPSIS_ATTR]);
         $series->setImageUrl($data[Series::IMAGE_URL_ATTR]);
 
-        if(isset($data[Series::SEASON_ATTR], $data[Series::EPISODE_ATTR], $data[Series::TIME_ATTR])) {
+        if(isset($data[Series::SEASON_ATTR])) {
             $series->setSeason($data[Series::SEASON_ATTR]);
+        }
+
+        if(isset($data[Series::EPISODE_ATTR])) {
             $series->setEpisode($data[Series::EPISODE_ATTR]);
+        }
+
+        if(isset($data[Series::TIME_ATTR])) {
             $series->setTime(DateTime::createFromFormat("H:i:s", $data[Series::TIME_ATTR]));
         }
 

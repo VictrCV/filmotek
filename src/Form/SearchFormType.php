@@ -65,7 +65,7 @@ class SearchFormType extends AbstractType implements EventSubscriberInterface
             ->addEventSubscriber($this);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             FormEvents::SUBMIT => 'ensureOneFieldIsSubmitted',

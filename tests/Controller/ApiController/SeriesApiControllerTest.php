@@ -75,6 +75,8 @@ class SeriesApiControllerTest extends WebTestCase
             Series::IS_FILM_ATTR => self::$faker->boolean(),
             Series::SYNOPSIS_ATTR => self::$faker->sentence(30),
             Series::IMAGE_URL_ATTR => self::$faker->imageUrl(),
+            Series::SEASON_ATTR => self::$faker->randomDigitNot(0),
+            Series::EPISODE_ATTR => self::$faker->numberBetween(1,50),
             Series::TIME_ATTR => self::$faker->time()
         ];
 
@@ -133,14 +135,9 @@ class SeriesApiControllerTest extends WebTestCase
      */
     public function testPostSeriesAction422UnprocessableEntity()
     {
-
-        $data = [];
-
         self::$client->request(
             'POST',
-            SeriesApiController::SERIES_API_ROUTE,
-            [], [], [],
-            strval(json_encode($data))
+            SeriesApiController::SERIES_API_ROUTE
         );
 
         $response = self::$client->getResponse();

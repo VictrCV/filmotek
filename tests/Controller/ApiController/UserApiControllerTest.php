@@ -127,16 +127,9 @@ class UserApiControllerTest extends WebTestCase
      */
     public function testPostUserAction422UnprocessableEntity()
     {
-
-        $data = [
-            User::USERNAME_ATTR => self::$faker->userName()
-        ];
-
         self::$client->request(
             'POST',
-            UserApiController::USER_API_ROUTE,
-            [], [], [],
-            strval(json_encode($data))
+            UserApiController::USER_API_ROUTE
         );
 
         $response = self::$client->getResponse();

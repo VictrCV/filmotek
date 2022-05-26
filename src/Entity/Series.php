@@ -194,7 +194,7 @@ class Series implements JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $vars = get_object_vars($this);
         if($this->getTime() !== null) {

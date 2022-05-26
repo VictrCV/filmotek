@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\ChangeTrackingPolicy;
 use JsonSerializable;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -13,6 +15,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *
  * @ORM\Table(name="user", uniqueConstraints={@ORM\UniqueConstraint(name="UNIQ_USERNAME", columns={"username"})})
  * @ORM\Entity
+ * @ChangeTrackingPolicy("DEFERRED_EXPLICIT")
  *
  * @UniqueEntity(fields={"username"}, message="This username already exists.")
  */
@@ -91,7 +94,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSer
         return $this->getUsername();
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $vars = get_object_vars($this);
         unset($vars[self::PASSWORD_ATTR]);
