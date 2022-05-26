@@ -8,6 +8,7 @@ use App\Entity\User;
 use Exception;
 use Faker\Factory as FakerFactoryAlias;
 use Faker\Generator as FakerGeneratorAlias;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -91,7 +92,7 @@ class SeriesListTest extends TestCase
         self::$seriesList->setType($type);
         self::assertEquals($type, self::$seriesList->getType());
         $invalidType = self::$faker->sentence();
-        self::expectException(\InvalidArgumentException::class);
+        self::expectException(InvalidArgumentException::class);
         self::$seriesList->setType($invalidType);
     }
 
