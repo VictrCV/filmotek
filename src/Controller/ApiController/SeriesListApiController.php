@@ -61,36 +61,38 @@ class SeriesListApiController extends AbstractController
             ->getRepository(Series::class)
             ->find(intval($data[SeriesList::SERIES_ATTR]));
 
-        if ($series == null) {
-            return Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Series doesn't exist.");
-        }
-
         $user = $this->entityManager
             ->getRepository(User::class)
             ->find(intval($data[SeriesList::USER_ATTR]));
 
-        if ($user == null) {
-            return Utils::errorMessage(Response::HTTP_BAD_REQUEST, "User doesn't exist.");
+        if ($series == null) {
+            $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Series doesn't exist.");
+        } elseif ($user == null) {
+            $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "User doesn't exist.");
+        } else {
+            $seriesList->setSeries($series);
+            $seriesList->setUser($user);
+
+            $seriesExistsInList = $this->entityManager
+                ->getRepository(SeriesList::class)
+                ->createQueryBuilder('sl')
+                ->where('sl.type = :type', 'sl.series = :series', 'sl.user = :user')
+                ->setParameters([
+                    'type' => $seriesList->getType(),
+                    'series' => $seriesList->getSeries(),
+                    'user' => $seriesList->getUser()
+                ])
+                ->getQuery()
+                ->execute();
+
+            if (!empty($seriesExistsInList)) {
+                $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST,
+                    "Series already exists in " . $seriesList->getType() . " list.");
+            }
         }
 
-        $seriesList->setSeries($series);
-        $seriesList->setUser($user);
-
-        $seriesExistsInList = $this->entityManager
-            ->getRepository(SeriesList::class)
-            ->createQueryBuilder('sl')
-            ->where('sl.type = :type', 'sl.series = :series', 'sl.user = :user')
-            ->setParameters([
-                'type' => $seriesList->getType(),
-                'series' => $seriesList->getSeries(),
-                'user' => $seriesList->getUser()
-            ])
-            ->getQuery()
-            ->execute();
-
-        if (!empty($seriesExistsInList)) {
-            return Utils::errorMessage(Response::HTTP_BAD_REQUEST,
-                "Series already exists in " . $seriesList->getType() . " list.");
+        if (isset($badRequest)) {
+            return $badRequest;
         }
 
         $this->entityManager->persist($seriesList);
