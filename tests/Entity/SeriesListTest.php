@@ -94,4 +94,22 @@ class SeriesListTest extends TestCase
         self::expectException(\InvalidArgumentException::class);
         self::$seriesList->setType($invalidType);
     }
+
+    /**
+     * Implement testJsonSerialize().
+     *
+     * @covers ::jsonSerialize
+     * @return void
+     * @throws Exception
+     */
+    public function testJsonSerialize(): void
+    {
+        $vars = [
+            'id' => self::$seriesList->getId(),
+            SeriesList::TYPE_ATTR => self::$seriesList->getType(),
+            SeriesList::SERIES_ATTR => self::$seriesList->getSeries(),
+            SeriesList::USER_ATTR => self::$seriesList->getUser()
+        ];
+        self::assertEquals($vars, self::$seriesList->jsonSerialize());
+    }
 }

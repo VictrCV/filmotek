@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
+use JetBrains\PhpStorm\Internal\TentativeType;
+use JsonSerializable;
 
 /**
  * SeriesList
@@ -11,11 +13,16 @@ use InvalidArgumentException;
  * @ORM\Table(name="series_list", indexes={@ORM\Index(name="userId", columns={"userId"}), @ORM\Index(name="seriesId", columns={"seriesId"})})
  * @ORM\Entity
  */
-class SeriesList
+class SeriesList implements JsonSerializable
 {
-    const FAVOURITES = "favourites";
-    const TO_WATCH = "toWatch";
-    const IN_PROGRESS = "inProgress";
+    public const FAVOURITES = "favourites";
+    public const TO_WATCH = "toWatch";
+    public const IN_PROGRESS = "inProgress";
+
+    public const SERIES_LIST_ATTR = 'series_list';
+    public const TYPE_ATTR = 'type';
+    public const SERIES_ATTR = 'series';
+    public const USER_ATTR = 'user';
 
     /**
      * @var int
@@ -98,5 +105,8 @@ class SeriesList
         return $this;
     }
 
-
+    public function jsonSerialize(): mixed
+    {
+        return get_object_vars($this);
+    }
 }
