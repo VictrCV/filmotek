@@ -16,14 +16,16 @@ servers:
       port:
         default: '8000'
 tags:
-  - name: 'Users'
+  - name: '👥 Users'
     description: 'User management'
-  - name: 'Series'
+  - name: '🎞️ Series'
     description: 'Series management'
+  - name: '🗃️️ Series list'
+    description: 'Series list management'
 paths:
   /users:
     post:
-      tags: [ 'Users' ]
+      tags: [ '👥 Users' ]
       summary: Creates a User resource.
       description: 'Creates a new user'
       operationId: user_api_post
@@ -46,7 +48,7 @@ paths:
         '422':
           $ref: '#/components/responses/422_UnprocessableEntity_Response'
     options:
-      tags: [ 'Users' ]
+      tags: [ '👥 Users' ]
       summary: Provides the list of HTTP supported methods.
       description: 'Return a `Allow` header with a comma separated list of HTTP supported methods.'
       operationId: user_api_options
@@ -58,7 +60,7 @@ paths:
               $ref: '#/components/headers/Allow'
   /users/login:
     post:
-      tags: [ 'Users' ]
+      tags: [ '👥 Users' ]
       summary: Returns Filmotek api token.
       description: 'Returns Filmotek api authorization token (JWT).'
       operationId: user_api_login
@@ -98,7 +100,7 @@ paths:
           $ref: '#/components/responses/422_UnprocessableEntity_Response'
   /series:
     post:
-      tags: [ 'Series' ]
+      tags: [ '🎞️ Series' ]
       summary: Creates a Series resource.
       description: 'Creates a new series'
       operationId: series_api_post
@@ -121,10 +123,47 @@ paths:
         '422':
           $ref: '#/components/responses/422_UnprocessableEntity_Response'
     options:
-      tags: [ 'Series' ]
+      tags: [ '🎞️ Series' ]
       summary: Provides the list of HTTP supported methods.
       description: 'Return a `Allow` header with a comma separated list of HTTP supported methods.'
       operationId: series_api_options
+      responses:
+        '204':
+          description: '`Allow` header &lt;Response body is empty&gt;'
+          headers:
+            Allow:
+              $ref: '#/components/headers/Allow'
+  /series-list:
+    post:
+      tags: [ '🗃️️ Series list' ]
+      summary: Creates a Series list resource.
+      description: 'Creates a new series list'
+      operationId: series_list_api_post
+      security:
+        - FilmotekApiSecurity: [ ]
+      requestBody:
+        $ref: '#/components/requestBodies/SeriesListRequestBody'
+      responses:
+        '201':
+          description: '`Created`: series list created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeriesList'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '400':
+          $ref: '#/components/responses/400_BadRequest_Response_SeriesList'
+        '403':
+          $ref: '#/components/responses/403_Forbidden_Response'
+        '422':
+          $ref: '#/components/responses/422_UnprocessableEntity_Response'
+    options:
+      tags: [ '🗃️️ Series list' ]
+      summary: Provides the list of HTTP supported methods.
+      description: 'Return a `Allow` header with a comma separated list of HTTP supported methods.'
+      operationId: series_list_api_options
       responses:
         '204':
           description: '`Allow` header &lt;Response body is empty&gt;'
@@ -170,20 +209,6 @@ components:
               href: /api/v1/users
             self:
               href: /api/v1/users/1508
-    Message:
-      type: object
-      description: HTTP response message
-      properties:
-        code:
-          description: 'Response code'
-          type: integer
-          format: int64
-        message:
-          description: 'Response message'
-          type: string
-      example:
-        code: 200
-        message: Ok
     Series:
       type: object
       properties:
@@ -249,6 +274,60 @@ components:
               href: /api/v1/series
             self:
               href: /api/v1/series/1202
+    SeriesList:
+      type: object
+      properties:
+        id:
+          description: 'Series list Id'
+          type: integer
+          format: int64
+        type:
+          description: 'Series list type'
+          type: string
+          format: string
+        series:
+          description: 'Series list series'
+          type: integer
+          format: int64
+        user:
+          description: 'Series list user'
+          type: integer
+          format: int64
+        _links:
+          description: link relations
+          type: object
+          properties:
+            parent:
+              type: object
+              properties: { "href": { "type": "string", "format": "url" } }
+            self:
+              type: object
+              properties: { "href": { "type": "string", "format": "url" } }
+      example:
+        series:
+          id: 33
+          type: 'favourites'
+          series: 52
+          user: 17
+          _links:
+            parent:
+              href: /api/v1/series-list
+            self:
+              href: /api/v1/series-list/33
+    Message:
+      type: object
+      description: HTTP response message
+      properties:
+        code:
+          description: 'Response code'
+          type: integer
+          format: int64
+        message:
+          description: 'Response message'
+          type: string
+      example:
+        code: 200
+        message: Ok
   responses:
     400_BadRequest_Response_Users:
       description: "`BAD REQUEST`: username already exists"
@@ -257,8 +336,8 @@ components:
           schema:
             $ref: '#/components/schemas/Message'
           examples:
-            response-400:
-              $ref: '#/components/examples/response-400'
+            response-400-user:
+              $ref: '#/components/examples/response-400-user'
     400_BadRequest_Response_Series:
       description: "`BAD REQUEST`: series already exists"
       content:
@@ -266,8 +345,17 @@ components:
           schema:
             $ref: '#/components/schemas/Message'
           examples:
-            response-400:
-              $ref: '#/components/examples/response-400'
+            response-400-series:
+              $ref: '#/components/examples/response-400-series'
+    400_BadRequest_Response_SeriesList:
+      description: "`BAD REQUEST`: wrong type, series or user does not exist, or series already exists in list"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+          examples:
+            response-400-series-list:
+              $ref: '#/components/examples/response-400-series-list'
     401_Unauthorized_Response:
       description: '`Unauthorized`: invalid Authorization header'
       content:
@@ -382,11 +470,43 @@ components:
               season: 3
               episode: 9
               time: '00:35:00'
+    SeriesListRequestBody:
+      description: '`Series list` data'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              type:
+                description: 'Series list type'
+                type: string
+                format: string
+              series:
+                description: 'Series list series'
+                type: integer
+                format: int64
+              user:
+                description: 'Series list user'
+                type: string
+                format: int64
+            example:
+              type: favourites
+              series: 52
+              user: 17
   examples:
-    response-400:
+    response-400-user:
       value:
         code: 400
-        message: 'BAD REQUEST: username already exists'
+        message: 'BAD REQUEST: Username already exists.'
+    response-400-series:
+      value:
+        code: 400
+        message: 'BAD REQUEST: Series already exists.'
+    response-400-series-list:
+      value:
+        code: 400
+        message: 'BAD REQUEST: Wrong type.'
     response-401:
       value:
         code: 401

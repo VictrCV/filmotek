@@ -106,7 +106,7 @@ class SeriesListApiControllerTest extends BaseTestCase
     }
 
     /**
-     * Implements testPostSeriesListAction400BadRequestSeriesExistsInList()
+     * Implements testPostSeriesListAction400BadRequestSeriesNotExists()
      *
      * @covers ::postAction
      * @return void
@@ -138,7 +138,7 @@ class SeriesListApiControllerTest extends BaseTestCase
     }
 
     /**
-     * Implements testPostSeriesListAction400BadRequestSeriesExistsInList()
+     * Implements testPostSeriesListAction400BadRequestUserNotExists()
      *
      * @covers ::postAction
      * @return void
@@ -156,6 +156,36 @@ class SeriesListApiControllerTest extends BaseTestCase
             ]),
             SeriesList::SERIES_ATTR => $seriesId,
             SeriesList::USER_ATTR => -1
+        ];
+
+        self::$client->request(
+            'POST',
+            SeriesListApiController::SERIES_LIST_API_ROUTE,
+            [], [], self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD']),
+            strval(json_encode($data))
+        );
+
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
+
+    /**
+     * Implements testPostSeriesListAction400BadRequestUserNotExists()
+     *
+     * @covers ::postAction
+     * @return void
+     * @throws Exception
+     */
+    public function testPostSeriesListAction400BadRequestWrongType()
+    {
+        $seriesId = self::createSeries();
+
+        $data = [
+            SeriesList::TYPE_ATTR => self::$faker->lexify(),
+            SeriesList::SERIES_ATTR => $seriesId,
+            SeriesList::USER_ATTR => intval($_ENV['USER_ID'])
         ];
 
         self::$client->request(

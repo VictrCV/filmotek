@@ -7,6 +7,7 @@ use App\Entity\SeriesList;
 use App\Entity\User;
 use App\Utility\Utils;
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,7 +56,12 @@ class SeriesListApiController extends AbstractController
         }
 
         $seriesList = new SeriesList();
-        $seriesList->setType($data[SeriesList::TYPE_ATTR]);
+
+        try {
+            $seriesList->setType($data[SeriesList::TYPE_ATTR]);
+        } catch (InvalidArgumentException $e) {
+            $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Wrong type.");
+        }
 
         $series = $this->entityManager
             ->getRepository(Series::class)
@@ -65,10 +71,10 @@ class SeriesListApiController extends AbstractController
             ->getRepository(User::class)
             ->find(intval($data[SeriesList::USER_ATTR]));
 
-        if ($series == null) {
-            $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Series doesn't exist.");
+        if (!isset($badRequest) && $series == null) {
+            $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Series does not exist.");
         } elseif ($user == null) {
-            $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "User doesn't exist.");
+            $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "User does not exist.");
         } else {
             $seriesList->setSeries($series);
             $seriesList->setUser($user);
