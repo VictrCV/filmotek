@@ -5,10 +5,6 @@ namespace App\Tests\Controller\ApiController;
 use App\Controller\ApiController\SeriesApiController;
 use App\Entity\Series;
 use Exception;
-use Faker\Factory as FakerFactoryAlias;
-use Faker\Generator as FakerGeneratorAlias;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -19,22 +15,8 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @coversDefaultClass \App\Controller\ApiController\SeriesApiController
  */
-class SeriesApiControllerTest extends WebTestCase
+class SeriesApiControllerTest extends BaseTestCase
 {
-    private static KernelBrowser $client;
-    private static FakerGeneratorAlias $faker;
-
-    /**
-     * Sets up the fixture.
-     * This method is called before a test is executed.
-     *
-     * @return void
-     */
-    public static function setupBeforeClass(): void
-    {
-        self::$client = static::createClient();
-        self::$faker = FakerFactoryAlias::create();
-    }
 
     /**
      * Implements testOptionsAction204NoContent()
@@ -143,6 +125,56 @@ class SeriesApiControllerTest extends WebTestCase
         $response = self::$client->getResponse();
 
         self::assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
+
+    /**
+     * Implements testGetSeriesByApiIdAction200Ok()
+     *
+     * @covers ::getByApiIdAction
+     * @return void
+     * @throws Exception
+     */
+    public function testGetSeriesByApiIdAction200Ok()
+    {
+        $series = self::createSeries();
+
+        self::$client->request(
+            'GET',
+            SeriesApiController::SERIES_GET_BY_API_ID_ROUTE . $series->getApiId()
+        );
+
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        self::assertTrue($response->isSuccessful());
+        self::assertJson(strval($response->getContent()));
+        $seriesResponse = json_decode(strval($response->getContent()), true)[Series::SERIES_ATTR];
+        self::assertNotEmpty($seriesResponse['id']);
+        self::assertSame($series->getApiId(), $seriesResponse[Series::API_ID_ATTR]);
+        self::assertSame($series->getTitle(), $seriesResponse[Series::TITLE_ATTR]);
+        self::assertSame($series->getIsFilm(), $seriesResponse[Series::IS_FILM_ATTR]);
+        self::assertSame($series->getSynopsis(), $seriesResponse[Series::SYNOPSIS_ATTR]);
+        self::assertSame($series->getImageUrl(), $seriesResponse[Series::IMAGE_URL_ATTR]);
+    }
+
+    /**
+     * Implements testGetSeriesByApiIdAction404NotFound()
+     *
+     * @covers ::getByApiIdAction
+     * @return void
+     * @throws Exception
+     */
+    public function testGetSeriesByApiIdAction404NotFound()
+    {
+        self::$client->request(
+            'GET',
+            SeriesApiController::SERIES_GET_BY_API_ID_ROUTE . self::$faker->randomNumber(9)
+        );
+
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
         self::assertFalse($response->isSuccessful());
     }
 }

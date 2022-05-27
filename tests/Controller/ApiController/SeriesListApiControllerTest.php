@@ -50,7 +50,7 @@ class SeriesListApiControllerTest extends BaseTestCase
      */
     public function testPostSeriesListAction201Created(): array
     {
-        $seriesId = self::createSeries();
+        $seriesId = self::createSeries()['id'];
 
         $data = [
             SeriesList::TYPE_ATTR => self::$faker->randomElement([
@@ -146,7 +146,7 @@ class SeriesListApiControllerTest extends BaseTestCase
      */
     public function testPostSeriesListAction400BadRequestUserNotExists()
     {
-        $seriesId = self::createSeries();
+        $seriesId = self::createSeries()['id'];
 
         $data = [
             SeriesList::TYPE_ATTR => self::$faker->randomElement([
@@ -180,7 +180,7 @@ class SeriesListApiControllerTest extends BaseTestCase
      */
     public function testPostSeriesListAction400BadRequestWrongType()
     {
-        $seriesId = self::createSeries();
+        $seriesId = self::createSeries()['id'];
 
         $data = [
             SeriesList::TYPE_ATTR => self::$faker->lexify(),

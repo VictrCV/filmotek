@@ -133,6 +133,28 @@ paths:
           headers:
             Allow:
               $ref: '#/components/headers/Allow'
+  /series/apiId/{apiId}:
+    parameters:
+      - $ref: '#/components/parameters/apiId'
+    get:
+      tags: [ '🎞️ Series' ]
+      summary: Retrieves a Series resource based on its apiId.
+      description: 'Returns the result identified by `apiId`.'
+      operationId: series_api_get_by_api_id
+      security:
+        - FilmotekApiSecurity: [ ]
+      responses:
+        '200':
+          description: Series
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Series'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '404':
+          $ref: '#/components/responses/404_Resource_Not_Found_Response'
   /series-list:
     post:
       tags: [ '🗃️️ Series list' ]
@@ -494,6 +516,13 @@ components:
               type: favourites
               series: 52
               user: 17
+  parameters:
+    apiId:
+      name: apiId
+      in: path
+      description: 'apiId of Series'
+      required: true
+      schema: { "type": "string", pattern: '^tt\d{7}$' }
   examples:
     response-400-user:
       value:

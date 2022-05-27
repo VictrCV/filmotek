@@ -8,6 +8,10 @@
             </div>
             <div class="col-8">
                 <h1 class="text-center pb-5">{{ details.titleText.text }}</h1>
+                {% if (app.session.get('jwt') != null) %}
+                    <a class="btn btn-form" role="button" href="{{ path('') }}">Add to Favourites</a>
+                    <br><br>
+                {% endif %}
                 <h2>Synopsis</h2>
                 <p>{{ details.plot.plotText.plainText }}</p>
             </div>
