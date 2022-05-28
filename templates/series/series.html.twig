@@ -4,18 +4,21 @@
     <div class="container mt-5 pt-5 color-text">
         <div class="row">
             <div class="col-4">
-                <img src="{{ details.primaryImage.url }}" class="cover-large">
+                <img src="{{ series.imageUrl }}" class="cover-large">
             </div>
             <div class="col-8">
-                <h1 class="text-center pb-5">{{ details.titleText.text }}</h1>
+                <h1 class="text-center pb-5">{{ series.title }}</h1>
                 {% if (app.session.get('jwt') != null) %}
-                    <a class="btn btn-form" role="button" href="{{ path('') }}">Add to Favourites</a>
+                    <a class="btn btn-form" role="button"
+                       href="{{ path('series_list_post', {'type': 'favourites', 'apiId': series.apiId}) }}">
+                        Add to Favourites
+                    </a>
                     <br><br>
                 {% endif %}
                 <h2>Synopsis</h2>
-                <p>{{ details.plot.plotText.plainText }}</p>
+                <p>{{ series.synopsis }}</p>
             </div>
         </div>
     </div>
 {% endblock %}
-{% block sectiontitle %}Search results{% endblock %}
+{% block sectiontitle %}Series{% endblock %}

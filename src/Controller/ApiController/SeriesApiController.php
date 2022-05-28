@@ -91,7 +91,7 @@ class SeriesApiController extends AbstractController
      */
     public function optionsAction(): Response
     {
-        $methods = ['POST'];
+        $methods = ['POST', 'GET'];
         $methods[] = 'OPTIONS';
 
         return new Response(

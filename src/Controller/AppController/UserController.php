@@ -69,14 +69,16 @@ class UserController extends AbstractController
                     strval(json_encode($data))
                 );
                 $response = $this->userApiController->loginAction($request);
-                $token = $response->headers->get('Authorization');
-                $session->set(self::JWT_SESSION_KEY, $token);
-                $session->set(User::USERNAME_ATTR, $user->getUsername());
 
-                return $this->redirectToRoute('search', []);
-            } else {
-                $this->addFlash('error', 'Oops! Something went wrong and the registration could not be completed.');
+                if ($response->getStatusCode() == Response::HTTP_OK) {
+                    $token = $response->headers->get('Authorization');
+                    $session->set(self::JWT_SESSION_KEY, $token);
+                    $session->set(User::USERNAME_ATTR, $user->getUsername());
+
+                    return $this->redirectToRoute('search', []);
+                }
             }
+            $this->addFlash('error', 'Oops! Something went wrong and the registration could not be completed.');
         }
         return $this->render('user/sign-up.html.twig', [
             'form' => $form->createView(),
@@ -114,7 +116,10 @@ class UserController extends AbstractController
             if ($response->getStatusCode() == Response::HTTP_OK) {
                 $token = $response->headers->get('Authorization');
                 $session->set(self::JWT_SESSION_KEY, $token);
+                $login = json_decode(strval($response->getContent()), true);
+                $session->set(UserApiController::USER_ID, $login[UserApiController::USER_ID]);
                 $session->set(User::USERNAME_ATTR, $formData['username']);
+
                 return $this->redirectToRoute('search', []);
             } else if ($response->getStatusCode() == Response::HTTP_UNAUTHORIZED) {
                 $this->addFlash('error', 'Wrong credentials.');
