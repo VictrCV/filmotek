@@ -19,8 +19,6 @@ class SeriesApiControllerTest extends BaseTestCase
 {
 
     /**
-     * Implements testOptionsAction204NoContent()
-     *
      * @covers ::optionsAction
      * @return void
      * @throws Exception
@@ -42,8 +40,6 @@ class SeriesApiControllerTest extends BaseTestCase
     }
 
     /**
-     * Implements testPostSeriesAction201Created()
-     *
      * @covers ::postAction
      * @return array
      * @throws Exception
@@ -86,8 +82,6 @@ class SeriesApiControllerTest extends BaseTestCase
     }
 
     /**
-     * Implements testPostSeriesAction400BadRequest()
-     *
      * @depends testPostSeriesAction201Created
      * @covers ::postAction
      * @return void
@@ -109,8 +103,6 @@ class SeriesApiControllerTest extends BaseTestCase
     }
 
     /**
-     * Implements testPostSeriesAction422UnprocessableEntity()
-     *
      * @covers ::postAction
      * @return void
      * @throws Exception
@@ -129,8 +121,6 @@ class SeriesApiControllerTest extends BaseTestCase
     }
 
     /**
-     * Implements testGetSeriesByApiIdAction200Ok()
-     *
      * @covers ::getByApiIdAction
      * @return void
      * @throws Exception
@@ -159,8 +149,6 @@ class SeriesApiControllerTest extends BaseTestCase
     }
 
     /**
-     * Implements testGetSeriesByApiIdAction404NotFound()
-     *
      * @covers ::getByApiIdAction
      * @return void
      * @throws Exception

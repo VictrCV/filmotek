@@ -38,8 +38,6 @@ class UserApiControllerTest extends WebTestCase
     }
 
     /**
-     * Implements testOptionsAction204NoContent()
-     *
      * @covers ::optionsAction
      * @return void
      * @throws Exception
@@ -61,8 +59,6 @@ class UserApiControllerTest extends WebTestCase
     }
 
     /**
-     * Implements testPostUserAction201Created()
-     *
      * @covers ::postAction
      * @return array
      * @throws Exception
@@ -96,8 +92,6 @@ class UserApiControllerTest extends WebTestCase
     }
 
     /**
-     * Implements testPostUserAction400BadRequest()
-     *
      * @depends testPostUserAction201Created
      * @covers ::postAction
      * @return void
@@ -119,8 +113,6 @@ class UserApiControllerTest extends WebTestCase
     }
 
     /**
-     * Implements testPostUserAction422UnprocessableEntity()
-     *
      * @covers ::postAction
      * @return void
      * @throws Exception
@@ -139,8 +131,6 @@ class UserApiControllerTest extends WebTestCase
     }
 
     /**
-     * Implements testLoginUserAction200Ok()
-     *
      * @depends testPostUserAction201Created
      * @covers ::loginAction
      * @return void
@@ -164,8 +154,6 @@ class UserApiControllerTest extends WebTestCase
     }
 
     /**
-     * Implements testLoginUserAction401Unauthorized()
-     *
      * @covers ::loginAction
      * @return void
      * @throws Exception
@@ -191,8 +179,6 @@ class UserApiControllerTest extends WebTestCase
     }
 
     /**
-     * Implements testLoginUserAction422UnprocessableEntity()
-     *
      * @covers ::loginAction
      * @return void
      * @throws Exception

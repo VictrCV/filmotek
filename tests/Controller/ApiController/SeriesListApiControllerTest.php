@@ -19,8 +19,6 @@ class SeriesListApiControllerTest extends BaseTestCase
 {
 
     /**
-     * Implements testOptionsAction204NoContent()
-     *
      * @covers ::optionsAction
      * @return void
      * @throws Exception
@@ -42,8 +40,6 @@ class SeriesListApiControllerTest extends BaseTestCase
     }
 
     /**
-     * Implements testPostSeriesListAction201Created()
-     *
      * @covers ::postAction
      * @return array
      * @throws Exception
@@ -83,8 +79,6 @@ class SeriesListApiControllerTest extends BaseTestCase
     }
 
     /**
-     * Implements testPostSeriesListAction400BadRequestSeriesExistsInList()
-     *
      * @depends testPostSeriesListAction201Created
      * @covers ::postAction
      * @return void
@@ -106,8 +100,6 @@ class SeriesListApiControllerTest extends BaseTestCase
     }
 
     /**
-     * Implements testPostSeriesListAction400BadRequestSeriesNotExists()
-     *
      * @covers ::postAction
      * @return void
      * @throws Exception
@@ -138,8 +130,6 @@ class SeriesListApiControllerTest extends BaseTestCase
     }
 
     /**
-     * Implements testPostSeriesListAction400BadRequestUserNotExists()
-     *
      * @covers ::postAction
      * @return void
      * @throws Exception
@@ -172,8 +162,6 @@ class SeriesListApiControllerTest extends BaseTestCase
     }
 
     /**
-     * Implements testPostSeriesListAction400BadRequestUserNotExists()
-     *
      * @covers ::postAction
      * @return void
      * @throws Exception
@@ -202,8 +190,6 @@ class SeriesListApiControllerTest extends BaseTestCase
     }
 
     /**
-     * Implements testPostSeriesListAction422UnprocessableEntity()
-     *
      * @covers ::postAction
      * @return void
      * @throws Exception
@@ -224,8 +210,6 @@ class SeriesListApiControllerTest extends BaseTestCase
     }
 
     /**
-     * Implements testPostSeriesListAction401Unauthorized()
-     *
      * @covers ::postAction
      * @return void
      * @throws Exception
