@@ -36,7 +36,7 @@ class SeriesListController extends SeriesController
 
         if ($response->getStatusCode() == Response::HTTP_NOT_FOUND) {
             $series = $this->getSeriesFromRapidapi($apiId);
-            if (!isset($series)) {
+            if (isset($series)) {
                 return new Response(null, Response::HTTP_INTERNAL_SERVER_ERROR);
             }
 
@@ -91,10 +91,6 @@ class SeriesListController extends SeriesController
 
         if ($response->getStatusCode() != Response::HTTP_CREATED) {
             $this->addFlash('error', 'Oops! Something went wrong and the series could not be added to list.');
-            return $this->render('series/series.html.twig', [
-                'series' => $series,
-                'inFavourites' => $inFavourites
-            ]);
         }
 
         return $this->render('series/series.html.twig', [
