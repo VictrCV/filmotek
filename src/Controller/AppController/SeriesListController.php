@@ -36,8 +36,10 @@ class SeriesListController extends SeriesController
 
         if ($response->getStatusCode() == Response::HTTP_NOT_FOUND) {
             $series = $this->getSeriesFromRapidapi($apiId);
-            if (isset($series)) {
-                return new Response(null, Response::HTTP_INTERNAL_SERVER_ERROR);
+
+            if (!isset($series)) {
+                $this->addFlash('error', 'Oops! Something went wrong and the series could not be obtained.');
+                return $this->redirectToRoute('search', []);
             }
 
             $data = [
@@ -62,7 +64,8 @@ class SeriesListController extends SeriesController
                 $this->addFlash('error', 'Oops! Something went wrong and the series could not be created.');
                 return $this->render('series/series.html.twig', [
                     'series' => $series,
-                    'inFavourites' => false
+                    'inFavourites' => false,
+                    'inToWatch' => false
                 ]);
             }
         } else {
@@ -88,6 +91,10 @@ class SeriesListController extends SeriesController
             $session->get(UserApiController::USER_ID),
             SeriesList::FAVOURITES,
             $series['id']);
+        $inToWatch = $this->isSeriesInList(
+            $session->get(UserApiController::USER_ID),
+            SeriesList::TO_WATCH,
+            $series['id']);
 
         if ($response->getStatusCode() != Response::HTTP_CREATED) {
             $this->addFlash('error', 'Oops! Something went wrong and the series could not be added to list.');
@@ -95,7 +102,8 @@ class SeriesListController extends SeriesController
 
         return $this->render('series/series.html.twig', [
             'series' => $series,
-            'inFavourites' => $inFavourites
+            'inFavourites' => $inFavourites,
+            'inToWatch' => $inToWatch
         ]);
     }
 }

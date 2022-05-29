@@ -59,18 +59,24 @@ class SeriesController extends AbstractController
             $series = json_decode($response->getContent(), true)[Series::SERIES_ATTR];
         }
 
-        if (isset($series['id'])) {
+        if (isset($series['id']) && $session->get(UserApiController::USER_ID) !== null) {
             $inFavourites = $this->isSeriesInList(
                 $session->get(UserApiController::USER_ID),
                 SeriesList::FAVOURITES,
                 $series['id']);
+            $inToWatch = $this->isSeriesInList(
+                $session->get(UserApiController::USER_ID),
+                SeriesList::TO_WATCH,
+                $series['id']);
         } else {
             $inFavourites = false;
+            $inToWatch = false;
         }
 
         return $this->render('series/series.html.twig', [
             'series' => $series,
-            'inFavourites' => $inFavourites
+            'inFavourites' => $inFavourites,
+            'inToWatch' => $inToWatch
         ]);
     }
 
@@ -91,11 +97,13 @@ class SeriesController extends AbstractController
         );
 
         if ($response->getStatusCode() == Response::HTTP_OK) {
-            return Utils::rapidapiJsonToSeriesArray($response->getContent());
-        } else {
-            $this->addFlash('error', 'Oops! Something went wrong and the series could not be obtained.');
-            return null;
+            $series = Utils::rapidapiJsonToSeriesArray($response->getContent());
         }
+        if (isset($series)) {
+            return $series;
+        }
+
+        return null;
     }
 
     protected function isSeriesInList(int $user, string $type, int $series): bool
