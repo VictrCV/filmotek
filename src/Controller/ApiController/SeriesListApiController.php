@@ -60,72 +60,26 @@ class SeriesListApiController extends AbstractController
 
         try {
             $seriesList->setType($data[SeriesList::TYPE_ATTR]);
+
+            $series = $this->entityManager
+                ->getRepository(Series::class)
+                ->find(intval($data[SeriesList::SERIES_ATTR]));
+
+            $user = $this->entityManager
+                ->getRepository(User::class)
+                ->find(intval($data[SeriesList::USER_ATTR]));
+
+            $badRequest = $this->postActionCheckBadRequest($seriesList->getType(), $series, $user);
         } catch (InvalidArgumentException $e) {
             $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Wrong type.");
-        }
-
-        $series = $this->entityManager
-            ->getRepository(Series::class)
-            ->find(intval($data[SeriesList::SERIES_ATTR]));
-
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->find(intval($data[SeriesList::USER_ATTR]));
-
-        if (!isset($badRequest) && $series == null) {
-            $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Series does not exist.");
-        } elseif ($user == null) {
-            $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "User does not exist.");
-        } else {
-            $seriesList->setSeries($series);
-            $seriesList->setUser($user);
-
-            $seriesExistsInList = $this->entityManager
-                ->getRepository(SeriesList::class)
-                ->createQueryBuilder('sl')
-                ->where('sl.type = :type', 'sl.series = :series', 'sl.user = :user')
-                ->setParameters([
-                    'type' => $seriesList->getType(),
-                    'series' => $seriesList->getSeries(),
-                    'user' => $seriesList->getUser()
-                ])
-                ->getQuery()
-                ->execute();
-
-            if (!empty($seriesExistsInList)) {
-                $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST,
-                    "Series already exists in " . $seriesList->getType() . " list.");
-            }
-
-            if ($seriesList->getType() == SeriesList::TO_WATCH) {
-                $incompatibleType = SeriesList::IN_PROGRESS;
-            } else if ($seriesList->getType() == SeriesList::IN_PROGRESS) {
-                $incompatibleType = SeriesList::TO_WATCH;
-            }
-
-            if(isset($incompatibleType)) {
-                $seriesExistsInList = $this->entityManager
-                    ->getRepository(SeriesList::class)
-                    ->createQueryBuilder('sl')
-                    ->where('sl.type = :type', 'sl.series = :series', 'sl.user = :user')
-                    ->setParameters([
-                        'type' => $incompatibleType,
-                        'series' => $seriesList->getSeries(),
-                        'user' => $seriesList->getUser()
-                    ])
-                    ->getQuery()
-                    ->execute();
-
-                if (!empty($seriesExistsInList)) {
-                    $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST,
-                        "Series exists in " . $incompatibleType . " list and cannot be in " . $seriesList->getType() . " list too.");
-                }
-            }
         }
 
         if (isset($badRequest)) {
             return $badRequest;
         }
+
+        $seriesList->setSeries($series);
+        $seriesList->setUser($user);
 
         $this->entityManager->persist($seriesList);
         $this->entityManager->flush();
@@ -135,6 +89,57 @@ class SeriesListApiController extends AbstractController
             [SeriesList::SERIES_LIST_ATTR => $seriesList]
         );
 
+    }
+
+    /**
+     * @param string $type
+     * @param Series|null $series
+     * @param User|null $user
+     * @return Response|null
+     */
+    private function postActionCheckBadRequest(string $type, ?Series $series, ?User $user): ?Response
+    {
+        if ($series == null) {
+            $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Series does not exist.");
+        } elseif ($user == null) {
+            $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "User does not exist.");
+        } else {
+            $seriesExistsInList = $this->entityManager
+                ->getRepository(SeriesList::class)
+                ->findBy([
+                    'type' => $type,
+                    'series' => $series,
+                    'user' => $user
+                ]);
+
+            if (!empty($seriesExistsInList)) {
+                $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST,
+                    "Series already exists in " . $type . " list.");
+            }
+
+            if ($type == SeriesList::TO_WATCH) {
+                $incompatibleType = SeriesList::IN_PROGRESS;
+            } else if ($type == SeriesList::IN_PROGRESS) {
+                $incompatibleType = SeriesList::TO_WATCH;
+            }
+
+            if (isset($incompatibleType)) {
+                $seriesExistsInList = $this->entityManager
+                    ->getRepository(SeriesList::class)
+                    ->findBy([
+                        'type' => $incompatibleType,
+                        'series' => $series,
+                        'user' => $user
+                    ]);
+
+                if (!empty($seriesExistsInList)) {
+                    $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST,
+                        "Series exists in " . $incompatibleType . " list and cannot be in " . $type . " list too.");
+                }
+            }
+        }
+
+        return $badRequest ?? null;
     }
 
     /**
@@ -165,7 +170,6 @@ class SeriesListApiController extends AbstractController
     public function getByUserAction(Request $request, string $user): Response
     {
         $params = $request->query;
-
         $query = $this->entityManager
             ->getRepository(SeriesList::class)
             ->createQueryBuilder('sl')
