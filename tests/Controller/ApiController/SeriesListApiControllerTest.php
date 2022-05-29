@@ -104,6 +104,43 @@ class SeriesListApiControllerTest extends BaseTestCase
      * @return void
      * @throws Exception
      */
+    public function testPostSeriesListAction400BadRequestSeriesExistsInIncompatibleList()
+    {
+        $seriesId = self::createSeries()['id'];
+
+        $data = [
+            SeriesList::TYPE_ATTR => SeriesList::TO_WATCH,
+            SeriesList::SERIES_ATTR => $seriesId,
+            SeriesList::USER_ATTR => intval($_ENV['USER_ID'])
+        ];
+
+        self::$client->request(
+            'POST',
+            SeriesListApiController::SERIES_LIST_API_ROUTE,
+            [], [], self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD']),
+            json_encode($data)
+        );
+
+        $data[SeriesList::TYPE_ATTR] = SeriesList::IN_PROGRESS;
+
+        self::$client->request(
+            'POST',
+            SeriesListApiController::SERIES_LIST_API_ROUTE,
+            [], [], self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD']),
+            json_encode($data)
+        );
+
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
+
+    /**
+     * @covers ::postAction
+     * @return void
+     * @throws Exception
+     */
     public function testPostSeriesListAction400BadRequestSeriesNotExists()
     {
         $data = [

@@ -96,6 +96,31 @@ class SeriesListApiController extends AbstractController
                 $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST,
                     "Series already exists in " . $seriesList->getType() . " list.");
             }
+
+            if ($seriesList->getType() == SeriesList::TO_WATCH) {
+                $incompatibleType = SeriesList::IN_PROGRESS;
+            } else if ($seriesList->getType() == SeriesList::IN_PROGRESS) {
+                $incompatibleType = SeriesList::TO_WATCH;
+            }
+
+            if(isset($incompatibleType)) {
+                $seriesExistsInList = $this->entityManager
+                    ->getRepository(SeriesList::class)
+                    ->createQueryBuilder('sl')
+                    ->where('sl.type = :type', 'sl.series = :series', 'sl.user = :user')
+                    ->setParameters([
+                        'type' => $incompatibleType,
+                        'series' => $seriesList->getSeries(),
+                        'user' => $seriesList->getUser()
+                    ])
+                    ->getQuery()
+                    ->execute();
+
+                if (!empty($seriesExistsInList)) {
+                    $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST,
+                        "Series exists in " . $incompatibleType . " list and cannot be in " . $seriesList->getType() . " list too.");
+                }
+            }
         }
 
         if (isset($badRequest)) {

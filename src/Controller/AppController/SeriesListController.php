@@ -65,7 +65,7 @@ class SeriesListController extends SeriesController
                 return $this->render('series/series.html.twig', [
                     'series' => $series,
                     'inFavourites' => false,
-                    'inToWatch' => false
+                    'inIncompatibleList' => false
                 ]);
             }
         } else {
@@ -91,9 +91,8 @@ class SeriesListController extends SeriesController
             $session->get(UserApiController::USER_ID),
             SeriesList::FAVOURITES,
             $series['id']);
-        $inToWatch = $this->isSeriesInList(
+        $inIncompatibleList = $this->isSeriesInIncompatibleList(
             $session->get(UserApiController::USER_ID),
-            SeriesList::TO_WATCH,
             $series['id']);
 
         if ($response->getStatusCode() != Response::HTTP_CREATED) {
@@ -103,7 +102,7 @@ class SeriesListController extends SeriesController
         return $this->render('series/series.html.twig', [
             'series' => $series,
             'inFavourites' => $inFavourites,
-            'inToWatch' => $inToWatch
+            'inIncompatibleList' => $inIncompatibleList
         ]);
     }
 }
