@@ -64,8 +64,8 @@
     color: var(--primary-color) !important
 }
 
-.btn-sign-up-form,
-.btn-sign-up-form:focus {
+.btn-form,
+.btn-form:focus {
     background-color: var(--primary-color) !important;
     color: var(--secondary-light) !important;
     border: none !important;

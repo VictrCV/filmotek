@@ -24,6 +24,7 @@ class UserApiController extends AbstractController
 {
     public const USER_API_ROUTE = '/api/v1/users';
     public const LOGIN_API_ROUTE = UserApiController::USER_API_ROUTE . '/login';
+    public const USER_ID = 'userId';
 
     private const HEADER_CACHE_CONTROL = 'Cache-Control';
     private const HEADER_ALLOW = 'Allow';
@@ -137,6 +138,7 @@ class UserApiController extends AbstractController
         $jwt = json_decode((string)$response->getContent())->token;
         $response->setData(
             [
+                self::USER_ID => $user->getId(),
                 'token_type' => 'Bearer',
                 'access_token' => $jwt,
                 'expires_in' => 2 * 60 * 60,

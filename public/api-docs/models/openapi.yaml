@@ -133,6 +133,28 @@ paths:
           headers:
             Allow:
               $ref: '#/components/headers/Allow'
+  /series/apiId/{apiId}:
+    parameters:
+      - $ref: '#/components/parameters/apiId'
+    get:
+      tags: [ '🎞️ Series' ]
+      summary: Retrieves a Series resource based on its apiId.
+      description: 'Returns the result identified by `apiId`.'
+      operationId: series_api_get_by_api_id
+      security:
+        - FilmotekApiSecurity: [ ]
+      responses:
+        '200':
+          description: Series
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Series'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '404':
+          $ref: '#/components/responses/404_Resource_Not_Found_Response'
   /series-list:
     post:
       tags: [ '🗃️️ Series list' ]
@@ -170,6 +192,30 @@ paths:
           headers:
             Allow:
               $ref: '#/components/headers/Allow'
+  /series-list/user/{user}:
+    parameters:
+      - $ref: '#/components/parameters/user'
+      - $ref: '#/components/parameters/typeQuery'
+      - $ref: '#/components/parameters/seriesQuery'
+    get:
+      tags: [ '🗃️️ Series list' ]
+      summary: Retrieves a Series list resource based on its user.
+      description: 'Returns the result identified by `user` and, optionally, by `type` and/or `series`.'
+      operationId: series_list_api_get_by_user
+      security:
+        - FilmotekApiSecurity: [ ]
+      responses:
+        '200':
+          description: SeriesList
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Series'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '404':
+          $ref: '#/components/responses/404_Resource_Not_Found_Response'
 components:
   headers:
     Location:
@@ -494,6 +540,31 @@ components:
               type: favourites
               series: 52
               user: 17
+  parameters:
+    apiId:
+      name: apiId
+      in: path
+      description: 'apiId of Series'
+      required: true
+      schema: { "type": "string", pattern: '^tt\d{7}$' }
+    user:
+      name: user
+      in: path
+      description: 'user Id'
+      required: true
+      schema: { "type": "integer", pattern: '^\d+$' }
+    typeQuery:
+      name: type
+      in: query
+      description: 'type'
+      required: false
+      schema: { "type": "string", pattern: '^[A-Za-z]{10}$' }
+    seriesQuery:
+      name: series
+      in: query
+      description: 'series Id'
+      required: false
+      schema: { "type": "integer", pattern: '^\d+$' }
   examples:
     response-400-user:
       value:

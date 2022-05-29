@@ -19,6 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class SeriesApiController extends AbstractController
 {
     public const SERIES_API_ROUTE = '/api/v1/series';
+    public const SERIES_GET_BY_API_ID_ROUTE = self::SERIES_API_ROUTE . '/apiId/';
 
     private const HEADER_CACHE_CONTROL = 'Cache-Control';
     private const HEADER_ALLOW = 'Allow';
@@ -90,7 +91,7 @@ class SeriesApiController extends AbstractController
      */
     public function optionsAction(): Response
     {
-        $methods = ['POST'];
+        $methods = ['POST', 'GET'];
         $methods[] = 'OPTIONS';
 
         return new Response(
@@ -100,6 +101,28 @@ class SeriesApiController extends AbstractController
                 self::HEADER_ALLOW => implode(', ', $methods),
                 self::HEADER_CACHE_CONTROL => 'public, inmutable'
             ]
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @param string $apiId
+     * @return Response
+     * @Route(path="/apiId/{apiId}", name="getByApiId", methods={"GET"})
+     */
+    public function getByApiIdAction(Request $request, string $apiId): Response
+    {
+        $series = $this->entityManager
+            ->getRepository(Series::class)
+            ->findOneBy([Series::API_ID_ATTR => $apiId]);
+
+        if (!isset($series)) {
+            return Utils::errorMessage(Response::HTTP_NOT_FOUND, 'Series not found.');
+        }
+
+        return Utils::apiResponse(
+            Response::HTTP_OK,
+            [Series::SERIES_ATTR => $series]
         );
     }
 }

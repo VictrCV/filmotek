@@ -22,6 +22,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class SeriesListApiController extends AbstractController
 {
     public const SERIES_LIST_API_ROUTE = '/api/v1/series-list';
+    public const SERIES_LIST_GET_BY_USER_ROUTE = self::SERIES_LIST_API_ROUTE . '/user/';
 
     private const HEADER_CACHE_CONTROL = 'Cache-Control';
     private const HEADER_ALLOW = 'Allow';
@@ -117,7 +118,7 @@ class SeriesListApiController extends AbstractController
      */
     public function optionsAction(): Response
     {
-        $methods = ['POST'];
+        $methods = ['POST', 'GET'];
         $methods[] = 'OPTIONS';
 
         return new Response(
@@ -127,6 +128,48 @@ class SeriesListApiController extends AbstractController
                 self::HEADER_ALLOW => implode(', ', $methods),
                 self::HEADER_CACHE_CONTROL => 'public, inmutable'
             ]
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @param string $user
+     * @return Response
+     * @Route(path="/user/{user}", name="getByUser", methods={"GET"})
+     */
+    public function getByUserAction(Request $request, string $user): Response
+    {
+        $params = $request->query;
+
+        $query = $this->entityManager
+            ->getRepository(SeriesList::class)
+            ->createQueryBuilder('sl')
+            ->where('sl.user = :user')
+            ->setParameter('user', $user);
+
+        if ($params->get(SeriesList::TYPE_ATTR) !== null) {
+            $query = $query
+                ->andWhere('sl.type = :type')
+                ->setParameter('type', $params->get(SeriesList::TYPE_ATTR));
+        }
+
+        if ($params->get(SeriesList::SERIES_ATTR) !== null) {
+            $query = $query
+                ->andWhere('sl.series = :series')
+                ->setParameter('series', $params->get(SeriesList::SERIES_ATTR));
+        }
+
+        $seriesList = $query
+            ->getQuery()
+            ->execute();
+
+        if (empty($seriesList)) {
+            return Utils::errorMessage(Response::HTTP_NOT_FOUND, 'Series list not found.');
+        }
+
+        return Utils::apiResponse(
+            Response::HTTP_OK,
+            [SeriesList::SERIES_LIST_ATTR => $seriesList]
         );
     }
 }

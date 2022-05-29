@@ -59,7 +59,7 @@ class SearchFormType extends AbstractType implements EventSubscriberInterface
             ->add('search', SubmitType::class, [
                 'label' => 'Search',
                 'attr' => [
-                    'class' => 'btn-sign-up-form'
+                    'class' => 'btn-form'
                 ],
             ])
             ->addEventSubscriber($this);

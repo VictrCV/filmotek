@@ -44,14 +44,14 @@ class BaseTestCase extends WebTestCase
             'POST',
             UserApiController::LOGIN_API_ROUTE,
             [], [], [],
-            strval(json_encode($data))
+            json_encode($data)
         );
 
         $response = self::$client->getResponse();
         return ['HTTP_Authorization' => $response->headers->get('Authorization')];
     }
 
-    protected function createSeries(): int
+    protected function createSeries(): array
     {
         $data = [
             Series::API_ID_ATTR => 'tt' . self::$faker->randomNumber(7),
@@ -65,11 +65,9 @@ class BaseTestCase extends WebTestCase
             'POST',
             SeriesApiController::SERIES_API_ROUTE,
             [], [], [],
-            strval(json_encode($data))
+            json_encode($data)
         );
         $response = self::$client->getResponse();
-        $series = json_decode(strval($response->getContent()), true);
-
-        return $series[Series::SERIES_ATTR]['id'];
+        return json_decode($response->getContent(), true)[Series::SERIES_ATTR];
     }
 }
