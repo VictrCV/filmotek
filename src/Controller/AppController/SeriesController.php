@@ -113,10 +113,6 @@ class SeriesController extends AbstractController
 
         $response = $this->seriesListApiController->getByUserAction($request, $user);
 
-        if ($response->getStatusCode() == Response::HTTP_OK) {
-            return true;
-        } else {
-            return false;
-        }
+        return $response->getStatusCode() == Response::HTTP_OK;
     }
 }
