@@ -64,19 +64,18 @@ class SeriesController extends AbstractController
                 $session->get(UserApiController::USER_ID),
                 SeriesList::FAVOURITES,
                 $series['id']);
-            $inToWatch = $this->isSeriesInList(
+            $inIncompatibleList = $this->isSeriesInIncompatibleList(
                 $session->get(UserApiController::USER_ID),
-                SeriesList::TO_WATCH,
                 $series['id']);
         } else {
             $inFavourites = false;
-            $inToWatch = false;
+            $inIncompatibleList = false;
         }
 
         return $this->render('series/series.html.twig', [
             'series' => $series,
             'inFavourites' => $inFavourites,
-            'inToWatch' => $inToWatch
+            'inIncompatibleList' => $inIncompatibleList
         ]);
     }
 
@@ -122,5 +121,11 @@ class SeriesController extends AbstractController
         $response = $this->seriesListApiController->getByUserAction($request, $user);
 
         return $response->getStatusCode() == Response::HTTP_OK;
+    }
+
+    protected function isSeriesInIncompatibleList(int $user, int $series): bool
+    {
+        return $this->isSeriesInList($user, SeriesList::TO_WATCH, $series) ||
+            $this->isSeriesInList($user, SeriesList::IN_PROGRESS, $series);
     }
 }
