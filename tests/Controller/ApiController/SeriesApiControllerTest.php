@@ -62,15 +62,15 @@ class SeriesApiControllerTest extends BaseTestCase
             'POST',
             SeriesApiController::SERIES_API_ROUTE,
             [], [], [],
-            strval(json_encode($data))
+            json_encode($data)
         );
 
         $response = self::$client->getResponse();
 
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         self::assertTrue($response->isSuccessful());
-        self::assertJson(strval($response->getContent()));
-        $series = json_decode(strval($response->getContent()), true);
+        self::assertJson($response->getContent());
+        $series = json_decode($response->getContent(), true);
         self::assertNotEmpty($series[Series::SERIES_ATTR]['id']);
         self::assertSame($data[Series::API_ID_ATTR], $series[Series::SERIES_ATTR][Series::API_ID_ATTR]);
         self::assertSame($data[Series::TITLE_ATTR], $series[Series::SERIES_ATTR][Series::TITLE_ATTR]);
@@ -93,7 +93,7 @@ class SeriesApiControllerTest extends BaseTestCase
             'POST',
             SeriesApiController::SERIES_API_ROUTE,
             [], [], [],
-            strval(json_encode($data))
+            json_encode($data)
         );
 
         $response = self::$client->getResponse();
@@ -131,21 +131,21 @@ class SeriesApiControllerTest extends BaseTestCase
 
         self::$client->request(
             'GET',
-            SeriesApiController::SERIES_GET_BY_API_ID_ROUTE . $series->getApiId()
+            SeriesApiController::SERIES_GET_BY_API_ID_ROUTE . $series[Series::API_ID_ATTR]
         );
 
         $response = self::$client->getResponse();
 
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
         self::assertTrue($response->isSuccessful());
-        self::assertJson(strval($response->getContent()));
-        $seriesResponse = json_decode(strval($response->getContent()), true)[Series::SERIES_ATTR];
+        self::assertJson($response->getContent());
+        $seriesResponse = json_decode($response->getContent(), true)[Series::SERIES_ATTR];
         self::assertNotEmpty($seriesResponse['id']);
-        self::assertSame($series->getApiId(), $seriesResponse[Series::API_ID_ATTR]);
-        self::assertSame($series->getTitle(), $seriesResponse[Series::TITLE_ATTR]);
-        self::assertSame($series->getIsFilm(), $seriesResponse[Series::IS_FILM_ATTR]);
-        self::assertSame($series->getSynopsis(), $seriesResponse[Series::SYNOPSIS_ATTR]);
-        self::assertSame($series->getImageUrl(), $seriesResponse[Series::IMAGE_URL_ATTR]);
+        self::assertSame($series[Series::API_ID_ATTR], $seriesResponse[Series::API_ID_ATTR]);
+        self::assertSame($series[Series::TITLE_ATTR], $seriesResponse[Series::TITLE_ATTR]);
+        self::assertSame($series[Series::IS_FILM_ATTR], $seriesResponse[Series::IS_FILM_ATTR]);
+        self::assertSame($series[Series::SYNOPSIS_ATTR], $seriesResponse[Series::SYNOPSIS_ATTR]);
+        self::assertSame($series[Series::IMAGE_URL_ATTR], $seriesResponse[Series::IMAGE_URL_ATTR]);
     }
 
     /**

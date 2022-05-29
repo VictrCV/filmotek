@@ -75,15 +75,15 @@ class UserApiControllerTest extends WebTestCase
             'POST',
             UserApiController::USER_API_ROUTE,
             [], [], [],
-            strval(json_encode($data))
+            json_encode($data)
         );
 
         $response = self::$client->getResponse();
 
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         self::assertTrue($response->isSuccessful());
-        self::assertJson(strval($response->getContent()));
-        $user = json_decode(strval($response->getContent()), true);
+        self::assertJson($response->getContent());
+        $user = json_decode($response->getContent(), true);
         self::assertNotEmpty($user[User::USER_ATTR]['id']);
         self::assertSame($data[User::USERNAME_ATTR], $user[User::USER_ATTR][User::USERNAME_ATTR]);
         self::assertArrayNotHasKey(User::PASSWORD_ATTR, $user[User::USER_ATTR]);
@@ -103,7 +103,7 @@ class UserApiControllerTest extends WebTestCase
             'POST',
             UserApiController::USER_API_ROUTE,
             [], [], [],
-            strval(json_encode($data))
+            json_encode($data)
         );
 
         $response = self::$client->getResponse();
@@ -143,7 +143,7 @@ class UserApiControllerTest extends WebTestCase
             'POST',
             UserApiController::LOGIN_API_ROUTE,
             [], [], [],
-            strval(json_encode($data))
+            json_encode($data)
         );
 
         $response = self::$client->getResponse();
@@ -169,7 +169,7 @@ class UserApiControllerTest extends WebTestCase
             'POST',
             UserApiController::LOGIN_API_ROUTE,
             [], [], [],
-            strval(json_encode($data))
+            json_encode($data)
         );
 
         $response = self::$client->getResponse();
@@ -193,7 +193,7 @@ class UserApiControllerTest extends WebTestCase
             'POST',
             UserApiController::LOGIN_API_ROUTE,
             [], [], [],
-            strval(json_encode($data))
+            json_encode($data)
         );
 
         $response = self::$client->getResponse();

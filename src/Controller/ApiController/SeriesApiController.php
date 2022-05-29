@@ -106,6 +106,7 @@ class SeriesApiController extends AbstractController
 
     /**
      * @param Request $request
+     * @param string $apiId
      * @return Response
      * @Route(path="/apiId/{apiId}", name="getByApiId", methods={"GET"})
      */

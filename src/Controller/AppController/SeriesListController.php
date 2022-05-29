@@ -63,7 +63,7 @@ class SeriesListController extends SeriesController
                 SeriesApiController::SERIES_API_ROUTE,
                 'POST',
                 [], [], [], [],
-                strval(json_encode($data))
+                json_encode($data)
             );
             $response = $this->seriesApiController->postAction($request);
 

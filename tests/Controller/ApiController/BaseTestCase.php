@@ -44,14 +44,14 @@ class BaseTestCase extends WebTestCase
             'POST',
             UserApiController::LOGIN_API_ROUTE,
             [], [], [],
-            strval(json_encode($data))
+            json_encode($data)
         );
 
         $response = self::$client->getResponse();
         return ['HTTP_Authorization' => $response->headers->get('Authorization')];
     }
 
-    protected function createSeries(): Series
+    protected function createSeries(): array
     {
         $data = [
             Series::API_ID_ATTR => 'tt' . self::$faker->randomNumber(7),
@@ -65,18 +65,9 @@ class BaseTestCase extends WebTestCase
             'POST',
             SeriesApiController::SERIES_API_ROUTE,
             [], [], [],
-            strval(json_encode($data))
+            json_encode($data)
         );
         $response = self::$client->getResponse();
-        $seriesArray = json_decode(strval($response->getContent()), true)[Series::SERIES_ATTR];
-
-        $series = new Series();
-        $series->setApiId($seriesArray[Series::API_ID_ATTR]);
-        $series->setTitle($seriesArray[Series::TITLE_ATTR]);
-        $series->setIsFilm($seriesArray[Series::IS_FILM_ATTR]);
-        $series->setSynopsis($seriesArray[Series::SYNOPSIS_ATTR]);
-        $series->setImageUrl($seriesArray[Series::IMAGE_URL_ATTR]);
-
-        return $series;
+        return json_decode($response->getContent(), true)[Series::SERIES_ATTR];
     }
 }

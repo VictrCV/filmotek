@@ -55,7 +55,7 @@ class UserController extends AbstractController
                 UserApiController::USER_API_ROUTE,
                 'POST',
                 [], [], [], [],
-                strval(json_encode($data))
+                json_encode($data)
             );
 
             $response = $this->userApiController->postAction($request);
@@ -66,7 +66,7 @@ class UserController extends AbstractController
                     UserApiController::LOGIN_API_ROUTE,
                     'POST',
                     [], [], [], [],
-                    strval(json_encode($data))
+                    json_encode($data)
                 );
                 $response = $this->userApiController->loginAction($request);
 
@@ -108,7 +108,7 @@ class UserController extends AbstractController
                 UserApiController::LOGIN_API_ROUTE,
                 'POST',
                 [], [], [], [],
-                strval(json_encode($data))
+                json_encode($data)
             );
 
             $response = $this->userApiController->loginAction($request);
@@ -116,7 +116,7 @@ class UserController extends AbstractController
             if ($response->getStatusCode() == Response::HTTP_OK) {
                 $token = $response->headers->get('Authorization');
                 $session->set(self::JWT_SESSION_KEY, $token);
-                $login = json_decode(strval($response->getContent()), true);
+                $login = json_decode($response->getContent(), true);
                 $session->set(UserApiController::USER_ID, $login[UserApiController::USER_ID]);
                 $session->set(User::USERNAME_ATTR, $formData['username']);
 
