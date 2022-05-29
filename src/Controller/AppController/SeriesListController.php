@@ -11,27 +11,16 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * @codeCoverageIgnore
  */
 class SeriesListController extends SeriesController
 {
-    private SeriesListApiController $seriesListApiController;
-
-    public function __construct(
-        HttpClientInterface     $client,
-        SeriesApiController     $seriesApiController,
-        SeriesListApiController $seriesListApiController,
-    )
-    {
-        parent::__construct($client, $seriesApiController);
-        $this->seriesListApiController = $seriesListApiController;
-    }
 
     /**
      * @Route("/series-list/post/{type}/{apiId}", name="series_list_post")
+     * @param Request $request
      * @param string $type
      * @param string $apiId
      * @return RedirectResponse|Response
@@ -72,7 +61,8 @@ class SeriesListController extends SeriesController
             } else {
                 $this->addFlash('error', 'Oops! Something went wrong and the series could not be created.');
                 return $this->render('series/series.html.twig', [
-                    'series' => $series
+                    'series' => $series,
+                    'inFavourites' => false
                 ]);
             }
         } else {
@@ -94,12 +84,22 @@ class SeriesListController extends SeriesController
         );
         $response = $this->seriesListApiController->postAction($request);
 
+        $inFavourites = $this->isSeriesInList(
+            $session->get(UserApiController::USER_ID),
+            SeriesList::FAVOURITES,
+            $series['id']);
+
         if ($response->getStatusCode() != Response::HTTP_CREATED) {
             $this->addFlash('error', 'Oops! Something went wrong and the series could not be added to list.');
+            return $this->render('series/series.html.twig', [
+                'series' => $series,
+                'inFavourites' => $inFavourites
+            ]);
         }
 
         return $this->render('series/series.html.twig', [
-            'series' => $series
+            'series' => $series,
+            'inFavourites' => $inFavourites
         ]);
     }
 }

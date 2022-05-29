@@ -9,11 +9,13 @@
             <div class="col-8">
                 <h1 class="text-center pb-5">{{ series.title }}</h1>
                 {% if (app.session.get('jwt') != null) %}
+                    {% if inFavourites == false %}
                     <a class="btn btn-form" role="button"
                        href="{{ path('series_list_post', {'type': 'favourites', 'apiId': series.apiId}) }}">
                         Add to Favourites
                     </a>
                     <br><br>
+                    {% endif %}
                 {% endif %}
                 <h2>Synopsis</h2>
                 <p>{{ series.synopsis }}</p>
