@@ -41,6 +41,7 @@ class SeriesListApiControllerTest extends BaseTestCase
 
     /**
      * @covers ::postAction
+     * @covers ::postActionCheckBadRequest
      * @return array
      * @throws Exception
      */
@@ -81,6 +82,7 @@ class SeriesListApiControllerTest extends BaseTestCase
     /**
      * @depends testPostSeriesListAction201Created
      * @covers ::postAction
+     * @covers ::postActionCheckBadRequest
      * @return void
      * @throws Exception
      */
@@ -101,6 +103,7 @@ class SeriesListApiControllerTest extends BaseTestCase
 
     /**
      * @covers ::postAction
+     * @covers ::postActionCheckBadRequest
      * @return void
      * @throws Exception
      */
@@ -138,6 +141,7 @@ class SeriesListApiControllerTest extends BaseTestCase
 
     /**
      * @covers ::postAction
+     * @covers ::postActionCheckBadRequest
      * @return void
      * @throws Exception
      */
@@ -168,6 +172,7 @@ class SeriesListApiControllerTest extends BaseTestCase
 
     /**
      * @covers ::postAction
+     * @covers ::postActionCheckBadRequest
      * @return void
      * @throws Exception
      */
@@ -200,6 +205,7 @@ class SeriesListApiControllerTest extends BaseTestCase
 
     /**
      * @covers ::postAction
+     * @covers ::postActionCheckBadRequest
      * @return void
      * @throws Exception
      */
@@ -228,6 +234,7 @@ class SeriesListApiControllerTest extends BaseTestCase
 
     /**
      * @covers ::postAction
+     * @covers ::postActionCheckBadRequest
      * @return void
      * @throws Exception
      */
@@ -248,6 +255,7 @@ class SeriesListApiControllerTest extends BaseTestCase
 
     /**
      * @covers ::postAction
+     * @covers ::postActionCheckBadRequest
      * @return void
      * @throws Exception
      */
