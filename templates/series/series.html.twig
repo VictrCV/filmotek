@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {{ parent() }}
+    <div class="container mt-5 pt-5 color-text">
+        <div class="row">
+            <div class="col-4">
+                <img src="{{ series.imageUrl }}" class="cover-large">
+            </div>
+            <div class="col-8">
+                <h1 class="text-center pb-5">{{ series.title }}</h1>
+                {% if (app.session.get('jwt') != null) %}
+                    <div class="row">
+                        {% if inFavourites == false %}
+                            <div class="col-3">
+                                <a class="btn btn-form mb-4" role="button"
+                                   href="{{ path('series_list_post', {'type': 'favourites', 'apiId': series.apiId}) }}">
+                                    Add to "Favourites"
+                                </a>
+                            </div>
+                        {% endif %}
+                        {% if inIncompatibleList == false %}
+                        <div class="col-3">
+                            <a class="btn btn-form mb-4" role="button"
+                               href="{{ path('series_list_post', {'type': 'toWatch', 'apiId': series.apiId}) }}">
+                                Add to "To watch"
+                            </a>
+                        </div>
+                        <div class="col-3">
+                            <a class="btn btn-form mb-4" role="button"
+                               href="{{ path('series_list_post', {'type': 'inProgress', 'apiId': series.apiId}) }}">
+                                Add to "In progress"
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                <h2>Synopsis</h2>
+                <p>{{ series.synopsis }}</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block sectiontitle %}Series{% endblock %}

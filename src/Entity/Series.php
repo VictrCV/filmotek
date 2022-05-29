@@ -3,16 +3,31 @@
 namespace App\Entity;
 
 use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Series
  *
- * @ORM\Table(name="series")
+ * @ORM\Table(name="series", uniqueConstraints={@ORM\UniqueConstraint(name="UNIQ_API_ID", columns={"apiId"})})
  * @ORM\Entity
+ *
+ * @UniqueEntity(fields={"apiId"}, message="This series already exists.")
  */
-class Series
+class Series implements JsonSerializable
 {
+    public const SERIES_ATTR = 'series';
+    public const API_ID_ATTR = 'apiId';
+    public const TITLE_ATTR = 'title';
+    public const IS_FILM_ATTR = 'isFilm';
+    public const SYNOPSIS_ATTR = 'synopsis';
+    public const IMAGE_URL_ATTR = 'imageUrl';
+    public const SEASON_ATTR = 'season';
+    public const EPISODE_ATTR = 'episode';
+    public const TIME_ATTR = 'time';
+
     /**
      * @var int
      *
@@ -25,9 +40,9 @@ class Series
     /**
      * @var string
      *
-     * @ORM\Column(name="dataImdbId", type="string", length=9, nullable=false)
+     * @ORM\Column(name="apiId", type="string", length=9, nullable=false)
      */
-    private $dataImdbId;
+    private $apiId;
 
     /**
      * @var string
@@ -67,9 +82,9 @@ class Series
     /**
      * @var int|null
      *
-     * @ORM\Column(name="chapter", type="integer", nullable=true)
+     * @ORM\Column(name="episode", type="integer", nullable=true)
      */
-    private $chapter;
+    private $episode;
 
     /**
      * @var DateTime|null
@@ -83,14 +98,14 @@ class Series
         return $this->id;
     }
 
-    public function getDataImdbId(): ?string
+    public function getApiId(): ?string
     {
-        return $this->dataImdbId;
+        return $this->apiId;
     }
 
-    public function setDataImdbId(string $dataImdbId): self
+    public function setApiId(string $apiId): self
     {
-        $this->dataImdbId = $dataImdbId;
+        $this->apiId = $apiId;
 
         return $this;
     }
@@ -155,29 +170,36 @@ class Series
         return $this;
     }
 
-    public function getChapter(): ?int
+    public function getEpisode(): ?int
     {
-        return $this->chapter;
+        return $this->episode;
     }
 
-    public function setChapter(?int $chapter): self
+    public function setEpisode(?int $episode): self
     {
-        $this->chapter = $chapter;
+        $this->episode = $episode;
 
         return $this;
     }
 
-    public function getTime(): ?\DateTimeInterface
+    public function getTime(): ?DateTimeInterface
     {
         return $this->time;
     }
 
-    public function setTime(?\DateTimeInterface $time): self
+    public function setTime(?DateTimeInterface $time): self
     {
         $this->time = $time;
 
         return $this;
     }
 
-
+    public function jsonSerialize(): mixed
+    {
+        $vars = get_object_vars($this);
+        if($this->getTime() !== null) {
+            $vars[Series::TIME_ATTR] = $this->getTime()->format('H:i:s');
+        }
+        return $vars;
+    }
 }

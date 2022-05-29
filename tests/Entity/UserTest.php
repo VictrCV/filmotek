@@ -50,14 +50,16 @@ class UserTest extends TestCase
      *
      * @covers ::getUsername
      * @covers ::setUsername
-     * @return void
+     * @return User
      * @throws Exception
      */
-    public function testGetSetUsername(): void
+    public function testGetSetUsername(): User
     {
         $username = self::$faker->userName();
         self::$user->setUsername($username);
         self::assertEquals($username, self::$user->getUsername());
+
+        return self::$user;
     }
 
     /**
@@ -65,14 +67,72 @@ class UserTest extends TestCase
      *
      * @covers ::getPassword
      * @covers ::setPassword
-     * @return void
+     * @return User
      * @throws Exception
      */
-    public function testGetSetPassword(): void
+    public function testGetSetPassword(): User
     {
         $password = self::$faker->password();
         self::$user->setPassword($password);
         self::assertEquals($password, self::$user->getPassword());
+
+        return self::$user;
+    }
+
+    /**
+     * Implement testGetRoles().
+     *
+     * @covers ::getRoles
+     * @return void
+     * @throws Exception
+     */
+    public function testGetRoles(): void
+    {
+        self::assertEquals(1, sizeof(self::$user->getRoles()));
+        self::assertContains('ROLE_USER', self::$user->getRoles());
+    }
+
+    /**
+     * Implement testEraseCredentials().
+     *
+     * @depends testGetSetPassword
+     * @covers ::eraseCredentials
+     * @return void
+     * @throws Exception
+     */
+    public function testEraseCredentials(User $user): void
+    {
+        $user->eraseCredentials();
+        self::assertEmpty($user->getPassword());
+    }
+
+    /**
+     * Implement testGetUserIdentifier().
+     *
+     * @depends testGetSetUsername
+     * @covers ::getUserIdentifier
+     * @return void
+     * @throws Exception
+     */
+    public function testGetUserIdentifier(User $user): void
+    {
+        self::assertEquals($user->getUsername(), $user->getUserIdentifier());
+    }
+
+    /**
+     * Implement testJsonSerialize().
+     *
+     * @covers ::jsonSerialize
+     * @return void
+     * @throws Exception
+     */
+    public function testJsonSerialize(): void
+    {
+        $vars = [
+            'id' => self::$user->getId(),
+            User::USERNAME_ATTR => self::$user->getUsername()
+        ];
+        self::assertEquals($vars, self::$user->jsonSerialize());
     }
 
 }

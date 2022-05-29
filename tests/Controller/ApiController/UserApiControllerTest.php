@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\ApiController;
+namespace App\Tests\Controller\ApiController;
 
 use App\Controller\ApiController\UserApiController;
 use App\Entity\User;
@@ -38,8 +38,6 @@ class UserApiControllerTest extends WebTestCase
     }
 
     /**
-     * Implements testOptionsAction204NoContent()
-     *
      * @covers ::optionsAction
      * @return void
      * @throws Exception
@@ -61,13 +59,11 @@ class UserApiControllerTest extends WebTestCase
     }
 
     /**
-     * Implements testPostUserAction201Created()
-     *
      * @covers ::postAction
-     * @return void
+     * @return array
      * @throws Exception
      */
-    public function testPostUserAction201Created()
+    public function testPostUserAction201Created(): array
     {
 
         $data = [
@@ -78,52 +74,36 @@ class UserApiControllerTest extends WebTestCase
         self::$client->request(
             'POST',
             UserApiController::USER_API_ROUTE,
-            [],
-            [],
-            [],
-            strval(json_encode($data))
+            [], [], [],
+            json_encode($data)
         );
 
         $response = self::$client->getResponse();
 
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         self::assertTrue($response->isSuccessful());
-        self::assertJson(strval($response->getContent()));
-        $user = json_decode(strval($response->getContent()), true);
-        self::assertNotEmpty($user['user']['id']);
-        self::assertSame($data[User::USERNAME_ATTR], $user['user'][User::USERNAME_ATTR]);
+        self::assertJson($response->getContent());
+        $user = json_decode($response->getContent(), true);
+        self::assertNotEmpty($user[User::USER_ATTR]['id']);
+        self::assertSame($data[User::USERNAME_ATTR], $user[User::USER_ATTR][User::USERNAME_ATTR]);
+        self::assertArrayNotHasKey(User::PASSWORD_ATTR, $user[User::USER_ATTR]);
+
+        return $data;
     }
 
     /**
-     * Implements testPostUserAction400BadRequest()
-     *
+     * @depends testPostUserAction201Created
      * @covers ::postAction
      * @return void
      * @throws Exception
      */
-    public function testPostUserAction400BadRequest()
+    public function testPostUserAction400BadRequest(array $data)
     {
-
-        $data = [
-            User::USERNAME_ATTR => self::$faker->userName(),
-            User::PASSWORD_ATTR => self::$faker->password()
-        ];
-
         self::$client->request(
             'POST',
             UserApiController::USER_API_ROUTE,
-            [],
-            [],
-            [],
-            strval(json_encode($data))
-        );
-        self::$client->request(
-            'POST',
-            UserApiController::USER_API_ROUTE,
-            [],
-            [],
-            [],
-            strval(json_encode($data))
+            [], [], [],
+            json_encode($data)
         );
 
         $response = self::$client->getResponse();
@@ -133,26 +113,87 @@ class UserApiControllerTest extends WebTestCase
     }
 
     /**
-     * Implements testPostUserAction422UnprocessableEntity()
-     *
      * @covers ::postAction
      * @return void
      * @throws Exception
      */
     public function testPostUserAction422UnprocessableEntity()
     {
+        self::$client->request(
+            'POST',
+            UserApiController::USER_API_ROUTE
+        );
 
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
+
+    /**
+     * @depends testPostUserAction201Created
+     * @covers ::loginAction
+     * @return void
+     * @throws Exception
+     */
+    public function testLoginUserAction200Ok(array $data)
+    {
+
+        self::$client->request(
+            'POST',
+            UserApiController::LOGIN_API_ROUTE,
+            [], [], [],
+            json_encode($data)
+        );
+
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        self::assertTrue($response->isSuccessful());
+        self::assertTrue($response->headers->has('Authorization'));
+    }
+
+    /**
+     * @covers ::loginAction
+     * @return void
+     * @throws Exception
+     */
+    public function testLoginUserAction401Unauthorized()
+    {
         $data = [
-            User::USERNAME_ATTR => self::$faker->userName()
+            User::USERNAME_ATTR => self::$faker->userName(),
+            User::PASSWORD_ATTR => self::$faker->password()
         ];
 
         self::$client->request(
             'POST',
-            UserApiController::USER_API_ROUTE,
-            [],
-            [],
-            [],
-            strval(json_encode($data))
+            UserApiController::LOGIN_API_ROUTE,
+            [], [], [],
+            json_encode($data)
+        );
+
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
+
+    /**
+     * @covers ::loginAction
+     * @return void
+     * @throws Exception
+     */
+    public function testLoginUserAction422UnprocessableEntity()
+    {
+        $data = [
+            User::PASSWORD_ATTR => self::$faker->password()
+        ];
+
+        self::$client->request(
+            'POST',
+            UserApiController::LOGIN_API_ROUTE,
+            [], [], [],
+            json_encode($data)
         );
 
         $response = self::$client->getResponse();

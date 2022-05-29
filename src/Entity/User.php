@@ -3,23 +3,28 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as Serializer;
+use Doctrine\ORM\Mapping\ChangeTrackingPolicy;
+use JsonSerializable;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * User
  *
- * @ORM\Table(name="user", uniqueConstraints={@ORM\UniqueConstraint(name="UNIQ_8D93D649F85E0677", columns={"username"})})
+ * @ORM\Table(name="user", uniqueConstraints={@ORM\UniqueConstraint(name="UNIQ_USERNAME", columns={"username"})})
  * @ORM\Entity
+ * @ChangeTrackingPolicy("DEFERRED_EXPLICIT")
  *
  * @UniqueEntity(fields={"username"}, message="This username already exists.")
  */
-class User implements PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSerializable
 {
     public const USER_ATTR = 'user';
     public const USERNAME_ATTR = 'username';
     public const PASSWORD_ATTR = 'password';
+    public const ROLE_USER = 'ROLE_USER';
 
     /**
      * @var int
@@ -40,7 +45,6 @@ class User implements PasswordAuthenticatedUserInterface
     /**
      * @var string
      *
-     * @Serializer\Exclude()
      * @ORM\Column(name="password", type="string", length=255, nullable=false)
      */
     private $password;
@@ -74,4 +78,26 @@ class User implements PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getRoles(): array
+    {
+        $roles[] = self::ROLE_USER;
+        return $roles;
+    }
+
+    public function eraseCredentials()
+    {
+        $this->setPassword('');
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->getUsername();
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        $vars = get_object_vars($this);
+        unset($vars[self::PASSWORD_ATTR]);
+        return $vars;
+    }
 }

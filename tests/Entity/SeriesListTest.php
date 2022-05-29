@@ -8,6 +8,7 @@ use App\Entity\User;
 use Exception;
 use Faker\Factory as FakerFactoryAlias;
 use Faker\Generator as FakerGeneratorAlias;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -91,7 +92,25 @@ class SeriesListTest extends TestCase
         self::$seriesList->setType($type);
         self::assertEquals($type, self::$seriesList->getType());
         $invalidType = self::$faker->sentence();
-        self::expectException(\InvalidArgumentException::class);
+        self::expectException(InvalidArgumentException::class);
         self::$seriesList->setType($invalidType);
+    }
+
+    /**
+     * Implement testJsonSerialize().
+     *
+     * @covers ::jsonSerialize
+     * @return void
+     * @throws Exception
+     */
+    public function testJsonSerialize(): void
+    {
+        $vars = [
+            'id' => self::$seriesList->getId(),
+            SeriesList::TYPE_ATTR => self::$seriesList->getType(),
+            SeriesList::SERIES_ATTR => self::$seriesList->getSeries(),
+            SeriesList::USER_ATTR => self::$seriesList->getUser()
+        ];
+        self::assertEquals($vars, self::$seriesList->jsonSerialize());
     }
 }

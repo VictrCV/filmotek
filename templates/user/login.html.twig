@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {{ parent() }}
+    <div class="container d-flex justify-content-center" role="alert">
+        <div class="row sign-up-form ">
+            <div class="col">
+                {{ form(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block sectiontitle %}Login{% endblock %}

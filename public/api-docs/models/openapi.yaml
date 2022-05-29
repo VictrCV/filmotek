@@ -16,12 +16,16 @@ servers:
       port:
         default: '8000'
 tags:
-  - name: 'Users'
+  - name: '👥 Users'
     description: 'User management'
+  - name: '🎞️ Series'
+    description: 'Series management'
+  - name: '🗃️️ Series list'
+    description: 'Series list management'
 paths:
   /users:
     post:
-      tags: [ 'Users' ]
+      tags: [ '👥 Users' ]
       summary: Creates a User resource.
       description: 'Creates a new user'
       operationId: user_api_post
@@ -42,9 +46,9 @@ paths:
         '400':
           $ref: '#/components/responses/400_BadRequest_Response_Users'
         '422':
-          $ref: '#/components/responses/422_UnprocessableEntity_Response_Users'
+          $ref: '#/components/responses/422_UnprocessableEntity_Response'
     options:
-      tags: [ 'Users' ]
+      tags: [ '👥 Users' ]
       summary: Provides the list of HTTP supported methods.
       description: 'Return a `Allow` header with a comma separated list of HTTP supported methods.'
       operationId: user_api_options
@@ -54,12 +58,166 @@ paths:
           headers:
             Allow:
               $ref: '#/components/headers/Allow'
-
+  /users/login:
+    post:
+      tags: [ '👥 Users' ]
+      summary: Returns Filmotek api token.
+      description: 'Returns Filmotek api authorization token (JWT).'
+      operationId: user_api_login
+      requestBody:
+        $ref: '#/components/requestBodies/UserRequestBody'
+      responses:
+        '200':
+          description: '_User access token_'
+          headers:
+            Authorization:
+              description: 'Authorization header with access token'
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token_type: { description: 'Bearer', type: string }
+                  access_token: { description: 'JSON web token', type: string }
+                  expires_in: { description: 'Expiration time (in seconds)', type: integer }
+              examples:
+                example-1:
+                  value:
+                    token_type: Bearer
+                    access_token: <JSON web token>
+                    expires_in: 7200
+          links:
+            AllEndPoints:
+              operationId: '*'
+              parameters:
+                token: '$response.body#/access_token'
+              description: 'The `access_token` value returned in the response must be appended to the `Authorization: Bearer ` header in all operations.'
+        '401':
+          $ref: '#/components/responses/401_Unauthorized_Response'
+        '422':
+          $ref: '#/components/responses/422_UnprocessableEntity_Response'
+  /series:
+    post:
+      tags: [ '🎞️ Series' ]
+      summary: Creates a Series resource.
+      description: 'Creates a new series'
+      operationId: series_api_post
+      security:
+        - FilmotekApiSecurity: [ ]
+      requestBody:
+        $ref: '#/components/requestBodies/SeriesRequestBody'
+      responses:
+        '201':
+          description: '`Created`: series created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Series'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '400':
+          $ref: '#/components/responses/400_BadRequest_Response_Series'
+        '422':
+          $ref: '#/components/responses/422_UnprocessableEntity_Response'
+    options:
+      tags: [ '🎞️ Series' ]
+      summary: Provides the list of HTTP supported methods.
+      description: 'Return a `Allow` header with a comma separated list of HTTP supported methods.'
+      operationId: series_api_options
+      responses:
+        '204':
+          description: '`Allow` header &lt;Response body is empty&gt;'
+          headers:
+            Allow:
+              $ref: '#/components/headers/Allow'
+  /series/apiId/{apiId}:
+    parameters:
+      - $ref: '#/components/parameters/apiId'
+    get:
+      tags: [ '🎞️ Series' ]
+      summary: Retrieves a Series resource based on its apiId.
+      description: 'Returns the result identified by `apiId`.'
+      operationId: series_api_get_by_api_id
+      security:
+        - FilmotekApiSecurity: [ ]
+      responses:
+        '200':
+          description: Series
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Series'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '404':
+          $ref: '#/components/responses/404_Resource_Not_Found_Response'
+  /series-list:
+    post:
+      tags: [ '🗃️️ Series list' ]
+      summary: Creates a Series list resource.
+      description: 'Creates a new series list'
+      operationId: series_list_api_post
+      security:
+        - FilmotekApiSecurity: [ ]
+      requestBody:
+        $ref: '#/components/requestBodies/SeriesListRequestBody'
+      responses:
+        '201':
+          description: '`Created`: series list created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeriesList'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '400':
+          $ref: '#/components/responses/400_BadRequest_Response_SeriesList'
+        '403':
+          $ref: '#/components/responses/403_Forbidden_Response'
+        '422':
+          $ref: '#/components/responses/422_UnprocessableEntity_Response'
+    options:
+      tags: [ '🗃️️ Series list' ]
+      summary: Provides the list of HTTP supported methods.
+      description: 'Return a `Allow` header with a comma separated list of HTTP supported methods.'
+      operationId: series_list_api_options
+      responses:
+        '204':
+          description: '`Allow` header &lt;Response body is empty&gt;'
+          headers:
+            Allow:
+              $ref: '#/components/headers/Allow'
+  /series-list/user/{user}:
+    parameters:
+      - $ref: '#/components/parameters/user'
+      - $ref: '#/components/parameters/typeQuery'
+      - $ref: '#/components/parameters/seriesQuery'
+    get:
+      tags: [ '🗃️️ Series list' ]
+      summary: Retrieves a Series list resource based on its user.
+      description: 'Returns the result identified by `user` and, optionally, by `type` and/or `series`.'
+      operationId: series_list_api_get_by_user
+      security:
+        - FilmotekApiSecurity: [ ]
+      responses:
+        '200':
+          description: SeriesList
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Series'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '404':
+          $ref: '#/components/responses/404_Resource_Not_Found_Response'
 components:
   headers:
-    ETag:
-      description: Entity Tag (unique identifier provided for cache validation)
-      schema: { type: string, pattern: "[0-9a-f]*" }
     Location:
       description: "`URI` of the new resource"
       schema: { type: string, format: url }
@@ -97,6 +255,111 @@ components:
               href: /api/v1/users
             self:
               href: /api/v1/users/1508
+    Series:
+      type: object
+      properties:
+        id:
+          description: 'Series Id'
+          type: integer
+          format: int64
+        apiId:
+          description: 'Series apiId'
+          type: string
+          format: string
+        title:
+          description: 'Series title'
+          type: string
+          format: string
+        isFilm:
+          description: 'Series isFilm'
+          type: boolean
+          format: boolean
+        synopsis:
+          description: 'Series synopsis'
+          type: string
+          format: string
+        imageUrl:
+          description: 'Series imageUrl'
+          type: string
+          format: string
+        season:
+          description: 'Series season'
+          type: integer
+          format: int32
+        episode:
+          description: 'Series episode'
+          type: integer
+          format: int32
+        time:
+          description: 'Series time'
+          type: string
+          format: date-time
+        _links:
+          description: link relations
+          type: object
+          properties:
+            parent:
+              type: object
+              properties: { "href": { "type": "string", "format": "url" } }
+            self:
+              type: object
+              properties: { "href": { "type": "string", "format": "url" } }
+      example:
+        series:
+          id: 1212
+          apiId: 'tt0944947'
+          title: 'Game of Thrones'
+          isFilm: false
+          synopsis: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.'
+          imageUrl: 'https://m.media-amazon.com/images/M/MV5BYTRiNDQwYzAtMzVlZS00NTI5LWJjYjUtMzkwNTUzMWMxZTllXkEyXkFqcGdeQXVyNDIzMzcwNjc@._V1_.jpg'
+          season: 3
+          episode: 9
+          time: '00:35:00'
+          _links:
+            parent:
+              href: /api/v1/series
+            self:
+              href: /api/v1/series/1202
+    SeriesList:
+      type: object
+      properties:
+        id:
+          description: 'Series list Id'
+          type: integer
+          format: int64
+        type:
+          description: 'Series list type'
+          type: string
+          format: string
+        series:
+          description: 'Series list series'
+          type: integer
+          format: int64
+        user:
+          description: 'Series list user'
+          type: integer
+          format: int64
+        _links:
+          description: link relations
+          type: object
+          properties:
+            parent:
+              type: object
+              properties: { "href": { "type": "string", "format": "url" } }
+            self:
+              type: object
+              properties: { "href": { "type": "string", "format": "url" } }
+      example:
+        series:
+          id: 33
+          type: 'favourites'
+          series: 52
+          user: 17
+          _links:
+            parent:
+              href: /api/v1/series-list
+            self:
+              href: /api/v1/series-list/33
     Message:
       type: object
       description: HTTP response message
@@ -119,8 +382,26 @@ components:
           schema:
             $ref: '#/components/schemas/Message'
           examples:
-            response-400:
-              $ref: '#/components/examples/response-400'
+            response-400-user:
+              $ref: '#/components/examples/response-400-user'
+    400_BadRequest_Response_Series:
+      description: "`BAD REQUEST`: series already exists"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+          examples:
+            response-400-series:
+              $ref: '#/components/examples/response-400-series'
+    400_BadRequest_Response_SeriesList:
+      description: "`BAD REQUEST`: wrong type, series or user does not exist, or series already exists in list"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+          examples:
+            response-400-series-list:
+              $ref: '#/components/examples/response-400-series-list'
     401_Unauthorized_Response:
       description: '`Unauthorized`: invalid Authorization header'
       content:
@@ -157,15 +438,15 @@ components:
           examples:
             response-412:
               $ref: '#/components/examples/response-412'
-    422_UnprocessableEntity_Response_Users:
-      description: "`UNPROCESSABLE ENTITY`: username or password is left out"
+    422_UnprocessableEntity_Response:
+      description: "`UNPROCESSABLE ENTITY`: Missing data."
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Message'
           examples:
             response-422:
-              $ref: '#/components/examples/response-422-users'
+              $ref: '#/components/examples/response-422'
   requestBodies:
     UserRequestBody:
       description: '`User` data'
@@ -186,11 +467,117 @@ components:
             example:
               username: fulanito90
               password: Us3rP4ssw0rd
+    SeriesRequestBody:
+      description: '`Series` data'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              apiId:
+                description: 'Series apiId'
+                type: string
+                format: string
+              title:
+                description: 'Series title'
+                type: string
+                format: string
+              isFilm:
+                description: 'Series isFilm'
+                type: boolean
+                format: boolean
+              synopsis:
+                description: 'Series synopsis'
+                type: string
+                format: string
+              imageUrl:
+                description: 'Series imageUrl'
+                type: string
+                format: string
+              season:
+                description: 'Series season'
+                type: integer
+                format: int32
+              episode:
+                description: 'Series episode'
+                type: integer
+                format: int32
+              time:
+                description: 'Series time'
+                type: string
+                format: date-time
+            example:
+              apiId: 'tt0944947'
+              title: 'Game of Thrones'
+              isFilm: false
+              synopsis: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.'
+              imageUrl: 'https://m.media-amazon.com/images/M/MV5BYTRiNDQwYzAtMzVlZS00NTI5LWJjYjUtMzkwNTUzMWMxZTllXkEyXkFqcGdeQXVyNDIzMzcwNjc@._V1_.jpg'
+              season: 3
+              episode: 9
+              time: '00:35:00'
+    SeriesListRequestBody:
+      description: '`Series list` data'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              type:
+                description: 'Series list type'
+                type: string
+                format: string
+              series:
+                description: 'Series list series'
+                type: integer
+                format: int64
+              user:
+                description: 'Series list user'
+                type: string
+                format: int64
+            example:
+              type: favourites
+              series: 52
+              user: 17
+  parameters:
+    apiId:
+      name: apiId
+      in: path
+      description: 'apiId of Series'
+      required: true
+      schema: { "type": "string", pattern: '^tt\d{7}$' }
+    user:
+      name: user
+      in: path
+      description: 'user Id'
+      required: true
+      schema: { "type": "integer", pattern: '^\d+$' }
+    typeQuery:
+      name: type
+      in: query
+      description: 'type'
+      required: false
+      schema: { "type": "string", pattern: '^[A-Za-z]{10}$' }
+    seriesQuery:
+      name: series
+      in: query
+      description: 'series Id'
+      required: false
+      schema: { "type": "integer", pattern: '^\d+$' }
   examples:
-    response-400:
+    response-400-user:
       value:
         code: 400
-        message: 'BAD REQUEST: username already exists'
+        message: 'BAD REQUEST: Username already exists.'
+    response-400-series:
+      value:
+        code: 400
+        message: 'BAD REQUEST: Series already exists.'
+    response-400-series-list:
+      value:
+        code: 400
+        message: 'BAD REQUEST: Wrong type.'
     response-401:
       value:
         code: 401
@@ -207,14 +594,12 @@ components:
       value:
         code: 412
         message: 'PRECONDITION FAILED: one or more conditions given evaluated to false'
-    response-422-users:
+    response-422:
       value:
         code: 422
-        message: 'UNPROCESSABLE ENTITY: username or password is left out'
-    response-422-results:
-      value:
-        code: 422
-        message: 'UNPROCESSABLE ENTITY: user is left out'
+        message: 'UNPROCESSABLE ENTITY: Missing data.'
   securitySchemes:
     FilmotekApiSecurity:
       type: http
+      bearerFormat: JWT
+      scheme: bearer
