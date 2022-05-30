@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {{ parent() }}
+    <div class="d-flex flex-wrap justify-content-center mt-5 results">
+        {% for series in favourites %}
+                <figure>
+                    <figcaption>{{ series.series.title }}</figcaption>
+                    <a href="{{ path('series', {'list': 'favourites', 'apiId': series.series.apiId}) }}">
+                        <img src="{{ series.series.imageUrl }}" class="mx-5 mb-4 mt-2 cover">
+                    </a>
+                </figure>
+        {% endfor %}
+    </div>
+{% endblock %}
+{% block sectiontitle %}Search results{% endblock %}

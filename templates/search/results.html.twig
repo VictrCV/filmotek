@@ -6,7 +6,7 @@
             {% if series.primaryImage is not null %}
                 <figure>
                     <figcaption>{{ series.titleText.text }}</figcaption>
-                    <a href="{{ path('series', {'apiId': series.id}) }}">
+                    <a href="{{ path('series', {'list': 'search', 'apiId': series.id}) }}">
                         <img src="{{ series.primaryImage.url }}" class="mx-5 mb-4 mt-2 cover">
                     </a>
                 </figure>

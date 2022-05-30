@@ -19,13 +19,13 @@ class SeriesListController extends SeriesController
 {
 
     /**
-     * @Route("/series-list/post/{type}/{apiId}", name="series_list_post")
+     * @Route("{list}/series-list/post/{type}/{apiId}", name="series_list_post")
      * @param Request $request
      * @param string $type
      * @param string $apiId
      * @return RedirectResponse|Response
      */
-    public function postSeriesList(Request $request, string $type, string $apiId): RedirectResponse|Response
+    public function postSeriesList(Request $request, string $list, string $type, string $apiId): RedirectResponse|Response
     {
         $session = $request->getSession();
 
@@ -39,7 +39,10 @@ class SeriesListController extends SeriesController
 
             if (!isset($series)) {
                 $this->addFlash('error', 'Oops! Something went wrong and the series could not be obtained.');
-                return $this->redirectToRoute('search', []);
+                return $this->redirectToRoute('series', [
+                    'list' => $list,
+                    Series::API_ID_ATTR => $apiId
+                ]);
             }
 
             $data = [
@@ -62,10 +65,9 @@ class SeriesListController extends SeriesController
                 $series = json_decode($response->getContent(), true)[Series::SERIES_ATTR];
             } else {
                 $this->addFlash('error', 'Oops! Something went wrong and the series could not be created.');
-                return $this->render('series/series.html.twig', [
-                    'series' => $series,
-                    'inFavourites' => false,
-                    'inIncompatibleList' => false
+                return $this->redirectToRoute('series', [
+                    'list' => $list,
+                    Series::API_ID_ATTR => $apiId
                 ]);
             }
         } else {
@@ -87,22 +89,13 @@ class SeriesListController extends SeriesController
         );
         $response = $this->seriesListApiController->postAction($request);
 
-        $inFavourites = $this->isSeriesInList(
-            $session->get(UserApiController::USER_ID),
-            SeriesList::FAVOURITES,
-            $series['id']);
-        $inIncompatibleList = $this->isSeriesInIncompatibleList(
-            $session->get(UserApiController::USER_ID),
-            $series['id']);
-
         if ($response->getStatusCode() != Response::HTTP_CREATED) {
             $this->addFlash('error', 'Oops! Something went wrong and the series could not be added to list.');
         }
 
-        return $this->render('series/series.html.twig', [
-            'series' => $series,
-            'inFavourites' => $inFavourites,
-            'inIncompatibleList' => $inIncompatibleList
+        return $this->redirectToRoute('series', [
+            'list' => $list,
+            Series::API_ID_ATTR => $apiId
         ]);
     }
 }

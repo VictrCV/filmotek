@@ -36,12 +36,12 @@ class SeriesController extends AbstractController
     }
 
     /**
-     * @Route("/series/{apiId}", name="series")
+     * @Route("{list}/series/{apiId}", name="series")
      * @param Request $request
      * @param string $apiId
      * @return RedirectResponse|Response
      */
-    public function series(Request $request, string $apiId): RedirectResponse|Response
+    public function series(Request $request, string $list, string $apiId): RedirectResponse|Response
     {
         $session = $request->getSession();
 
@@ -53,7 +53,8 @@ class SeriesController extends AbstractController
         if ($response->getStatusCode() == Response::HTTP_NOT_FOUND) {
             $series = $this->getSeriesFromRapidapi($apiId);
             if (!isset($series)) {
-                return new Response(null, Response::HTTP_INTERNAL_SERVER_ERROR);
+                $this->addFlash('error', 'Oops! Something went wrong and the series could not be obtained.');
+                return $this->redirectToRoute($list);
             }
         } else {
             $series = json_decode($response->getContent(), true)[Series::SERIES_ATTR];
