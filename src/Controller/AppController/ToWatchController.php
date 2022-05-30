@@ -14,15 +14,15 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @codeCoverageIgnore
  */
-class FavouritesController extends SeriesListController
+class ToWatchController extends SeriesListController
 {
 
     /**
-     * @Route("/favourites", name="favourites")
+     * @Route("/to_watch", name="to_watch")
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function favourites(Request $request): RedirectResponse|Response
+    public function toWatch(Request $request): RedirectResponse|Response
     {
         $session = $request->getSession();
         $user = $session->get(UserApiController::USER_ID);

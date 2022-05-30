@@ -44,6 +44,9 @@
                             <li {% if active == 'favourites' %} class="nav-item active" {% else %} class="nav-item" {% endif %}>
                                 <a class="nav-link" aria-current="page" href="{{ path('favourites') }}">Favourites</a>
                             </li>
+                            <li {% if active == 'to_watch' %} class="nav-item active" {% else %} class="nav-item" {% endif %}>
+                                <a class="nav-link" aria-current="page" href="{{ path('to_watch') }}">To watch</a>
+                            </li>
                         {% endif %}
                         <li {% if active == 'search' %} class="nav-item active" {% else %} class="nav-item" {% endif %}>
                             <a class="nav-link" aria-current="page" href="{{ path('search') }}">Search</a>
@@ -52,7 +55,7 @@
                             <li {% if active == 'login' %} class="nav-item active" {% else %} class="nav-item" {% endif %}>
                                 <a class="nav-link" aria-current="page" href="{{ path('login') }}">Log in</a>
                             </li>
-                            <li {% if active == 'sign-up' %} class="nav-item active" {% else %} class="nav-item" {% endif %}>
+                            <li {% if active == 'sign_up' %} class="nav-item active" {% else %} class="nav-item" {% endif %}>
                                 <a class="btn btn-sign-up" role="button" aria-current="page" href="{{ path('sign_up') }}">Sign up</a>
                             </li>
                         {% else %}

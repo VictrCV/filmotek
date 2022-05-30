@@ -98,4 +98,29 @@ class SeriesListController extends SeriesController
             Series::API_ID_ATTR => $apiId
         ]);
     }
+
+    /**
+     * @param int $user
+     * @param string $type
+     * @return RedirectResponse|Response
+     */
+    protected function loadSeriesList(int $user, string $type): RedirectResponse|Response
+    {
+        $request = Request::create(
+            SeriesListApiController::SERIES_LIST_GET_BY_USER_ROUTE . $user,
+            'GET',
+            [SeriesList::TYPE_ATTR => $type]
+        );
+        $response = $this->seriesListApiController->getByUserAction($request, $user);
+
+        if ($response->getStatusCode() != Response::HTTP_OK) {
+            $this->addFlash('error', 'Oops! Something went wrong and the series-list series could not be obtained.');
+            return $this->redirectToRoute('search', []);
+        }
+
+        $seriesList = json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR];
+        return $this->render('series-list/series-list.html.twig', [
+            'seriesList' => $seriesList,
+        ]);
+    }
 }

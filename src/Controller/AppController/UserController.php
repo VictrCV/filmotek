@@ -27,7 +27,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/sign-up", name="sign_up")
+     * @Route("/sign_up", name="sign_up")
      * @param Request $request
      * @return RedirectResponse|Response
      */
