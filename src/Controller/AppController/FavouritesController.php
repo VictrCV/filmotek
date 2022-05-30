@@ -25,7 +25,7 @@ class FavouritesController extends AbstractController
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function search(Request $request): RedirectResponse|Response
+    public function favourites(Request $request): RedirectResponse|Response
     {
         $session = $request->getSession();
         $user = $session->get(UserApiController::USER_ID);

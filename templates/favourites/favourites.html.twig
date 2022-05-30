@@ -5,7 +5,7 @@
         {% for series in favourites %}
                 <figure>
                     <figcaption>{{ series.series.title }}</figcaption>
-                    <a href="{{ path('series', {'apiId': series.series.apiId}) }}">
+                    <a href="{{ path('series', {'list': 'favourites', 'apiId': series.series.apiId}) }}">
                         <img src="{{ series.series.imageUrl }}" class="mx-5 mb-4 mt-2 cover">
                     </a>
                 </figure>
