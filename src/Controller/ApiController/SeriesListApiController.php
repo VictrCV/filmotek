@@ -63,14 +63,14 @@ class SeriesListApiController extends AbstractController
 
             $series = $this->entityManager
                 ->getRepository(Series::class)
-                ->find(intval($data[SeriesList::SERIES_ATTR]));
+                ->find($data[SeriesList::SERIES_ATTR]);
 
             $user = $this->entityManager
                 ->getRepository(User::class)
-                ->find(intval($data[SeriesList::USER_ATTR]));
+                ->find($data[SeriesList::USER_ATTR]);
 
             $badRequest = $this->postActionCheckBadRequest($seriesList->getType(), $series, $user);
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Wrong type.");
         }
 
@@ -148,7 +148,7 @@ class SeriesListApiController extends AbstractController
      */
     public function optionsAction(): Response
     {
-        $methods = ['POST', 'GET'];
+        $methods = ['POST', 'GET', 'PUT'];
         $methods[] = 'OPTIONS';
 
         return new Response(
@@ -163,18 +163,18 @@ class SeriesListApiController extends AbstractController
 
     /**
      * @param Request $request
-     * @param string $user
+     * @param int $userId
      * @return Response
-     * @Route(path="/user/{user}", name="getByUser", methods={"GET"})
+     * @Route(path="/user/{userId}", name="getByUser", methods={"GET"})
      */
-    public function getByUserAction(Request $request, string $user): Response
+    public function getByUserAction(Request $request, int $userId): Response
     {
         $params = $request->query;
         $query = $this->entityManager
             ->getRepository(SeriesList::class)
             ->createQueryBuilder('sl')
             ->where('sl.user = :user')
-            ->setParameter('user', $user);
+            ->setParameter('user', $userId);
 
         if ($params->get(SeriesList::TYPE_ATTR) !== null) {
             $query = $query
@@ -195,6 +195,63 @@ class SeriesListApiController extends AbstractController
         if (empty($seriesList)) {
             return Utils::errorMessage(Response::HTTP_NOT_FOUND, 'Series list not found.');
         }
+
+        return Utils::apiResponse(
+            Response::HTTP_OK,
+            [SeriesList::SERIES_LIST_ATTR => $seriesList]
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @param int $seriesListId
+     * @return Response
+     * @Route(path="/{seriesListId}", name="put", methods={"PUT"})
+     * @Security(
+     *     expression="is_granted('IS_AUTHENTICATED_FULLY')",
+     *     statusCode=401,
+     *     message="`Unauthorized`: Invalid credentials."
+     * )
+     */
+    public function putAction(Request $request, int $seriesListId): Response
+    {
+        $seriesList = $this->entityManager
+            ->getRepository(SeriesList::class)
+            ->find($seriesListId);
+
+        if (!isset($seriesList)) {
+            return Utils::errorMessage(Response::HTTP_NOT_FOUND, 'Series list not found.');
+        }
+
+        $body = $request->getContent();
+        $data = json_decode($body, true);
+
+        if ($this->getUser()->getId() != $seriesList->getUser()->getId() || (
+                isset($data[SeriesList::USER_ATTR]) &&
+                $this->getUser()->getId() != $data[SeriesList::USER_ATTR]
+            )) {
+            return Utils::errorMessage(Response::HTTP_FORBIDDEN, '`Forbidden`: you do not have permission to access.');
+        }
+
+        if (isset($data[SeriesList::TYPE_ATTR])) {
+            try {
+                $seriesList->setType($data[SeriesList::TYPE_ATTR]);
+            } catch (InvalidArgumentException) {
+                return Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Wrong type.");
+            }
+        }
+
+        if (isset($data[SeriesList::SERIES_ATTR])) {
+            $series = $this->entityManager
+                ->getRepository(Series::class)
+                ->find($data[SeriesList::SERIES_ATTR]);
+            if (!isset($series)) {
+                return Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Series does not exist.");
+            }
+            $seriesList->setSeries($series);
+        }
+
+        $this->entityManager->flush();
 
         return Utils::apiResponse(
             Response::HTTP_OK,
