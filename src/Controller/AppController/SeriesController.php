@@ -106,27 +106,27 @@ class SeriesController extends AbstractController
         return null;
     }
 
-    protected function isSeriesInList(int $user, string $type, int $series): bool
+    protected function isSeriesInList(int $userId, string $type, int $seriesId): bool
     {
         $data = [
             SeriesList::TYPE_ATTR => $type,
-            SeriesList::SERIES_ATTR => $series,
+            SeriesList::SERIES_ATTR => $seriesId,
         ];
 
         $request = Request::create(
-            SeriesListApiController::SERIES_LIST_GET_BY_USER_ROUTE . $user,
+            SeriesListApiController::SERIES_LIST_GET_BY_USER_ROUTE . $userId,
             'GET',
             $data
         );
 
-        $response = $this->seriesListApiController->getByUserAction($request, $user);
+        $response = $this->seriesListApiController->getByUserAction($request, $userId);
 
         return $response->getStatusCode() == Response::HTTP_OK;
     }
 
-    protected function isSeriesInIncompatibleList(int $user, int $series): bool
+    protected function isSeriesInIncompatibleList(int $userId, int $seriesId): bool
     {
-        return $this->isSeriesInList($user, SeriesList::TO_WATCH, $series) ||
-            $this->isSeriesInList($user, SeriesList::IN_PROGRESS, $series);
+        return $this->isSeriesInList($userId, SeriesList::TO_WATCH, $seriesId) ||
+            $this->isSeriesInList($userId, SeriesList::IN_PROGRESS, $seriesId);
     }
 }

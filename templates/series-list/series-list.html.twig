@@ -2,10 +2,13 @@
 {% block body %}
     {{ parent() }}
     <div class="d-flex flex-wrap justify-content-center mt-5 results">
-        {% for series in favourites %}
+        {% for series in seriesList %}
                 <figure>
                     <figcaption>{{ series.series.title }}</figcaption>
-                    <a href="{{ path('series', {'list': 'favourites', 'apiId': series.series.apiId}) }}">
+                    <a href="{{ path('series', {
+                        'list': app.request.attributes.get('_route'),
+                        'apiId': series.series.apiId
+                    }) }}">
                         <img src="{{ series.series.imageUrl }}" class="mx-5 mb-4 mt-2 cover">
                     </a>
                 </figure>

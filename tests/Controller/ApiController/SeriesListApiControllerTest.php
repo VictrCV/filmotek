@@ -76,7 +76,7 @@ class SeriesListApiControllerTest extends BaseTestCase
         self::assertSame($data[SeriesList::TYPE_ATTR], $seriesList[SeriesList::TYPE_ATTR]);
         self::assertSame($data[SeriesList::SERIES_ATTR], $seriesList[SeriesList::SERIES_ATTR]['id']);
         self::assertSame($data[SeriesList::USER_ATTR], $seriesList[SeriesList::USER_ATTR]['id']);
-        return $data;
+        return $seriesList;
     }
 
     /**
@@ -86,8 +86,14 @@ class SeriesListApiControllerTest extends BaseTestCase
      * @return void
      * @throws Exception
      */
-    public function testPostSeriesListAction400BadRequestSeriesExistsInList(array $data)
+    public function testPostSeriesListAction400BadRequestSeriesExistsInList(array $seriesList)
     {
+        $data = [
+            SeriesList::TYPE_ATTR => $seriesList[SeriesList::TYPE_ATTR],
+            SeriesList::SERIES_ATTR => $seriesList[SeriesList::SERIES_ATTR]['id'],
+            SeriesList::USER_ATTR => $seriesList[SeriesList::USER_ATTR]['id']
+        ];
+
         self::$client->request(
             'POST',
             SeriesListApiController::SERIES_LIST_API_ROUTE,
@@ -278,19 +284,19 @@ class SeriesListApiControllerTest extends BaseTestCase
      * @return void
      * @throws Exception
      */
-    public function testGetSeriesListByUserAction200Ok(array $series)
+    public function testGetSeriesListByUserAction200Ok(array $seriesList)
     {
         self::$client->request(
             'GET',
-            SeriesListApiController::SERIES_LIST_GET_BY_USER_ROUTE . $series[SeriesList::USER_ATTR],
+            SeriesListApiController::SERIES_LIST_GET_BY_USER_ROUTE . $seriesList[SeriesList::USER_ATTR]['id'],
         );
         $response = self::$client->getResponse();
 
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
         self::assertTrue($response->isSuccessful());
         self::assertJson($response->getContent());
-        $seriesList = json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR];
-        self::assertEquals($series[SeriesList::USER_ATTR], $seriesList[0][SeriesList::USER_ATTR]['id']);
+        $seriesListResponse = json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR];
+        self::assertEquals($seriesList[SeriesList::USER_ATTR]['id'], $seriesListResponse[0][SeriesList::USER_ATTR]['id']);
     }
 
     /**
@@ -299,16 +305,16 @@ class SeriesListApiControllerTest extends BaseTestCase
      * @return void
      * @throws Exception
      */
-    public function testGetSeriesListByUserAction200OkBodyParams(array $series)
+    public function testGetSeriesListByUserAction200OkBodyParams(array $seriesList)
     {
         $data = [
-            SeriesList::TYPE_ATTR => $series[SeriesList::TYPE_ATTR],
-            SeriesList::SERIES_ATTR => $series[SeriesList::SERIES_ATTR],
+            SeriesList::TYPE_ATTR => $seriesList[SeriesList::TYPE_ATTR],
+            SeriesList::SERIES_ATTR => $seriesList[SeriesList::SERIES_ATTR]['id'],
         ];
 
         self::$client->request(
             'GET',
-            SeriesListApiController::SERIES_LIST_GET_BY_USER_ROUTE . $series[SeriesList::USER_ATTR],
+            SeriesListApiController::SERIES_LIST_GET_BY_USER_ROUTE . $seriesList[SeriesList::USER_ATTR]['id'],
             $data
         );
         $response = self::$client->getResponse();
@@ -316,10 +322,10 @@ class SeriesListApiControllerTest extends BaseTestCase
         self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
         self::assertTrue($response->isSuccessful());
         self::assertJson($response->getContent());
-        $seriesList = json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR][0];
-        self::assertEquals($series[SeriesList::USER_ATTR], $seriesList[SeriesList::USER_ATTR]['id']);
-        self::assertEquals($series[SeriesList::TYPE_ATTR], $seriesList[SeriesList::TYPE_ATTR]);
-        self::assertEquals($series[SeriesList::SERIES_ATTR], $seriesList[SeriesList::SERIES_ATTR]['id']);
+        $seriesListResponse = json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR][0];
+        self::assertEquals($seriesList[SeriesList::USER_ATTR]['id'], $seriesListResponse[SeriesList::USER_ATTR]['id']);
+        self::assertEquals($seriesList[SeriesList::TYPE_ATTR], $seriesListResponse[SeriesList::TYPE_ATTR]);
+        self::assertEquals($seriesList[SeriesList::SERIES_ATTR]['id'], $seriesListResponse[SeriesList::SERIES_ATTR]['id']);
     }
 
     /**
@@ -331,11 +337,159 @@ class SeriesListApiControllerTest extends BaseTestCase
     {
         self::$client->request(
             'GET',
-            SeriesListApiController::SERIES_LIST_GET_BY_USER_ROUTE . intval(-1),
+            SeriesListApiController::SERIES_LIST_GET_BY_USER_ROUTE . -1,
         );
         $response = self::$client->getResponse();
 
         self::assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
+
+    /**
+     * @depends testPostSeriesListAction201Created
+     * @covers ::putAction
+     * @return void
+     * @throws Exception
+     */
+    public function testPutSeriesListAction200Ok(array $seriesList)
+    {
+        if ($seriesList[SeriesList::TYPE_ATTR] == SeriesList::FAVOURITES) {
+            $type = self::$faker->randomElement([
+                SeriesList::IN_PROGRESS,
+                SeriesList::TO_WATCH
+            ]);
+        } else if ($seriesList[SeriesList::TYPE_ATTR] == SeriesList::TO_WATCH) {
+            $type = self::$faker->randomElement([
+                SeriesList::IN_PROGRESS,
+                SeriesList::FAVOURITES
+            ]);
+        } else {
+            $type = self::$faker->randomElement([
+                SeriesList::FAVOURITES,
+                SeriesList::TO_WATCH
+            ]);
+        }
+
+        $seriesId = self::createSeries()['id'];
+
+        $data = [
+            SeriesList::TYPE_ATTR => $type,
+            SeriesList::SERIES_ATTR => $seriesId
+        ];
+
+        self::$client->request(
+            'PUT',
+            SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesList['id'],
+            [], [],
+            self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD']),
+            json_encode($data)
+        );
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        self::assertTrue($response->isSuccessful());
+        self::assertJson($response->getContent());
+        $seriesListResponse = json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR];
+        self::assertEquals($type, $seriesListResponse[SeriesList::TYPE_ATTR]);
+    }
+
+    /**
+     * @depends testPostSeriesListAction201Created
+     * @covers ::putAction
+     * @return void
+     * @throws Exception
+     */
+    public function testPutSeriesListAction401Unauthorized(array $seriesList)
+    {
+        self::$client->request(
+            'PUT',
+            SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesList['id']
+        );
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
+
+    /**
+     * @covers ::putAction
+     * @return void
+     * @throws Exception
+     */
+    public function testPutSeriesListAction404NotFound()
+    {
+        self::$client->request(
+            'PUT',
+            SeriesListApiController::SERIES_LIST_API_ROUTE . '/-1',
+            [], [],
+            self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD'])
+        );
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
+
+    /**
+     * @depends testPostSeriesListAction201Created
+     * @covers ::putAction
+     * @return void
+     * @throws Exception
+     */
+    public function testPutSeriesListAction400BadRequestWrongType(array $seriesList)
+    {
+        self::$client->request(
+            'PUT',
+            SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesList['id'],
+            [], [],
+            self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD']),
+            json_encode([SeriesList::TYPE_ATTR => self::$faker->lexify()])
+        );
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
+
+    /**
+     * @depends testPostSeriesListAction201Created
+     * @covers ::putAction
+     * @return void
+     * @throws Exception
+     */
+    public function testPutSeriesListAction400BadRequestSeriesNotExists(array $seriesList)
+    {
+        self::$client->request(
+            'PUT',
+            SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesList['id'],
+            [], [],
+            self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD']),
+            json_encode([SeriesList::SERIES_ATTR => -1])
+        );
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
+
+    /**
+     * @depends testPostSeriesListAction201Created
+     * @covers ::putAction
+     * @return void
+     * @throws Exception
+     */
+    public function testPutSeriesListAction403ForbiddenUpdatedUser(array $seriesList)
+    {
+        self::$client->request(
+            'PUT',
+            SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesList['id'],
+            [], [],
+            self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD']),
+            json_encode([SeriesList::USER_ATTR => -1])
+        );
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
         self::assertFalse($response->isSuccessful());
     }
 }

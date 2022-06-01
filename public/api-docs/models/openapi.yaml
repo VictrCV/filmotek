@@ -176,7 +176,7 @@ paths:
             Location:
               $ref: '#/components/headers/Location'
         '400':
-          $ref: '#/components/responses/400_BadRequest_Response_SeriesList'
+          $ref: '#/components/responses/400_BadRequest_Response_SeriesList_Post'
         '403':
           $ref: '#/components/responses/403_Forbidden_Response'
         '422':
@@ -192,11 +192,11 @@ paths:
           headers:
             Allow:
               $ref: '#/components/headers/Allow'
-  /series-list/user/{user}:
+  /series-list/user/{userId}:
     parameters:
-      - $ref: '#/components/parameters/user'
+      - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/typeQuery'
-      - $ref: '#/components/parameters/seriesQuery'
+      - $ref: '#/components/parameters/seriesIdQuery'
     get:
       tags: [ '🗃️️ Series list' ]
       summary: Retrieves a Series list resource based on its user.
@@ -214,6 +214,36 @@ paths:
           headers:
             Location:
               $ref: '#/components/headers/Location'
+        '404':
+          $ref: '#/components/responses/404_Resource_Not_Found_Response'
+  /series-list/{seriesListId}:
+    parameters:
+      - $ref: '#/components/parameters/seriesListId'
+    put:
+      tags: [ '🗃️️ Series list' ]
+      summary: Updates the Series list resource.
+      description: 'Updates the series list identified by `seriesListId`.'
+      operationId: series_list_api_put
+      security:
+        - FilmotekApiSecurity: [ ]
+      requestBody:
+        $ref: '#/components/requestBodies/SeriesListRequestBody'
+      responses:
+        '200':
+          description: SeriesList
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeriesList'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '400':
+          $ref: '#/components/responses/400_BadRequest_Response_SeriesList_Put'
+        '401':
+          $ref: '#/components/responses/401_Unauthorized_Response'
+        '403':
+          $ref: '#/components/responses/403_Forbidden_Response'
         '404':
           $ref: '#/components/responses/404_Resource_Not_Found_Response'
 components:
@@ -331,12 +361,12 @@ components:
           description: 'Series list type'
           type: string
           format: string
-        series:
-          description: 'Series list series'
+        seriesId:
+          description: 'Series list series Id'
           type: integer
           format: int64
-        user:
-          description: 'Series list user'
+        userId:
+          description: 'Series list user Id'
           type: integer
           format: int64
         _links:
@@ -353,8 +383,8 @@ components:
         series:
           id: 33
           type: 'favourites'
-          series: 52
-          user: 17
+          seriesId: 52
+          userId: 17
           _links:
             parent:
               href: /api/v1/series-list
@@ -393,8 +423,17 @@ components:
           examples:
             response-400-series:
               $ref: '#/components/examples/response-400-series'
-    400_BadRequest_Response_SeriesList:
+    400_BadRequest_Response_SeriesList_Post:
       description: "`BAD REQUEST`: wrong type, series or user does not exist, or series already exists in list"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+          examples:
+            response-400-series-list:
+              $ref: '#/components/examples/response-400-series-list'
+    400_BadRequest_Response_SeriesList_Put:
+      description: "`BAD REQUEST`: wrong type or series does not exist"
       content:
         application/json:
           schema:
@@ -528,18 +567,18 @@ components:
                 description: 'Series list type'
                 type: string
                 format: string
-              series:
-                description: 'Series list series'
+              seriesId:
+                description: 'Series list series Id'
                 type: integer
                 format: int64
-              user:
-                description: 'Series list user'
-                type: string
+              userId:
+                description: 'Series list user Id'
+                type: integer
                 format: int64
             example:
               type: favourites
-              series: 52
-              user: 17
+              seriesId: 52
+              userId: 17
   parameters:
     apiId:
       name: apiId
@@ -547,10 +586,16 @@ components:
       description: 'apiId of Series'
       required: true
       schema: { "type": "string", pattern: '^tt\d{7}$' }
-    user:
-      name: user
+    userId:
+      name: userId
       in: path
       description: 'user Id'
+      required: true
+      schema: { "type": "integer", pattern: '^\d+$' }
+    seriesListId:
+      name: seriesListId
+      in: path
+      description: 'series list Id'
       required: true
       schema: { "type": "integer", pattern: '^\d+$' }
     typeQuery:
@@ -558,8 +603,8 @@ components:
       in: query
       description: 'type'
       required: false
-      schema: { "type": "string", pattern: '^[A-Za-z]{10}$' }
-    seriesQuery:
+      schema: { "type": "string", pattern: '^[A-Za-z]{7,10}$' }
+    seriesIdQuery:
       name: series
       in: query
       description: 'series Id'

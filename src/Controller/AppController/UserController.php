@@ -27,7 +27,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/sign-up", name="sign_up")
+     * @Route("/sign_up", name="sign_up")
      * @param Request $request
      * @return RedirectResponse|Response
      */
@@ -39,7 +39,7 @@ class UserController extends AbstractController
         $form->add('sign-up', SubmitType::class, [
             'label' => 'Sign up',
             'attr' => [
-                'class' => 'btn-sign-up-form'
+                'class' => 'btn-form'
             ],
         ]);
 
