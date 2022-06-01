@@ -603,9 +603,9 @@ components:
       in: query
       description: 'type'
       required: false
-      schema: { "type": "string", pattern: '^[A-Za-z]{10}$' }
+      schema: { "type": "string", pattern: '^[A-Za-z]{7,10}$' }
     seriesIdQuery:
-      name: seriesId
+      name: series
       in: query
       description: 'series Id'
       required: false

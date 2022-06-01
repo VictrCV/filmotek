@@ -39,7 +39,7 @@ class UserController extends AbstractController
         $form->add('sign-up', SubmitType::class, [
             'label' => 'Sign up',
             'attr' => [
-                'class' => 'btn-sign-up-form'
+                'class' => 'btn-form'
             ],
         ]);
 

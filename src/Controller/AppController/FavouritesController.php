@@ -27,6 +27,6 @@ class FavouritesController extends SeriesListController
         $session = $request->getSession();
         $user = $session->get(UserApiController::USER_ID);
 
-        return $this->loadSeriesList($user, SeriesList::TO_WATCH);
+        return $this->loadSeriesList($user, SeriesList::FAVOURITES);
     }
 }

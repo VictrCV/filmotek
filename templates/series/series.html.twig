@@ -41,6 +41,16 @@
                             </a>
                         </div>
                         {% endif %}
+                        {% if app.request.attributes.get('_route_params')['list'] == 'to_watch' %}
+                            <div class="col-3">
+                                <a class="btn btn-form mb-4" role="button"
+                                   href="{{ path('series_list_start_watching', {
+                                       'list': app.request.attributes.get('_route_params')['list'],
+                                       'apiId': series.apiId}) }}">
+                                    Start watching
+                                </a>
+                            </div>
+                        {% endif %}
                     </div>
                 {% endif %}
                 <h2>Synopsis</h2>
