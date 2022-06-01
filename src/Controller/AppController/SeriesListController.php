@@ -84,8 +84,7 @@ class SeriesListController extends SeriesController
         $request = Request::create(
             SeriesListApiController::SERIES_LIST_API_ROUTE,
             'POST',
-            [], [], [],
-            ['HTTP_Authorization' => $session->get(UserController::JWT_SESSION_KEY)],
+            [], [], [], [],
             json_encode($data)
         );
         $response = $this->seriesListApiController->postAction($request);
@@ -181,8 +180,7 @@ class SeriesListController extends SeriesController
         $request = Request::create(
             SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesListId,
             'PUT',
-            [], [], [],
-            ['HTTP_Authorization' => $session->get(UserController::JWT_SESSION_KEY)],
+            [], [], [], [],
             json_encode([SeriesList::TYPE_ATTR => SeriesList::IN_PROGRESS])
         );
         $response = $this->seriesListApiController->putAction($request, $seriesListId);

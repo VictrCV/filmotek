@@ -65,7 +65,6 @@ class UserApiControllerTest extends WebTestCase
      */
     public function testPostUserAction201Created(): array
     {
-
         $data = [
             User::USERNAME_ATTR => self::$faker->userName(),
             User::PASSWORD_ATTR => self::$faker->password()
@@ -83,10 +82,10 @@ class UserApiControllerTest extends WebTestCase
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         self::assertTrue($response->isSuccessful());
         self::assertJson($response->getContent());
-        $user = json_decode($response->getContent(), true);
-        self::assertNotEmpty($user[User::USER_ATTR]['id']);
-        self::assertSame($data[User::USERNAME_ATTR], $user[User::USER_ATTR][User::USERNAME_ATTR]);
-        self::assertArrayNotHasKey(User::PASSWORD_ATTR, $user[User::USER_ATTR]);
+        $user = json_decode($response->getContent(), true)[User::USER_ATTR];
+        self::assertNotEmpty($user['id']);
+        self::assertSame($data[User::USERNAME_ATTR], $user[User::USERNAME_ATTR]);
+        self::assertArrayNotHasKey(User::PASSWORD_ATTR, $user);
 
         return $data;
     }
