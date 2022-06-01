@@ -8,7 +8,6 @@ use App\Entity\User;
 use App\Utility\Utils;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,11 +40,6 @@ class SeriesListApiController extends AbstractController
      * @param Request $request
      * @return Response
      * @Route(path="", name="post", methods={"POST"})
-     * @Security(
-     *     expression="is_granted('IS_AUTHENTICATED_FULLY')",
-     *     statusCode=401,
-     *     message="`Unauthorized`: Invalid credentials."
-     * )
      */
     public function postAction(Request $request): Response
     {
@@ -207,11 +201,6 @@ class SeriesListApiController extends AbstractController
      * @param int $seriesListId
      * @return Response
      * @Route(path="/{seriesListId}", name="put", methods={"PUT"})
-     * @Security(
-     *     expression="is_granted('IS_AUTHENTICATED_FULLY')",
-     *     statusCode=401,
-     *     message="`Unauthorized`: Invalid credentials."
-     * )
      */
     public function putAction(Request $request, int $seriesListId): Response
     {
@@ -225,13 +214,6 @@ class SeriesListApiController extends AbstractController
 
         $body = $request->getContent();
         $data = json_decode($body, true);
-
-        if ($this->getUser()->getId() != $seriesList->getUser()->getId() || (
-                isset($data[SeriesList::USER_ATTR]) &&
-                $this->getUser()->getId() != $data[SeriesList::USER_ATTR]
-            )) {
-            return Utils::errorMessage(Response::HTTP_FORBIDDEN, '`Forbidden`: you do not have permission to access.');
-        }
 
         if (isset($data[SeriesList::TYPE_ATTR])) {
             try {
@@ -249,6 +231,16 @@ class SeriesListApiController extends AbstractController
                 return Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Series does not exist.");
             }
             $seriesList->setSeries($series);
+        }
+
+        if (isset($data[SeriesList::USER_ATTR])) {
+            $user = $this->entityManager
+                ->getRepository(User::class)
+                ->find($data[SeriesList::USER_ATTR]);
+            if (!isset($user)) {
+                return Utils::errorMessage(Response::HTTP_BAD_REQUEST, "User does not exist.");
+            }
+            $seriesList->setUser($user);
         }
 
         $this->entityManager->flush();

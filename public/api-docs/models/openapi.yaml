@@ -94,8 +94,6 @@ paths:
               parameters:
                 token: '$response.body#/access_token'
               description: 'The `access_token` value returned in the response must be appended to the `Authorization: Bearer ` header in all operations.'
-        '401':
-          $ref: '#/components/responses/401_Unauthorized_Response'
         '422':
           $ref: '#/components/responses/422_UnprocessableEntity_Response'
   /series:
@@ -240,8 +238,6 @@ paths:
               $ref: '#/components/headers/Location'
         '400':
           $ref: '#/components/responses/400_BadRequest_Response_SeriesList_Put'
-        '401':
-          $ref: '#/components/responses/401_Unauthorized_Response'
         '403':
           $ref: '#/components/responses/403_Forbidden_Response'
         '404':

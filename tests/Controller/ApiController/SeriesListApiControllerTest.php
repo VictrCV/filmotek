@@ -48,6 +48,7 @@ class SeriesListApiControllerTest extends BaseTestCase
     public function testPostSeriesListAction201Created(): array
     {
         $seriesId = self::createSeries()['id'];
+        $userId = self::createUser()['id'];
 
         $data = [
             SeriesList::TYPE_ATTR => self::$faker->randomElement([
@@ -56,14 +57,13 @@ class SeriesListApiControllerTest extends BaseTestCase
                 SeriesList::TO_WATCH
             ]),
             SeriesList::SERIES_ATTR => $seriesId,
-            SeriesList::USER_ATTR => intval($_ENV['USER_ID'])
+            SeriesList::USER_ATTR => intval($userId)
         ];
 
         self::$client->request(
             'POST',
             SeriesListApiController::SERIES_LIST_API_ROUTE,
-            [], [],
-            self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD']),
+            [], [], [],
             json_encode($data)
         );
         $response = self::$client->getResponse();
@@ -97,7 +97,7 @@ class SeriesListApiControllerTest extends BaseTestCase
         self::$client->request(
             'POST',
             SeriesListApiController::SERIES_LIST_API_ROUTE,
-            [], [], self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD']),
+            [], [], [],
             json_encode($data)
         );
 
@@ -116,17 +116,18 @@ class SeriesListApiControllerTest extends BaseTestCase
     public function testPostSeriesListAction400BadRequestSeriesExistsInIncompatibleList()
     {
         $seriesId = self::createSeries()['id'];
+        $userId = self::createUser()['id'];
 
         $data = [
             SeriesList::TYPE_ATTR => SeriesList::TO_WATCH,
             SeriesList::SERIES_ATTR => $seriesId,
-            SeriesList::USER_ATTR => intval($_ENV['USER_ID'])
+            SeriesList::USER_ATTR => intval($userId)
         ];
 
         self::$client->request(
             'POST',
             SeriesListApiController::SERIES_LIST_API_ROUTE,
-            [], [], self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD']),
+            [], [], [],
             json_encode($data)
         );
 
@@ -135,7 +136,7 @@ class SeriesListApiControllerTest extends BaseTestCase
         self::$client->request(
             'POST',
             SeriesListApiController::SERIES_LIST_API_ROUTE,
-            [], [], self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD']),
+            [], [], [],
             json_encode($data)
         );
 
@@ -153,6 +154,8 @@ class SeriesListApiControllerTest extends BaseTestCase
      */
     public function testPostSeriesListAction400BadRequestSeriesNotExists()
     {
+        $userId = self::createUser()['id'];
+
         $data = [
             SeriesList::TYPE_ATTR => self::$faker->randomElement([
                 SeriesList::FAVOURITES,
@@ -160,13 +163,13 @@ class SeriesListApiControllerTest extends BaseTestCase
                 SeriesList::TO_WATCH
             ]),
             SeriesList::SERIES_ATTR => -1,
-            SeriesList::USER_ATTR => intval($_ENV['USER_ID'])
+            SeriesList::USER_ATTR => intval($userId)
         ];
 
         self::$client->request(
             'POST',
             SeriesListApiController::SERIES_LIST_API_ROUTE,
-            [], [], self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD']),
+            [], [], [],
             json_encode($data)
         );
 
@@ -199,7 +202,7 @@ class SeriesListApiControllerTest extends BaseTestCase
         self::$client->request(
             'POST',
             SeriesListApiController::SERIES_LIST_API_ROUTE,
-            [], [], self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD']),
+            [], [], [],
             json_encode($data)
         );
 
@@ -218,17 +221,18 @@ class SeriesListApiControllerTest extends BaseTestCase
     public function testPostSeriesListAction400BadRequestWrongType()
     {
         $seriesId = self::createSeries()['id'];
+        $userId = self::createUser()['id'];
 
         $data = [
             SeriesList::TYPE_ATTR => self::$faker->lexify(),
             SeriesList::SERIES_ATTR => $seriesId,
-            SeriesList::USER_ATTR => intval($_ENV['USER_ID'])
+            SeriesList::USER_ATTR => intval($userId)
         ];
 
         self::$client->request(
             'POST',
             SeriesListApiController::SERIES_LIST_API_ROUTE,
-            [], [], self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD']),
+            [], [], [],
             json_encode($data)
         );
 
@@ -248,33 +252,12 @@ class SeriesListApiControllerTest extends BaseTestCase
     {
         self::$client->request(
             'POST',
-            SeriesListApiController::SERIES_LIST_API_ROUTE,
-            [], [],
-            self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD'])
-        );
-
-        $response = self::$client->getResponse();
-
-        self::assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
-        self::assertFalse($response->isSuccessful());
-    }
-
-    /**
-     * @covers ::postAction
-     * @covers ::postActionCheckBadRequest
-     * @return void
-     * @throws Exception
-     */
-    public function testPostSeriesListAction401Unauthorized()
-    {
-        self::$client->request(
-            'POST',
             SeriesListApiController::SERIES_LIST_API_ROUTE
         );
 
         $response = self::$client->getResponse();
 
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+        self::assertEquals(Response::HTTP_UNPROCESSABLE_ENTITY, $response->getStatusCode());
         self::assertFalse($response->isSuccessful());
     }
 
@@ -371,17 +354,18 @@ class SeriesListApiControllerTest extends BaseTestCase
         }
 
         $seriesId = self::createSeries()['id'];
+        $userId = self::createUser()['id'];
 
         $data = [
             SeriesList::TYPE_ATTR => $type,
-            SeriesList::SERIES_ATTR => $seriesId
+            SeriesList::SERIES_ATTR => $seriesId,
+            SeriesList::USER_ATTR => $userId
         ];
 
         self::$client->request(
             'PUT',
             SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesList['id'],
-            [], [],
-            self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD']),
+            [], [], [],
             json_encode($data)
         );
         $response = self::$client->getResponse();
@@ -391,24 +375,8 @@ class SeriesListApiControllerTest extends BaseTestCase
         self::assertJson($response->getContent());
         $seriesListResponse = json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR];
         self::assertEquals($type, $seriesListResponse[SeriesList::TYPE_ATTR]);
-    }
-
-    /**
-     * @depends testPostSeriesListAction201Created
-     * @covers ::putAction
-     * @return void
-     * @throws Exception
-     */
-    public function testPutSeriesListAction401Unauthorized(array $seriesList)
-    {
-        self::$client->request(
-            'PUT',
-            SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesList['id']
-        );
-        $response = self::$client->getResponse();
-
-        self::assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-        self::assertFalse($response->isSuccessful());
+        self::assertEquals($seriesId, $seriesListResponse[SeriesList::SERIES_ATTR]['id']);
+        self::assertEquals($userId, $seriesListResponse[SeriesList::USER_ATTR]['id']);
     }
 
     /**
@@ -420,9 +388,7 @@ class SeriesListApiControllerTest extends BaseTestCase
     {
         self::$client->request(
             'PUT',
-            SeriesListApiController::SERIES_LIST_API_ROUTE . '/-1',
-            [], [],
-            self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD'])
+            SeriesListApiController::SERIES_LIST_API_ROUTE . '/-1'
         );
         $response = self::$client->getResponse();
 
@@ -441,8 +407,7 @@ class SeriesListApiControllerTest extends BaseTestCase
         self::$client->request(
             'PUT',
             SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesList['id'],
-            [], [],
-            self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD']),
+            [], [], [],
             json_encode([SeriesList::TYPE_ATTR => self::$faker->lexify()])
         );
         $response = self::$client->getResponse();
@@ -462,8 +427,7 @@ class SeriesListApiControllerTest extends BaseTestCase
         self::$client->request(
             'PUT',
             SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesList['id'],
-            [], [],
-            self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD']),
+            [], [], [],
             json_encode([SeriesList::SERIES_ATTR => -1])
         );
         $response = self::$client->getResponse();
@@ -478,18 +442,17 @@ class SeriesListApiControllerTest extends BaseTestCase
      * @return void
      * @throws Exception
      */
-    public function testPutSeriesListAction403ForbiddenUpdatedUser(array $seriesList)
+    public function testPutSeriesListAction400BadRequestUserNotExists(array $seriesList)
     {
         self::$client->request(
             'PUT',
             SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesList['id'],
-            [], [],
-            self::getAuthTokenHeader($_ENV['USER_USERNAME'], $_ENV['USER_PASSWORD']),
+            [], [], [],
             json_encode([SeriesList::USER_ATTR => -1])
         );
         $response = self::$client->getResponse();
 
-        self::assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         self::assertFalse($response->isSuccessful());
     }
 }
