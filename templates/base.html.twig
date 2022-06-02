@@ -47,6 +47,9 @@
                             <li {% if active == 'to_watch' %} class="nav-item active" {% else %} class="nav-item" {% endif %}>
                                 <a class="nav-link" aria-current="page" href="{{ path('to_watch') }}">To watch</a>
                             </li>
+                            <li {% if active == 'in_progress' %} class="nav-item active" {% else %} class="nav-item" {% endif %}>
+                                <a class="nav-link" aria-current="page" href="{{ path('in_progress') }}">In progress</a>
+                            </li>
                         {% endif %}
                         <li {% if active == 'search' %} class="nav-item active" {% else %} class="nav-item" {% endif %}>
                             <a class="nav-link" aria-current="page" href="{{ path('search') }}">Search</a>

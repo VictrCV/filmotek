@@ -2,10 +2,8 @@
 
 namespace App\Controller\AppController;
 
-use App\Controller\ApiController\SeriesListApiController;
 use App\Controller\ApiController\UserApiController;
 use App\Entity\SeriesList;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

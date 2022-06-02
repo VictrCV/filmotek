@@ -37,6 +37,19 @@ class SeriesTest extends TestCase
     /**
      * Implement testGetId().
      *
+     * @return void
+     * @throws Exception
+     */
+    public function testConstructor(): void
+    {
+        $series = new Series();
+        $defaultTime = DateTime::createFromFormat("H:i:s", "00:00:00");
+        self::assertEquals($defaultTime, $series->getTime());
+    }
+
+    /**
+     * Implement testGetId().
+     *
      * @covers ::getId
      * @return void
      * @throws Exception
@@ -187,7 +200,7 @@ class SeriesTest extends TestCase
             Series::EPISODE_ATTR => self::$series->getEpisode(),
             Series::TIME_ATTR => self::$series->getTime(),
         ];
-        if(self::$series->getTime() !== null) {
+        if (self::$series->getTime() !== null) {
             $vars[Series::TIME_ATTR] = self::$series->getTime()->format('H:i:s');
         }
 
