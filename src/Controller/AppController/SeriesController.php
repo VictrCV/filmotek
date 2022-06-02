@@ -61,22 +61,44 @@ class SeriesController extends AbstractController
         }
 
         if (isset($series['id']) && $session->get(UserApiController::USER_ID) !== null) {
-            $inFavourites = $this->isSeriesInList(
-                $session->get(UserApiController::USER_ID),
-                SeriesList::FAVOURITES,
-                $series['id']);
-            $inIncompatibleList = $this->isSeriesInIncompatibleList(
-                $session->get(UserApiController::USER_ID),
-                $series['id']);
+            $userId = $session->get(UserApiController::USER_ID);
+
+            $inFavourites = $this->isSeriesInList($userId, SeriesList::FAVOURITES, $series['id']);
+            if ($list == 'in_progress') {
+                $inIncompatibleList = true;
+                $data = [
+                    SeriesList::TYPE_ATTR => SeriesList::IN_PROGRESS,
+                    SeriesList::SERIES_ATTR => $series['id'],
+                ];
+
+                $request = Request::create(
+                    SeriesListApiController::SERIES_LIST_GET_BY_USER_ROUTE . $userId,
+                    'GET',
+                    $data
+                );
+                $response = $this->seriesListApiController->getByUserAction($request, $userId);
+
+                if ($response->getStatusCode() != Response::HTTP_OK) {
+                    $this->addFlash('error', 'Oops! Something went wrong and the series could not be loaded.');
+                    return $this->redirectToRoute($list);
+                }
+
+                $seriesList = json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR][0];
+            } else {
+                $inIncompatibleList = $this->isSeriesInIncompatibleList($userId, $series['id']);
+                $seriesList = null;
+            }
         } else {
             $inFavourites = false;
             $inIncompatibleList = false;
+            $seriesList = null;
         }
 
         return $this->render('series/series.html.twig', [
             'series' => $series,
             'inFavourites' => $inFavourites,
-            'inIncompatibleList' => $inIncompatibleList
+            'inIncompatibleList' => $inIncompatibleList,
+            'seriesList' => $seriesList
         ]);
     }
 
