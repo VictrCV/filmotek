@@ -188,8 +188,15 @@ class SeriesListController extends SeriesController
 
         if ($response->getStatusCode() != Response::HTTP_OK) {
             $this->addFlash('error', $errorMessage);
+            return $this->redirectToRoute('series', [
+                'list' => $list,
+                Series::API_ID_ATTR => $apiId
+            ]);
         }
 
-        return $this->redirectToRoute('to_watch');
+        return $this->redirectToRoute('series', [
+            'list' => 'in_progress',
+            Series::API_ID_ATTR => $apiId
+        ]);
     }
 }
