@@ -109,6 +109,7 @@ class SeriesListTest extends TestCase
         self::expectException(InvalidArgumentException::class);
         self::$seriesList->setType($invalidType);
     }
+
     /**
      * Implement testGetSetTime().
      *
@@ -169,9 +170,9 @@ class SeriesListTest extends TestCase
             SeriesList::TYPE_ATTR => self::$seriesList->getType(),
             SeriesList::SERIES_ATTR => self::$seriesList->getSeries(),
             SeriesList::USER_ATTR => self::$seriesList->getUser(),
-            Series::SEASON_ATTR => self::$seriesList->getSeason(),
-            Series::EPISODE_ATTR => self::$seriesList->getEpisode(),
-            Series::TIME_ATTR => self::$seriesList->getTime()->format('H:i:s'),
+            SeriesList::SEASON_ATTR => self::$seriesList->getSeason(),
+            SeriesList::EPISODE_ATTR => self::$seriesList->getEpisode(),
+            SeriesList::TIME_ATTR => self::$seriesList->getTime()->format('H:i:s'),
         ];
         self::assertEquals($vars, self::$seriesList->jsonSerialize());
     }

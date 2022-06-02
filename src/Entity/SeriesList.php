@@ -24,6 +24,9 @@ class SeriesList implements JsonSerializable
     public const TYPE_ATTR = 'type';
     public const SERIES_ATTR = 'series';
     public const USER_ATTR = 'user';
+    public const SEASON_ATTR = 'season';
+    public const EPISODE_ATTR = 'episode';
+    public const TIME_ATTR = 'time';
 
     /**
      * @var int
@@ -171,7 +174,7 @@ class SeriesList implements JsonSerializable
     public function jsonSerialize(): mixed
     {
         $vars = get_object_vars($this);
-        $vars[Series::TIME_ATTR] = $this->getTime()->format('H:i:s');
+        $vars[SeriesList::TIME_ATTR] = $this->getTime()->format('H:i:s');
 
         return $vars;
     }

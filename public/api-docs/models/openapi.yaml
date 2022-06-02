@@ -308,18 +308,6 @@ components:
           description: 'Series imageUrl'
           type: string
           format: string
-        season:
-          description: 'Series season'
-          type: integer
-          format: int32
-        episode:
-          description: 'Series episode'
-          type: integer
-          format: int32
-        time:
-          description: 'Series time'
-          type: string
-          format: date-time
         _links:
           description: link relations
           type: object
@@ -338,9 +326,6 @@ components:
           isFilm: false
           synopsis: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.'
           imageUrl: 'https://m.media-amazon.com/images/M/MV5BYTRiNDQwYzAtMzVlZS00NTI5LWJjYjUtMzkwNTUzMWMxZTllXkEyXkFqcGdeQXVyNDIzMzcwNjc@._V1_.jpg'
-          season: 3
-          episode: 9
-          time: '00:35:00'
           _links:
             parent:
               href: /api/v1/series
@@ -365,6 +350,18 @@ components:
           description: 'Series list user Id'
           type: integer
           format: int64
+        season:
+          description: 'Series season'
+          type: integer
+          format: int32
+        episode:
+          description: 'Series episode'
+          type: integer
+          format: int32
+        time:
+          description: 'Series time'
+          type: string
+          format: date-time
         _links:
           description: link relations
           type: object
@@ -381,6 +378,9 @@ components:
           type: 'favourites'
           seriesId: 52
           userId: 17
+          season: 3
+          episode: 9
+          time: '00:35:00'
           _links:
             parent:
               href: /api/v1/series-list
@@ -530,27 +530,12 @@ components:
                 description: 'Series imageUrl'
                 type: string
                 format: string
-              season:
-                description: 'Series season'
-                type: integer
-                format: int32
-              episode:
-                description: 'Series episode'
-                type: integer
-                format: int32
-              time:
-                description: 'Series time'
-                type: string
-                format: date-time
             example:
               apiId: 'tt0944947'
               title: 'Game of Thrones'
               isFilm: false
               synopsis: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.'
               imageUrl: 'https://m.media-amazon.com/images/M/MV5BYTRiNDQwYzAtMzVlZS00NTI5LWJjYjUtMzkwNTUzMWMxZTllXkEyXkFqcGdeQXVyNDIzMzcwNjc@._V1_.jpg'
-              season: 3
-              episode: 9
-              time: '00:35:00'
     SeriesListRequestBody:
       description: '`Series list` data'
       required: true
@@ -571,10 +556,25 @@ components:
                 description: 'Series list user Id'
                 type: integer
                 format: int64
+              season:
+                description: 'Series season'
+                type: integer
+                format: int32
+              episode:
+                description: 'Series episode'
+                type: integer
+                format: int32
+              time:
+                description: 'Series time'
+                type: string
+                format: date-time
             example:
               type: favourites
               seriesId: 52
               userId: 17
+              season: 3
+              episode: 9
+              time: '00:35:00'
   parameters:
     apiId:
       name: apiId

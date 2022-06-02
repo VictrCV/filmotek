@@ -4,7 +4,6 @@ namespace App\Controller\ApiController;
 
 use App\Entity\Series;
 use App\Utility\Utils;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,18 +54,6 @@ class SeriesApiController extends AbstractController
         $series->setIsFilm($data[Series::IS_FILM_ATTR]);
         $series->setSynopsis($data[Series::SYNOPSIS_ATTR]);
         $series->setImageUrl($data[Series::IMAGE_URL_ATTR]);
-
-        if(isset($data[Series::SEASON_ATTR])) {
-            $series->setSeason($data[Series::SEASON_ATTR]);
-        }
-
-        if(isset($data[Series::EPISODE_ATTR])) {
-            $series->setEpisode($data[Series::EPISODE_ATTR]);
-        }
-
-        if(isset($data[Series::TIME_ATTR])) {
-            $series->setTime(DateTime::createFromFormat("H:i:s", $data[Series::TIME_ATTR]));
-        }
 
         $seriesExists = $this->entityManager
             ->getRepository(Series::class)

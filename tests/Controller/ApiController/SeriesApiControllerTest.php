@@ -52,10 +52,7 @@ class SeriesApiControllerTest extends BaseTestCase
             Series::TITLE_ATTR => self::$faker->sentence(3),
             Series::IS_FILM_ATTR => self::$faker->boolean(),
             Series::SYNOPSIS_ATTR => self::$faker->sentence(30),
-            Series::IMAGE_URL_ATTR => self::$faker->imageUrl(),
-            Series::SEASON_ATTR => self::$faker->randomDigitNot(0),
-            Series::EPISODE_ATTR => self::$faker->numberBetween(1,50),
-            Series::TIME_ATTR => self::$faker->time()
+            Series::IMAGE_URL_ATTR => self::$faker->imageUrl()
         ];
 
         self::$client->request(

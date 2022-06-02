@@ -3,7 +3,6 @@
 namespace App\Tests\Entity;
 
 use App\Entity\Series;
-use DateTime;
 use Exception;
 use Faker\Factory as FakerFactoryAlias;
 use Faker\Generator as FakerGeneratorAlias;

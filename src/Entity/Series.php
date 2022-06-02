@@ -22,9 +22,6 @@ class Series implements JsonSerializable
     public const IS_FILM_ATTR = 'isFilm';
     public const SYNOPSIS_ATTR = 'synopsis';
     public const IMAGE_URL_ATTR = 'imageUrl';
-    public const SEASON_ATTR = 'season';
-    public const EPISODE_ATTR = 'episode';
-    public const TIME_ATTR = 'time';
 
     /**
      * @var int
