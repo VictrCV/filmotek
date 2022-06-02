@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
+use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
-use JetBrains\PhpStorm\Internal\TentativeType;
 use JsonSerializable;
 
 /**
@@ -60,6 +61,32 @@ class SeriesList implements JsonSerializable
      */
     private $user;
 
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="season", type="integer")
+     */
+    private $season = 1;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="episode", type="integer")
+     */
+    private $episode = 1;
+
+    /**
+     * @var DateTime
+     *
+     * @ORM\Column(name="time", type="time")
+     */
+    private $time;
+
+    public function __construct()
+    {
+        $this->setTime(DateTime::createFromFormat("H:i:s", "00:00:00"));
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -105,8 +132,47 @@ class SeriesList implements JsonSerializable
         return $this;
     }
 
+    public function getSeason(): ?int
+    {
+        return $this->season;
+    }
+
+    public function setSeason(?int $season): self
+    {
+        $this->season = $season;
+
+        return $this;
+    }
+
+    public function getEpisode(): ?int
+    {
+        return $this->episode;
+    }
+
+    public function setEpisode(?int $episode): self
+    {
+        $this->episode = $episode;
+
+        return $this;
+    }
+
+    public function getTime(): ?DateTimeInterface
+    {
+        return $this->time;
+    }
+
+    public function setTime(?DateTimeInterface $time): self
+    {
+        $this->time = $time;
+
+        return $this;
+    }
+
     public function jsonSerialize(): mixed
     {
-        return get_object_vars($this);
+        $vars = get_object_vars($this);
+        $vars[Series::TIME_ATTR] = $this->getTime()->format('H:i:s');
+
+        return $vars;
     }
 }

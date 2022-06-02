@@ -37,19 +37,6 @@ class SeriesTest extends TestCase
     /**
      * Implement testGetId().
      *
-     * @return void
-     * @throws Exception
-     */
-    public function testConstructor(): void
-    {
-        $series = new Series();
-        $defaultTime = DateTime::createFromFormat("H:i:s", "00:00:00");
-        self::assertEquals($defaultTime, $series->getTime());
-    }
-
-    /**
-     * Implement testGetId().
-     *
      * @covers ::getId
      * @return void
      * @throws Exception
@@ -57,52 +44,6 @@ class SeriesTest extends TestCase
     public function testGetId(): void
     {
         self::assertEmpty(self::$series->getId());
-    }
-
-    /**
-     * Implement testGetSetTime().
-     *
-     * @covers ::getTime
-     * @covers ::setTime
-     * @return void
-     * @throws Exception
-     */
-    public function testGetSetTime(): void
-    {
-        $datetime = self::$faker->time();
-        $time = DateTime::createFromFormat("H:i:s", $datetime);
-        self::$series->setTime($time);
-        self::assertEquals($time, self::$series->getTime());
-    }
-
-    /**
-     * Implement testGetSetEpisode().
-     *
-     * @covers ::getEpisode
-     * @covers ::setEpisode
-     * @return void
-     * @throws Exception
-     */
-    public function testGetSetEpisode(): void
-    {
-        $episode = self::$faker->randomNumber();
-        self::$series->setEpisode($episode);
-        self::assertEquals($episode, self::$series->getEpisode());
-    }
-
-    /**
-     * Implement testGetSetSeason().
-     *
-     * @covers ::getSeason
-     * @covers ::setSeason
-     * @return void
-     * @throws Exception
-     */
-    public function testGetSetSeason(): void
-    {
-        $season = self::$faker->randomNumber();
-        self::$series->setSeason($season);
-        self::assertEquals($season, self::$series->getSeason());
     }
 
     /**
@@ -196,13 +137,7 @@ class SeriesTest extends TestCase
             Series::IS_FILM_ATTR => self::$series->getIsFilm(),
             Series::SYNOPSIS_ATTR => self::$series->getSynopsis(),
             Series::IMAGE_URL_ATTR => self::$series->getImageUrl(),
-            Series::SEASON_ATTR => self::$series->getSeason(),
-            Series::EPISODE_ATTR => self::$series->getEpisode(),
-            Series::TIME_ATTR => self::$series->getTime(),
         ];
-        if (self::$series->getTime() !== null) {
-            $vars[Series::TIME_ATTR] = self::$series->getTime()->format('H:i:s');
-        }
 
         self::assertEquals($vars, self::$series->jsonSerialize());
     }

@@ -5,6 +5,7 @@ namespace App\Tests\Entity;
 use App\Entity\Series;
 use App\Entity\SeriesList;
 use App\Entity\User;
+use DateTime;
 use Exception;
 use Faker\Factory as FakerFactoryAlias;
 use Faker\Generator as FakerGeneratorAlias;
@@ -34,6 +35,19 @@ class SeriesListTest extends TestCase
     {
         self::$seriesList = new SeriesList();
         self::$faker = FakerFactoryAlias::create();
+    }
+
+    /**
+     * Implement testGetId().
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function testConstructor(): void
+    {
+        $seriesList = new SeriesList();
+        $defaultTime = DateTime::createFromFormat("H:i:s", "00:00:00");
+        self::assertEquals($defaultTime, $seriesList->getTime());
     }
 
     /**
@@ -95,6 +109,51 @@ class SeriesListTest extends TestCase
         self::expectException(InvalidArgumentException::class);
         self::$seriesList->setType($invalidType);
     }
+    /**
+     * Implement testGetSetTime().
+     *
+     * @covers ::getTime
+     * @covers ::setTime
+     * @return void
+     * @throws Exception
+     */
+    public function testGetSetTime(): void
+    {
+        $datetime = self::$faker->time();
+        $time = DateTime::createFromFormat("H:i:s", $datetime);
+        self::$seriesList->setTime($time);
+        self::assertEquals($time, self::$seriesList->getTime());
+    }
+
+    /**
+     * Implement testGetSetEpisode().
+     *
+     * @covers ::getEpisode
+     * @covers ::setEpisode
+     * @return void
+     * @throws Exception
+     */
+    public function testGetSetEpisode(): void
+    {
+        $episode = self::$faker->randomNumber();
+        self::$seriesList->setEpisode($episode);
+        self::assertEquals($episode, self::$seriesList->getEpisode());
+    }
+
+    /**
+     * Implement testGetSetSeason().
+     *
+     * @covers ::getSeason
+     * @covers ::setSeason
+     * @return void
+     * @throws Exception
+     */
+    public function testGetSetSeason(): void
+    {
+        $season = self::$faker->randomNumber();
+        self::$seriesList->setSeason($season);
+        self::assertEquals($season, self::$seriesList->getSeason());
+    }
 
     /**
      * Implement testJsonSerialize().
@@ -109,7 +168,10 @@ class SeriesListTest extends TestCase
             'id' => self::$seriesList->getId(),
             SeriesList::TYPE_ATTR => self::$seriesList->getType(),
             SeriesList::SERIES_ATTR => self::$seriesList->getSeries(),
-            SeriesList::USER_ATTR => self::$seriesList->getUser()
+            SeriesList::USER_ATTR => self::$seriesList->getUser(),
+            Series::SEASON_ATTR => self::$seriesList->getSeason(),
+            Series::EPISODE_ATTR => self::$seriesList->getEpisode(),
+            Series::TIME_ATTR => self::$seriesList->getTime()->format('H:i:s'),
         ];
         self::assertEquals($vars, self::$seriesList->jsonSerialize());
     }
