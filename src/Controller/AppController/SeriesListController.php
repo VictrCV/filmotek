@@ -137,6 +137,7 @@ class SeriesListController extends SeriesController
      */
     public function startWatching(Request $request, string $list, string $apiId): RedirectResponse|Response
     {
+        $errorMessage = 'Oops! Something went wrong and it was not possible to start watching the series.';
         $session = $request->getSession();
         $userId = $session->get(UserApiController::USER_ID);
 
@@ -146,7 +147,7 @@ class SeriesListController extends SeriesController
         $response = $this->seriesApiController->getByApiIdAction($request, $apiId);
 
         if ($response->getStatusCode() != Response::HTTP_OK) {
-            $this->addFlash('error', 'Oops! Something went wrong and it was not possible to start watching the series.');
+            $this->addFlash('error', $errorMessage);
             return $this->redirectToRoute('series', [
                 'list' => $list,
                 Series::API_ID_ATTR => $apiId
@@ -168,7 +169,7 @@ class SeriesListController extends SeriesController
         $response = $this->seriesListApiController->getByUserAction($request, $userId);
 
         if ($response->getStatusCode() != Response::HTTP_OK) {
-            $this->addFlash('error', 'Oops! Something went wrong and it was not possible to start watching the series.');
+            $this->addFlash('error', $errorMessage);
             return $this->redirectToRoute('series', [
                 'list' => $list,
                 Series::API_ID_ATTR => $apiId
@@ -186,12 +187,9 @@ class SeriesListController extends SeriesController
         $response = $this->seriesListApiController->putAction($request, $seriesListId);
 
         if ($response->getStatusCode() != Response::HTTP_OK) {
-            $this->addFlash('error', 'Oops! Something went wrong and it was not possible to start watching the series.');
+            $this->addFlash('error', $errorMessage);
         }
 
-        return $this->redirectToRoute('series', [
-            'list' => $list,
-            Series::API_ID_ATTR => $apiId
-        ]);
+        return $this->redirectToRoute('to_watch');
     }
 }
