@@ -219,7 +219,7 @@ class SeriesListApiController extends AbstractController
             try {
                 $seriesList->setType($data[SeriesList::TYPE_ATTR]);
             } catch (InvalidArgumentException) {
-                return Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Wrong type.");
+                $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Wrong type.");
             }
         }
 
@@ -228,7 +228,7 @@ class SeriesListApiController extends AbstractController
                 ->getRepository(Series::class)
                 ->find($data[SeriesList::SERIES_ATTR]);
             if (!isset($series)) {
-                return Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Series does not exist.");
+                $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Series does not exist.");
             }
             $seriesList->setSeries($series);
         }
@@ -238,9 +238,13 @@ class SeriesListApiController extends AbstractController
                 ->getRepository(User::class)
                 ->find($data[SeriesList::USER_ATTR]);
             if (!isset($user)) {
-                return Utils::errorMessage(Response::HTTP_BAD_REQUEST, "User does not exist.");
+                $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "User does not exist.");
             }
             $seriesList->setUser($user);
+        }
+
+        if (isset($badRequest)) {
+            return $badRequest;
         }
 
         $this->entityManager->flush();
