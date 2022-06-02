@@ -15,19 +15,19 @@
                                 <label class="align-middle">Season</label>
                             </div>
                             <div class="col-1 text-center">
-                                <input type="number" class="form-control" id="season" value="{{ series.season }}" disabled readonly>
+                                <input type="number" class="form-control" id="season" value="{{ seriesList.season }}" disabled readonly>
                             </div>
                             <div class="col-1 text-end pe-0">
                                 <label class="align-middle">Episode</label>
                             </div>
                             <div class="col-1 text-center">
-                                <input type="number" class="form-control" id="episode" value="{{ series.episode }}" disabled readonly>
+                                <input type="number" class="form-control" id="episode" value="{{ seriesList.episode }}" disabled readonly>
                             </div>
                             <div class="col-1 text-end pe-0">
                                 <label class="align-middle">Time</label>
                             </div>
                             <div class="col-2 text-center">
-                                <input type="time" class="form-control" id="time" value="{{ series.time }}" disabled readonly>
+                                <input type="time" class="form-control" id="time" value="{{ seriesList.time }}" step="1" disabled readonly>
                             </div>
                         </div>
                     {% endif %}
