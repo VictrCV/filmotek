@@ -9,10 +9,32 @@
             <div class="col-8">
                 <h1 class="text-center pb-5">{{ series.title }}</h1>
                 {% if (app.session.get('jwt') != null) %}
-                    <div class="row">
+                    {% if (app.request.attributes.get('_route_params')['list'] == 'in_progress') %}
+                        <div class="row justify-content-center mb-5">
+                            <div class="col-1 text-end pe-0">
+                                <label class="align-middle">Season</label>
+                            </div>
+                            <div class="col-1 text-center">
+                                <input type="number" class="form-control" id="season" value="{{ series.season }}" disabled readonly>
+                            </div>
+                            <div class="col-1 text-end pe-0">
+                                <label class="align-middle">Episode</label>
+                            </div>
+                            <div class="col-1 text-center">
+                                <input type="number" class="form-control" id="episode" value="{{ series.episode }}" disabled readonly>
+                            </div>
+                            <div class="col-1 text-end pe-0">
+                                <label class="align-middle">Time</label>
+                            </div>
+                            <div class="col-2 text-center">
+                                <input type="time" class="form-control" id="time" value="{{ series.time }}" disabled readonly>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="row mb-4">
                         {% if inFavourites == false %}
                             <div class="col-3">
-                                <a class="btn btn-form mb-4" role="button"
+                                <a class="btn btn-form" role="button"
                                    href="{{ path('series_list_post', {
                                        'list': app.request.attributes.get('_route_params')['list'],
                                        'type': 'favourites',
@@ -23,7 +45,7 @@
                         {% endif %}
                         {% if inIncompatibleList == false %}
                         <div class="col-3">
-                            <a class="btn btn-form mb-4" role="button"
+                            <a class="btn btn-form" role="button"
                                href="{{ path('series_list_post', {
                                    'list': app.request.attributes.get('_route_params')['list'],
                                    'type': 'toWatch',
@@ -32,7 +54,7 @@
                             </a>
                         </div>
                         <div class="col-3">
-                            <a class="btn btn-form mb-4" role="button"
+                            <a class="btn btn-form" role="button"
                                href="{{ path('series_list_post', {
                                    'list': app.request.attributes.get('_route_params')['list'],
                                    'type': 'inProgress',
@@ -43,7 +65,7 @@
                         {% endif %}
                         {% if app.request.attributes.get('_route_params')['list'] == 'to_watch' %}
                             <div class="col-3">
-                                <a class="btn btn-form mb-4" role="button"
+                                <a class="btn btn-form" role="button"
                                    href="{{ path('series_list_start_watching', {
                                        'list': app.request.attributes.get('_route_params')['list'],
                                        'apiId': series.apiId}) }}">

@@ -3,6 +3,7 @@
 namespace App\Utility;
 
 use App\Entity\Series;
+use DateTime;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -72,6 +73,9 @@ trait Utils
                 Series::IS_FILM_ATTR => !$series['titleType']['isSeries'],
                 Series::SYNOPSIS_ATTR => $series['plot']['plotText']['plainText'],
                 Series::IMAGE_URL_ATTR => $series['primaryImage']['url'],
+                Series::SEASON_ATTR => 1,
+                Series::EPISODE_ATTR => 1,
+                Series::TIME_ATTR => DateTime::createFromFormat("H:i:s", "00:00:00")
             ];
         }
         return null;

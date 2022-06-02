@@ -12,19 +12,19 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @codeCoverageIgnore
  */
-class ToWatchController extends SeriesListController
+class InProgressController extends SeriesListController
 {
 
     /**
-     * @Route("/to_watch", name="to_watch")
+     * @Route("/in_progress", name="in_progress")
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function toWatch(Request $request): RedirectResponse|Response
+    public function favourites(Request $request): RedirectResponse|Response
     {
         $session = $request->getSession();
         $user = $session->get(UserApiController::USER_ID);
 
-        return $this->loadSeriesList($user, SeriesList::TO_WATCH);
+        return $this->loadSeriesList($user, SeriesList::IN_PROGRESS);
     }
 }

@@ -73,25 +73,30 @@ class Series implements JsonSerializable
     private $imageUrl;
 
     /**
-     * @var int|null
+     * @var int
      *
-     * @ORM\Column(name="season", type="integer", nullable=true)
+     * @ORM\Column(name="season", type="integer")
      */
-    private $season;
+    private $season = 1;
 
     /**
-     * @var int|null
+     * @var int
      *
-     * @ORM\Column(name="episode", type="integer", nullable=true)
+     * @ORM\Column(name="episode", type="integer")
      */
-    private $episode;
+    private $episode = 1;
 
     /**
-     * @var DateTime|null
+     * @var DateTime
      *
-     * @ORM\Column(name="time", type="time", nullable=true)
+     * @ORM\Column(name="time", type="time")
      */
     private $time;
+
+    public function __construct()
+    {
+        $this->setTime(DateTime::createFromFormat("H:i:s", "00:00:00"));
+    }
 
     public function getId(): ?int
     {
@@ -197,7 +202,7 @@ class Series implements JsonSerializable
     public function jsonSerialize(): mixed
     {
         $vars = get_object_vars($this);
-        if($this->getTime() !== null) {
+        if ($this->getTime() !== null) {
             $vars[Series::TIME_ATTR] = $this->getTime()->format('H:i:s');
         }
         return $vars;
