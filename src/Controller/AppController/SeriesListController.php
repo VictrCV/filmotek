@@ -146,56 +146,45 @@ class SeriesListController extends SeriesController
         );
         $response = $this->seriesApiController->getByApiIdAction($request, $apiId);
 
-        if ($response->getStatusCode() != Response::HTTP_OK) {
-            $this->addFlash('error', $errorMessage);
-            return $this->redirectToRoute('series', [
-                'list' => $list,
-                Series::API_ID_ATTR => $apiId
-            ]);
-        }
-        $seriesId = json_decode($response->getContent(), true)[Series::SERIES_ATTR]['id'];
+        if ($response->getStatusCode() == Response::HTTP_OK) {
+            $seriesId = json_decode($response->getContent(), true)[Series::SERIES_ATTR]['id'];
 
-        $data = [
-            SeriesList::TYPE_ATTR => SeriesList::TO_WATCH,
-            SeriesList::SERIES_ATTR => $seriesId
-        ];
+            $data = [
+                SeriesList::TYPE_ATTR => SeriesList::TO_WATCH,
+                SeriesList::SERIES_ATTR => $seriesId
+            ];
 
-        $request = Request::create(
-            SeriesListApiController::SERIES_LIST_GET_BY_USER_ROUTE . $userId,
-            'GET',
-            $data,
+            $request = Request::create(
+                SeriesListApiController::SERIES_LIST_GET_BY_USER_ROUTE . $userId,
+                'GET',
+                $data,
 
-        );
-        $response = $this->seriesListApiController->getByUserAction($request, $userId);
+            );
+            $response = $this->seriesListApiController->getByUserAction($request, $userId);
 
-        if ($response->getStatusCode() != Response::HTTP_OK) {
-            $this->addFlash('error', $errorMessage);
-            return $this->redirectToRoute('series', [
-                'list' => $list,
-                Series::API_ID_ATTR => $apiId
-            ]);
-        }
+            if ($response->getStatusCode() == Response::HTTP_OK) {
+                $seriesListId = json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR][0]['id'];
 
-        $seriesListId = json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR][0]['id'];
+                $request = Request::create(
+                    SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesListId,
+                    'PUT',
+                    [], [], [], [],
+                    json_encode([SeriesList::TYPE_ATTR => SeriesList::IN_PROGRESS])
+                );
+                $response = $this->seriesListApiController->putAction($request, $seriesListId);
 
-        $request = Request::create(
-            SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesListId,
-            'PUT',
-            [], [], [], [],
-            json_encode([SeriesList::TYPE_ATTR => SeriesList::IN_PROGRESS])
-        );
-        $response = $this->seriesListApiController->putAction($request, $seriesListId);
-
-        if ($response->getStatusCode() != Response::HTTP_OK) {
-            $this->addFlash('error', $errorMessage);
-            return $this->redirectToRoute('series', [
-                'list' => $list,
-                Series::API_ID_ATTR => $apiId
-            ]);
+                if ($response->getStatusCode() == Response::HTTP_OK) {
+                    return $this->redirectToRoute('series', [
+                        'list' => 'in_progress',
+                        Series::API_ID_ATTR => $apiId
+                    ]);
+                }
+            }
         }
 
+        $this->addFlash('error', $errorMessage);
         return $this->redirectToRoute('series', [
-            'list' => 'in_progress',
+            'list' => $list,
             Series::API_ID_ATTR => $apiId
         ]);
     }
