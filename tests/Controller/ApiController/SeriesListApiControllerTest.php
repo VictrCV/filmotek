@@ -57,7 +57,10 @@ class SeriesListApiControllerTest extends BaseTestCase
                 SeriesList::TO_WATCH
             ]),
             SeriesList::SERIES_ATTR => $seriesId,
-            SeriesList::USER_ATTR => intval($userId)
+            SeriesList::USER_ATTR => intval($userId),
+            SeriesList::SEASON_ATTR => self::$faker->randomDigitNot(0),
+            SeriesList::EPISODE_ATTR => self::$faker->numberBetween(1,50),
+            SeriesList::TIME_ATTR => self::$faker->time()
         ];
 
         self::$client->request(
@@ -76,6 +79,9 @@ class SeriesListApiControllerTest extends BaseTestCase
         self::assertSame($data[SeriesList::TYPE_ATTR], $seriesList[SeriesList::TYPE_ATTR]);
         self::assertSame($data[SeriesList::SERIES_ATTR], $seriesList[SeriesList::SERIES_ATTR]['id']);
         self::assertSame($data[SeriesList::USER_ATTR], $seriesList[SeriesList::USER_ATTR]['id']);
+        self::assertSame($data[SeriesList::SEASON_ATTR], $seriesList[SeriesList::SEASON_ATTR]);
+        self::assertSame($data[SeriesList::EPISODE_ATTR], $seriesList[SeriesList::EPISODE_ATTR]);
+        self::assertSame($data[SeriesList::TIME_ATTR], $seriesList[SeriesList::TIME_ATTR]);
         return $seriesList;
     }
 
@@ -359,7 +365,10 @@ class SeriesListApiControllerTest extends BaseTestCase
         $data = [
             SeriesList::TYPE_ATTR => $type,
             SeriesList::SERIES_ATTR => $seriesId,
-            SeriesList::USER_ATTR => $userId
+            SeriesList::USER_ATTR => $userId,
+            SeriesList::SEASON_ATTR => self::$faker->randomDigitNot(0),
+            SeriesList::EPISODE_ATTR => self::$faker->numberBetween(1,50),
+            SeriesList::TIME_ATTR => self::$faker->time()
         ];
 
         self::$client->request(
@@ -377,6 +386,9 @@ class SeriesListApiControllerTest extends BaseTestCase
         self::assertEquals($type, $seriesListResponse[SeriesList::TYPE_ATTR]);
         self::assertEquals($seriesId, $seriesListResponse[SeriesList::SERIES_ATTR]['id']);
         self::assertEquals($userId, $seriesListResponse[SeriesList::USER_ATTR]['id']);
+        self::assertSame($data[SeriesList::SEASON_ATTR], $seriesListResponse[SeriesList::SEASON_ATTR]);
+        self::assertSame($data[SeriesList::EPISODE_ATTR], $seriesListResponse[SeriesList::EPISODE_ATTR]);
+        self::assertSame($data[SeriesList::TIME_ATTR], $seriesListResponse[SeriesList::TIME_ATTR]);
     }
 
     /**

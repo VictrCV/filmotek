@@ -6,6 +6,7 @@ use App\Entity\Series;
 use App\Entity\SeriesList;
 use App\Entity\User;
 use App\Utility\Utils;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -51,6 +52,18 @@ class SeriesListApiController extends AbstractController
         }
 
         $seriesList = new SeriesList();
+
+        if (isset($data[SeriesList::SEASON_ATTR])) {
+            $seriesList->setSeason($data[SeriesList::SEASON_ATTR]);
+        }
+
+        if (isset($data[SeriesList::EPISODE_ATTR])) {
+            $seriesList->setEpisode($data[SeriesList::EPISODE_ATTR]);
+        }
+
+        if (isset($data[SeriesList::TIME_ATTR])) {
+            $seriesList->setTime(DateTime::createFromFormat("H:i:s", $data[SeriesList::TIME_ATTR]));
+        }
 
         try {
             $seriesList->setType($data[SeriesList::TYPE_ATTR]);
@@ -246,6 +259,20 @@ class SeriesListApiController extends AbstractController
         if (isset($badRequest)) {
             return $badRequest;
         }
+
+        if (isset($data[SeriesList::SEASON_ATTR])) {
+            $seriesList->setSeason($data[SeriesList::SEASON_ATTR]);
+        }
+
+        if (isset($data[SeriesList::EPISODE_ATTR])) {
+            $seriesList->setEpisode($data[SeriesList::EPISODE_ATTR]);
+        }
+
+        if (isset($data[SeriesList::TIME_ATTR])) {
+            $seriesList->setTime(DateTime::createFromFormat("H:i:s", $data[SeriesList::TIME_ATTR]));
+        }
+
+        var_dump($seriesList);
 
         $this->entityManager->flush();
 
