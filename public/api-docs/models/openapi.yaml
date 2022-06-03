@@ -137,7 +137,7 @@ paths:
     get:
       tags: [ '🎞️ Series' ]
       summary: Retrieves a Series resource based on its apiId.
-      description: 'Returns the result identified by `apiId`.'
+      description: 'Returns the series identified by `apiId`.'
       operationId: series_api_get_by_api_id
       security:
         - FilmotekApiSecurity: [ ]
@@ -198,7 +198,7 @@ paths:
     get:
       tags: [ '🗃️️ Series list' ]
       summary: Retrieves a Series list resource based on its user.
-      description: 'Returns the result identified by `user` and, optionally, by `type` and/or `series`.'
+      description: 'Returns the series list identified by `user` and, optionally, by `type` and/or `series`.'
       operationId: series_list_api_get_by_user
       security:
         - FilmotekApiSecurity: [ ]
@@ -240,6 +240,18 @@ paths:
           $ref: '#/components/responses/400_BadRequest_Response_SeriesList_Put'
         '403':
           $ref: '#/components/responses/403_Forbidden_Response'
+        '404':
+          $ref: '#/components/responses/404_Resource_Not_Found_Response'
+    delete:
+      tags: [ '🗃️️ Series list' ]
+      summary: Removes the Series list resource.
+      description: 'Deletes the series list identified by `seriesListId`.'
+      operationId: series_list_api_delete
+      security:
+        - MiWApiSecurity: [ ]
+      responses:
+        '204':
+          description: 'Series list deleted &lt;Response body is empty&gt;'
         '404':
           $ref: '#/components/responses/404_Resource_Not_Found_Response'
 components:

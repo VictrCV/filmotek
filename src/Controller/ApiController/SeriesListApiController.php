@@ -155,7 +155,7 @@ class SeriesListApiController extends AbstractController
      */
     public function optionsAction(): Response
     {
-        $methods = ['POST', 'GET', 'PUT'];
+        $methods = ['POST', 'GET', 'PUT', 'DELETE'];
         $methods[] = 'OPTIONS';
 
         return new Response(
@@ -280,5 +280,27 @@ class SeriesListApiController extends AbstractController
             Response::HTTP_OK,
             [SeriesList::SERIES_LIST_ATTR => $seriesList]
         );
+    }
+
+    /**
+     * @param Request $request
+     * @param int $seriesListId
+     * @return Response
+     * @Route(path="/{seriesListId}", name="delete", methods={"DELETE"})
+     */
+    public function deleteAction(Request $request, int $seriesListId): Response
+    {
+        $seriesList = $this->entityManager
+            ->getRepository(SeriesList::class)
+            ->find($seriesListId);
+
+        if (!isset($seriesList)) {
+            return Utils::errorMessage(Response::HTTP_NOT_FOUND, 'Series list not found.');
+        }
+
+        $this->entityManager->remove($seriesList);
+        $this->entityManager->flush();
+
+        return Utils::apiResponse(Response::HTTP_NO_CONTENT);
     }
 }
