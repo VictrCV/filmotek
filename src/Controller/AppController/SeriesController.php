@@ -64,28 +64,15 @@ class SeriesController extends AbstractController
             $userId = $session->get(UserApiController::USER_ID);
 
             $inFavourites = $this->isSeriesInList($userId, SeriesList::FAVOURITES, $series['id']);
-            if ($list == 'in_progress') {
-                $inIncompatibleList = true;
-                $data = [
-                    SeriesList::TYPE_ATTR => SeriesList::IN_PROGRESS,
-                    SeriesList::SERIES_ATTR => $series['id'],
-                ];
+            $inIncompatibleList = $this->isSeriesInIncompatibleList($userId, $series['id']);
 
-                $request = Request::create(
-                    SeriesListApiController::SERIES_LIST_GET_BY_USER_ROUTE . $userId,
-                    'GET',
-                    $data
-                );
-                $response = $this->seriesListApiController->getByUserAction($request, $userId);
-
-                if ($response->getStatusCode() != Response::HTTP_OK) {
+            if ($list != 'search') {
+                $seriesList = $this->getSeriesList($list, $userId, $series['id']);
+                if (!isset($seriesList)) {
                     $this->addFlash('error', 'Oops! Something went wrong and the series could not be loaded.');
                     return $this->redirectToRoute($list);
                 }
-
-                $seriesList = json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR][0];
             } else {
-                $inIncompatibleList = $this->isSeriesInIncompatibleList($userId, $series['id']);
                 $seriesList = null;
             }
         } else {
@@ -150,5 +137,32 @@ class SeriesController extends AbstractController
     {
         return $this->isSeriesInList($userId, SeriesList::TO_WATCH, $seriesId) ||
             $this->isSeriesInList($userId, SeriesList::IN_PROGRESS, $seriesId);
+    }
+
+    protected function getSeriesList(string $list, int $userId, int $seriesId): ?array
+    {
+        $data = [SeriesList::SERIES_ATTR => $seriesId];
+        switch ($list) {
+            case 'favourites':
+                $data[SeriesList::TYPE_ATTR] = SeriesList::FAVOURITES;
+                break;
+            case 'to_watch':
+                $data[SeriesList::TYPE_ATTR] = SeriesList::TO_WATCH;
+                break;
+            case 'in_progress':
+                $data[SeriesList::TYPE_ATTR] = SeriesList::IN_PROGRESS;
+                break;
+        }
+
+        $request = Request::create(
+            SeriesListApiController::SERIES_LIST_GET_BY_USER_ROUTE . $userId,
+            'GET',
+            $data
+        );
+        $response = $this->seriesListApiController->getByUserAction($request, $userId);
+
+        return $response->getStatusCode() == Response::HTTP_OK
+            ? json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR][0]
+            : null;
     }
 }

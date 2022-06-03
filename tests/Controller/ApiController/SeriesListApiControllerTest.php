@@ -59,7 +59,7 @@ class SeriesListApiControllerTest extends BaseTestCase
             SeriesList::SERIES_ATTR => $seriesId,
             SeriesList::USER_ATTR => intval($userId),
             SeriesList::SEASON_ATTR => self::$faker->randomDigitNot(0),
-            SeriesList::EPISODE_ATTR => self::$faker->numberBetween(1,50),
+            SeriesList::EPISODE_ATTR => self::$faker->numberBetween(1, 50),
             SeriesList::TIME_ATTR => self::$faker->time()
         ];
 
@@ -367,7 +367,7 @@ class SeriesListApiControllerTest extends BaseTestCase
             SeriesList::SERIES_ATTR => $seriesId,
             SeriesList::USER_ATTR => $userId,
             SeriesList::SEASON_ATTR => self::$faker->randomDigitNot(0),
-            SeriesList::EPISODE_ATTR => self::$faker->numberBetween(1,50),
+            SeriesList::EPISODE_ATTR => self::$faker->numberBetween(1, 50),
             SeriesList::TIME_ATTR => self::$faker->time()
         ];
 
@@ -465,6 +465,44 @@ class SeriesListApiControllerTest extends BaseTestCase
         $response = self::$client->getResponse();
 
         self::assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
+
+    /**
+     * @depends testPostSeriesListAction201Created
+     * @covers ::deleteAction
+     * @return void
+     * @throws Exception
+     */
+    public function testDeleteSeriesListAction204NoContent(array $seriesList)
+    {
+
+        self::$client->request(
+            'DELETE',
+            SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesList['id']
+        );
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+        self::assertTrue($response->isSuccessful());
+        self::assertEmpty($response->getContent());
+    }
+
+    /**
+     * @covers ::deleteAction
+     * @return void
+     * @throws Exception
+     */
+    public function testDeleteSeriesListAction404NotFound()
+    {
+
+        self::$client->request(
+            'DELETE',
+            SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . -1
+        );
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
         self::assertFalse($response->isSuccessful());
     }
 }
