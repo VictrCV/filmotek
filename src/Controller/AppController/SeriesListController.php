@@ -130,13 +130,12 @@ class SeriesListController extends SeriesController
 
     /**
      * @Route("{list}/series_list/start_watching/{apiId}/{seriesListId}", name="series_list_start_watching")
-     * @param Request $request
      * @param string $list
      * @param string $apiId
      * @param int $seriesListId
      * @return RedirectResponse|Response
      */
-    public function startWatching(Request $request, string $list, string $apiId, int $seriesListId): RedirectResponse|Response
+    public function startWatching(string $list, string $apiId, int $seriesListId): RedirectResponse|Response
     {
         $request = Request::create(
             SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesListId,
@@ -162,13 +161,12 @@ class SeriesListController extends SeriesController
 
     /**
      * @Route("{list}/series_list/delete/{apiId}/{seriesListId}", name="series_list_delete")
-     * @param Request $request
      * @param string $list
      * @param string $apiId
      * @param int $seriesListId
      * @return RedirectResponse|Response
      */
-    public function deleteSeriesList(Request $request, string $list, string $apiId, int $seriesListId): RedirectResponse|Response
+    public function deleteSeriesList(string $list, string $apiId, int $seriesListId): RedirectResponse|Response
     {
         $request = Request::create(
             SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesListId,

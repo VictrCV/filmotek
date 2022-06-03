@@ -24,6 +24,8 @@ class SeriesListApiController extends AbstractController
     public const SERIES_LIST_API_ROUTE = '/api/v1/series-list';
     public const SERIES_LIST_GET_BY_USER_ROUTE = self::SERIES_LIST_API_ROUTE . '/user/';
 
+    public const SERIES_LIST_NOT_FOUND_MESSAGE = 'Series list not found.';
+
     private const HEADER_CACHE_CONTROL = 'Cache-Control';
     private const HEADER_ALLOW = 'Allow';
 
@@ -200,7 +202,7 @@ class SeriesListApiController extends AbstractController
             ->execute();
 
         if (empty($seriesList)) {
-            return Utils::errorMessage(Response::HTTP_NOT_FOUND, 'Series list not found.');
+            return Utils::errorMessage(Response::HTTP_NOT_FOUND, self::SERIES_LIST_NOT_FOUND_MESSAGE);
         }
 
         return Utils::apiResponse(
@@ -222,7 +224,7 @@ class SeriesListApiController extends AbstractController
             ->find($seriesListId);
 
         if (!isset($seriesList)) {
-            return Utils::errorMessage(Response::HTTP_NOT_FOUND, 'Series list not found.');
+            return Utils::errorMessage(Response::HTTP_NOT_FOUND, self::SERIES_LIST_NOT_FOUND_MESSAGE);
         }
 
         $body = $request->getContent();
@@ -272,8 +274,6 @@ class SeriesListApiController extends AbstractController
             $seriesList->setTime(DateTime::createFromFormat("H:i:s", $data[SeriesList::TIME_ATTR]));
         }
 
-        var_dump($seriesList);
-
         $this->entityManager->flush();
 
         return Utils::apiResponse(
@@ -295,7 +295,7 @@ class SeriesListApiController extends AbstractController
             ->find($seriesListId);
 
         if (!isset($seriesList)) {
-            return Utils::errorMessage(Response::HTTP_NOT_FOUND, 'Series list not found.');
+            return Utils::errorMessage(Response::HTTP_NOT_FOUND, self::SERIES_LIST_NOT_FOUND_MESSAGE);
         }
 
         $this->entityManager->remove($seriesList);
