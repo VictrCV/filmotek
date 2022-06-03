@@ -142,17 +142,12 @@ class SeriesController extends AbstractController
     protected function getSeriesList(string $list, int $userId, int $seriesId): ?array
     {
         $data = [SeriesList::SERIES_ATTR => $seriesId];
-        switch ($list) {
-            case 'favourites':
-                $data[SeriesList::TYPE_ATTR] = SeriesList::FAVOURITES;
-                break;
-            case 'to_watch':
-                $data[SeriesList::TYPE_ATTR] = SeriesList::TO_WATCH;
-                break;
-            case 'in_progress':
-                $data[SeriesList::TYPE_ATTR] = SeriesList::IN_PROGRESS;
-                break;
-        }
+        $data[SeriesList::TYPE_ATTR] = match ($list) {
+            'favourites' => SeriesList::FAVOURITES,
+            'to_watch' => SeriesList::TO_WATCH,
+            'in_progress' => SeriesList::IN_PROGRESS,
+            default => $list,
+        };
 
         $request = Request::create(
             SeriesListApiController::SERIES_LIST_GET_BY_USER_ROUTE . $userId,
