@@ -10,24 +10,32 @@
                 <h1 class="text-center pb-5">{{ series.title }}</h1>
                 {% if (app.session.get('jwt') != null) %}
                     {% if (app.request.attributes.get('_route_params')['list'] == 'in_progress') %}
-                        <div class="row justify-content-center mb-5">
-                            <div class="col-1 text-end pe-0">
+                        <div class="row justify-content-center">
+                            <div class="col-2">
                                 <label class="align-middle">Season</label>
                             </div>
-                            <div class="col-1 text-center">
-                                <input type="number" class="form-control" id="season" value="{{ seriesList.season }}" disabled readonly>
-                            </div>
-                            <div class="col-1 text-end pe-0">
+                            <div class="col-2">
                                 <label class="align-middle">Episode</label>
                             </div>
-                            <div class="col-1 text-center">
-                                <input type="number" class="form-control" id="episode" value="{{ seriesList.episode }}" disabled readonly>
-                            </div>
-                            <div class="col-1 text-end pe-0">
+                            <div class="col-4">
                                 <label class="align-middle">Time</label>
                             </div>
+                        </div>
+                        <div class="row justify-content-center mb-5">
+                            <div class="col-2 d-inline-flex text-center">
+                                <input type="number" min="1" class="form-control" id="season" value="{{ seriesList.season }}">
+                            </div>
                             <div class="col-2 text-center">
-                                <input type="time" class="form-control" id="time" value="{{ seriesList.time }}" step="1" disabled readonly>
+                                <input type="number" min="1" class="form-control" id="episode" value="{{ seriesList.episode }}">
+                            </div>
+                            <div class="col-2 text-center">
+                                <input type="time" step="1" class="form-control" id="time" value="{{ seriesList.time }}">
+                            </div>
+                            <div class="col-2">
+                                <a class="btn btn-form" role="button"
+                                   href="">
+                                    Save changes
+                                </a>
                             </div>
                         </div>
                     {% endif %}
