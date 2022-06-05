@@ -11,23 +11,27 @@
                 {% if (app.session.get('jwt') != null) %}
                     {% if (app.request.attributes.get('_route_params')['list'] == 'in_progress') %}
                         <div class="row justify-content-center">
-                            <div class="col-2">
-                                <label class="align-middle">Season</label>
-                            </div>
-                            <div class="col-2">
-                                <label class="align-middle">Episode</label>
-                            </div>
+                            {% if not series.isFilm %}
+                                <div class="col-2">
+                                    <label class="align-middle">Season</label>
+                                </div>
+                                <div class="col-2">
+                                    <label class="align-middle">Episode</label>
+                                </div>
+                            {% endif %}
                             <div class="col-4">
                                 <label class="align-middle">Time</label>
                             </div>
                         </div>
                         <div class="row justify-content-center mb-5">
-                            <div class="col-2 d-inline-flex text-center">
-                                <input type="number" min="1" class="form-control" id="season" value="{{ seriesList.season }}">
-                            </div>
-                            <div class="col-2 text-center">
-                                <input type="number" min="1" class="form-control" id="episode" value="{{ seriesList.episode }}">
-                            </div>
+                            {% if not series.isFilm %}
+                                <div class="col-2 d-inline-flex text-center">
+                                    <input type="number" min="1" class="form-control" id="season" value="{{ seriesList.season }}">
+                                </div>
+                                <div class="col-2 text-center">
+                                    <input type="number" min="1" class="form-control" id="episode" value="{{ seriesList.episode }}">
+                                </div>
+                            {% endif %}
                             <div class="col-2 text-center">
                                 <input type="time" step="1" class="form-control" id="time" value="{{ seriesList.time }}">
                             </div>
