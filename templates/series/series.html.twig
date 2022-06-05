@@ -33,7 +33,13 @@
                             </div>
                             <div class="col-2">
                                 <a class="btn btn-form" role="button"
-                                   href="">
+                                   href="{{ path('series_list_update', {
+                                       'list': app.request.attributes.get('_route_params')['list'],
+                                       'apiId': series.apiId,
+                                       'seriesListId': seriesList.id,
+                                       'query': {
+                                           'season':
+                                       }}) }}">
                                     Save changes
                                 </a>
                             </div>
