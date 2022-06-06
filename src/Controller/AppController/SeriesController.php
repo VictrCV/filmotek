@@ -7,6 +7,7 @@ use App\Controller\ApiController\SeriesListApiController;
 use App\Controller\ApiController\UserApiController;
 use App\Entity\Series;
 use App\Entity\SeriesList;
+use App\Form\TemporaryMarksType;
 use App\Utility\Utils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -81,7 +82,15 @@ class SeriesController extends AbstractController
             $seriesList = null;
         }
 
+        $temporaryMarksForm = $this->createForm(TemporaryMarksType::class);
+
+        if($series[Series::IS_FILM_ATTR]) {
+            $temporaryMarksForm->remove(SeriesList::SEASON_ATTR);
+            $temporaryMarksForm->remove(SeriesList::EPISODE_ATTR);
+        }
+
         return $this->render('series/series.html.twig', [
+            'temporaryMarksForm' => $temporaryMarksForm->createView(),
             'series' => $series,
             'inFavourites' => $inFavourites,
             'inIncompatibleList' => $inIncompatibleList,
