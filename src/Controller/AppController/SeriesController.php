@@ -10,6 +10,7 @@ use App\Entity\SeriesList;
 use App\Form\TemporaryMarksType;
 use App\Utility\Utils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,19 +48,10 @@ class SeriesController extends AbstractController
     {
         $session = $request->getSession();
 
-        $getSeriesRequest = Request::create(
-            SeriesApiController::SERIES_GET_BY_API_ID_ROUTE . $apiId
-        );
-        $response = $this->seriesApiController->getByApiIdAction($getSeriesRequest, $apiId);
-
-        if ($response->getStatusCode() == Response::HTTP_NOT_FOUND) {
-            $series = $this->getSeriesFromRapidapi($apiId);
-            if (!isset($series)) {
-                $this->addFlash('error', 'Oops! Something went wrong and the series could not be obtained.');
-                return $this->redirectToRoute($list);
-            }
-        } else {
-            $series = json_decode($response->getContent(), true)[Series::SERIES_ATTR];
+        $series = $this->getSeries($apiId);
+        if (!isset($series)) {
+            $this->addFlash('error', 'Oops! Something went wrong and the series could not be obtained.');
+            return $this->redirectToRoute($list);
         }
 
         if (isset($series['id']) && $session->get(UserApiController::USER_ID) !== null) {
@@ -91,28 +83,13 @@ class SeriesController extends AbstractController
         }
 
         $temporaryMarksForm->handleRequest($request);
-        if ($temporaryMarksForm->isSubmitted() && $temporaryMarksForm->isValid()) {
-            $formData = $temporaryMarksForm->getData();
-            $data = [SeriesList::TIME_ATTR => $formData[SeriesList::TIME_ATTR]->format('H:i:s')];
-
-            if (!$series[Series::IS_FILM_ATTR]) {
-                $data[SeriesList::SEASON_ATTR] = $formData[SeriesList::SEASON_ATTR];
-                $data[SeriesList::EPISODE_ATTR] = $formData[SeriesList::EPISODE_ATTR];
-            }
-
-            $request = Request::create(
-                SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesList['id'],
-                'PUT',
-                [], [], [], [],
-                json_encode($data)
-            );
-            $response = $this->seriesListApiController->putAction($request, $seriesList['id']);
-
-            if ($response->getStatusCode() == Response::HTTP_OK) {
-                $seriesList = json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR];
-            } else {
-                $this->addFlash('error', 'Oops! Something went wrong and it was not possible to save changes.');
-            }
+        $submitTemporaryMarksForm = $this->submitTemporaryMarksForm(
+            $temporaryMarksForm,
+            $seriesList['id'],
+            $series[Series::IS_FILM_ATTR]
+        );
+        if(isset($submitTemporaryMarksForm)) {
+            $seriesList = $submitTemporaryMarksForm;
         }
 
         return $this->render('series/series.html.twig', [
@@ -194,5 +171,50 @@ class SeriesController extends AbstractController
         return $response->getStatusCode() == Response::HTTP_OK
             ? json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR][0]
             : null;
+    }
+
+
+    protected function getSeries(string $apiId): ?array
+    {
+        $getSeriesRequest = Request::create(
+            SeriesApiController::SERIES_GET_BY_API_ID_ROUTE . $apiId
+        );
+        $response = $this->seriesApiController->getByApiIdAction($getSeriesRequest, $apiId);
+
+        if ($response->getStatusCode() == Response::HTTP_NOT_FOUND) {
+            $series = $this->getSeriesFromRapidapi($apiId);
+        } else {
+            $series = json_decode($response->getContent(), true)[Series::SERIES_ATTR];
+        }
+        return $series;
+    }
+
+    protected function submitTemporaryMarksForm(FormInterface $temporaryMarksForm, int $seriesListId, bool $isFilm): ?array
+    {
+        if ($temporaryMarksForm->isSubmitted() && $temporaryMarksForm->isValid()) {
+            $formData = $temporaryMarksForm->getData();
+            $data = [SeriesList::TIME_ATTR => $formData[SeriesList::TIME_ATTR]->format('H:i:s')];
+
+            if (!$isFilm) {
+                $data[SeriesList::SEASON_ATTR] = $formData[SeriesList::SEASON_ATTR];
+                $data[SeriesList::EPISODE_ATTR] = $formData[SeriesList::EPISODE_ATTR];
+            }
+
+            $request = Request::create(
+                SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesListId,
+                'PUT',
+                [], [], [], [],
+                json_encode($data)
+            );
+            $response = $this->seriesListApiController->putAction($request, $seriesListId);
+
+            if ($response->getStatusCode() == Response::HTTP_OK) {
+                $seriesList = json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR];
+            } else {
+                $this->addFlash('error', 'Oops! Something went wrong and it was not possible to save changes.');
+            }
+        }
+
+        return $seriesList ?? null;
     }
 }
