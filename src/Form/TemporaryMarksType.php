@@ -33,9 +33,9 @@ class TemporaryMarksType extends AbstractType
             ->add('time', TimeType::class, [
                 'label' => 'Time',
                 'widget' => 'single_text',
+                'with_seconds' => true,
                 'attr' => [
-                    'class' => 'form-control',
-                    'step' => 1
+                    'class' => 'form-control'
                 ]
             ])
             ->add('save', SubmitType::class, [

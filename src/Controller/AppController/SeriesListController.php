@@ -7,7 +7,6 @@ use App\Controller\ApiController\SeriesListApiController;
 use App\Controller\ApiController\UserApiController;
 use App\Entity\Series;
 use App\Entity\SeriesList;
-use DateTimeInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -184,33 +183,5 @@ class SeriesListController extends SeriesController
         }
 
         return $this->redirectToRoute($list);
-    }
-
-    /**
-     * @Route("{list}/series_list/update/{apiId}/{seriesListId}?{query}", name="series_list_update")
-     * @param string $list
-     * @param int $seriesListId
-     * @param string $apiId
-     * @param array $query
-     * @return RedirectResponse|Response
-     */
-    public function updateSeriesListTemporaryMarks(string $list, int $seriesListId, string $apiId, array $query)
-    {
-        $request = Request::create(
-            SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesListId,
-            'PUT',
-            [], [], [], [],
-            json_encode($query)
-        );
-        $response = $this->seriesListApiController->putAction($request, $seriesListId);
-
-        if ($response->getStatusCode() != Response::HTTP_NO_CONTENT) {
-            $this->addFlash('error', 'Oops! Something went wrong and it was not possible to save changes.');
-        }
-
-        return $this->redirectToRoute('series', [
-            'list' => $list,
-            Series::API_ID_ATTR => $apiId
-        ]);
     }
 }
