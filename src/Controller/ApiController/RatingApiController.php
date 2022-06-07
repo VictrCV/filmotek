@@ -52,7 +52,7 @@ class RatingApiController extends AbstractController
             ->find($data[Rating::SERIES_ATTR]);
 
         if (!isset($series)) {
-            return Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Series does not exist.");
+            $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Series does not exist.");
         }
 
         $user = $this->entityManager
@@ -60,7 +60,23 @@ class RatingApiController extends AbstractController
             ->find($data[Rating::USER_ATTR]);
 
         if (!isset($user)) {
-            return Utils::errorMessage(Response::HTTP_BAD_REQUEST, "User does not exist.");
+            $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "User does not exist.");
+        }
+
+        $ratingExists = $this->entityManager
+            ->getRepository(Rating::class)
+            ->findBy([
+                'series' => $series,
+                'user' => $user
+            ]);
+
+        if (!empty($ratingExists)) {
+            $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST,
+                "Rating already exists.");
+        }
+
+        if (isset($badRequest)) {
+            return $badRequest;
         }
 
         $rating = new Rating();

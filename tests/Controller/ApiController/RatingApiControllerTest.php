@@ -141,4 +141,30 @@ class RatingApiControllerTest extends BaseTestCase
         self::assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         self::assertFalse($response->isSuccessful());
     }
+
+    /**
+     * @depends testPostRatingAction201Created
+     * @covers ::postAction
+     * @return void
+     * @throws Exception
+     */
+    public function testPostRatingAction400BadRequestRatingExists(array $rating)
+    {
+        $data = [
+            Rating::VALUE_ATTR => self::$faker->numberBetween(1, 5),
+            Rating::SERIES_ATTR => $rating[Rating::SERIES_ATTR]['id'],
+            Rating::USER_ATTR => $rating[Rating::USER_ATTR]['id']
+        ];
+
+        self::$client->request(
+            'POST',
+            RatingApiController::RATING_API_ROUTE,
+            [], [], [],
+            json_encode($data)
+        );
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
 }
