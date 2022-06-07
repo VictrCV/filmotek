@@ -167,4 +167,69 @@ class RatingApiControllerTest extends BaseTestCase
         self::assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         self::assertFalse($response->isSuccessful());
     }
+
+    /**
+     * @depends testPostRatingAction201Created
+     * @covers ::getByUserAction
+     * @return void
+     * @throws Exception
+     */
+    public function testGetRatingByUserAction200Ok(array $rating)
+    {
+        self::$client->request(
+            'GET',
+            RatingApiController::RATING_GET_BY_USER_ROUTE . $rating[Rating::USER_ATTR]['id'],
+        );
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        self::assertTrue($response->isSuccessful());
+        self::assertJson($response->getContent());
+        $ratingResponse = json_decode($response->getContent(), true)[Rating::RATING_ATTR];
+        self::assertEquals($rating[Rating::USER_ATTR]['id'], $ratingResponse[0][Rating::USER_ATTR]['id']);
+    }
+
+    /**
+     * @depends testPostRatingAction201Created
+     * @covers ::getByUserAction
+     * @return void
+     * @throws Exception
+     */
+    public function testGetRatingByUserAction200OkBodyParams(array $rating)
+    {
+        $data = [
+            Rating::SERIES_ATTR => $rating[Rating::SERIES_ATTR]['id'],
+        ];
+
+        self::$client->request(
+            'GET',
+            RatingApiController::RATING_GET_BY_USER_ROUTE . $rating[Rating::USER_ATTR]['id'],
+            $data
+        );
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        self::assertTrue($response->isSuccessful());
+        self::assertJson($response->getContent());
+        $seriesListResponse = json_decode($response->getContent(), true)[Rating::RATING_ATTR][0];
+        self::assertEquals($rating[Rating::USER_ATTR]['id'], $seriesListResponse[Rating::USER_ATTR]['id']);
+        self::assertEquals($rating[Rating::SERIES_ATTR]['id'], $seriesListResponse[Rating::SERIES_ATTR]['id']);
+    }
+
+    /**
+     * @covers ::getByUserAction
+     * @return void
+     * @throws Exception
+     */
+    public function testGetSeriesListByUserAction404NotFound()
+    {
+        self::$client->request(
+            'GET',
+            RatingApiController::RATING_GET_BY_USER_ROUTE . -1,
+        );
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
 }

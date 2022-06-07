@@ -198,7 +198,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Series'
+                $ref: '#/components/schemas/SeriesList'
           headers:
             Location:
               $ref: '#/components/headers/Location'
@@ -273,6 +273,27 @@ paths:
           headers:
             Allow:
               $ref: '#/components/headers/Allow'
+  /rating/user/{userId}:
+    parameters:
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/seriesIdQuery'
+    get:
+      tags: [ '⭐ Rating' ]
+      summary: Retrieves a Rating resource based on its user.
+      description: 'Returns the rating identified by `user` and, optionally, by `series`.'
+      operationId: rating_api_get_by_user
+      responses:
+        '200':
+          description: Rating
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rating'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '404':
+          $ref: '#/components/responses/404_Resource_Not_Found_Response'
 components:
   headers:
     Location:

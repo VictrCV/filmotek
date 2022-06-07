@@ -19,6 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class RatingApiController extends AbstractController
 {
     public const RATING_API_ROUTE = '/api/v1/rating';
+    public const RATING_GET_BY_USER_ROUTE = self::RATING_API_ROUTE . '/user/';
 
     private const HEADER_CACHE_CONTROL = 'Cache-Control';
     private const HEADER_ALLOW = 'Allow';
@@ -99,7 +100,7 @@ class RatingApiController extends AbstractController
      */
     public function optionsAction(): Response
     {
-        $methods = ['OPTIONS', 'POST'];
+        $methods = ['OPTIONS', 'POST', 'GET'];
 
         return new Response(
             null,
@@ -108,6 +109,41 @@ class RatingApiController extends AbstractController
                 self::HEADER_ALLOW => implode(', ', $methods),
                 self::HEADER_CACHE_CONTROL => 'public, inmutable'
             ]
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @param int $userId
+     * @return Response
+     * @Route(path="/user/{userId}", name="getByUser", methods={"GET"})
+     */
+    public function getByUserAction(Request $request, int $userId): Response
+    {
+        $params = $request->query;
+        $query = $this->entityManager
+            ->getRepository(Rating::class)
+            ->createQueryBuilder('r')
+            ->where('r.user = :user')
+            ->setParameter('user', $userId);
+
+        if ($params->get(Rating::SERIES_ATTR) !== null) {
+            $query = $query
+                ->andWhere('r.series = :series')
+                ->setParameter('series', $params->get(Rating::SERIES_ATTR));
+        }
+
+        $rating = $query
+            ->getQuery()
+            ->execute();
+
+        if (empty($rating)) {
+            return Utils::errorMessage(Response::HTTP_NOT_FOUND, 'Rating not found.');
+        }
+
+        return Utils::apiResponse(
+            Response::HTTP_OK,
+            [Rating::RATING_ATTR => $rating]
         );
     }
 }
