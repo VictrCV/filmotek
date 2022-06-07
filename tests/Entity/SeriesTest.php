@@ -9,8 +9,6 @@ use Faker\Generator as FakerGeneratorAlias;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class SeriesTest
- *
  * @package App\Tests\Entity
  * @group   entities
  *
@@ -34,8 +32,6 @@ class SeriesTest extends TestCase
     }
 
     /**
-     * Implement testGetId().
-     *
      * @covers ::getId
      * @return void
      * @throws Exception
@@ -46,8 +42,6 @@ class SeriesTest extends TestCase
     }
 
     /**
-     * Implement testGetSetIsFilm().
-     *
      * @covers ::getIsFilm
      * @covers ::setIsFilm
      * @return void
@@ -61,8 +55,6 @@ class SeriesTest extends TestCase
     }
 
     /**
-     * Implement testGetSetApiId().
-     *
      * @covers ::getApiId
      * @covers ::setApiId
      * @return void
@@ -76,8 +68,6 @@ class SeriesTest extends TestCase
     }
 
     /**
-     * Implement testGetSetImageUrl().
-     *
      * @covers ::getImageUrl
      * @covers ::setImageUrl
      * @return void
@@ -91,8 +81,6 @@ class SeriesTest extends TestCase
     }
 
     /**
-     * Implement testGetSetTitle().
-     *
      * @covers ::getTitle
      * @covers ::setTitle
      * @return void
@@ -106,8 +94,6 @@ class SeriesTest extends TestCase
     }
 
     /**
-     * Implement testGetSetSynopsis().
-     *
      * @covers ::getSynopsis
      * @covers ::setSynopsis
      * @return void
@@ -121,8 +107,6 @@ class SeriesTest extends TestCase
     }
 
     /**
-     * Implement testJsonSerialize().
-     *
      * @covers ::jsonSerialize
      * @return void
      * @throws Exception

@@ -11,8 +11,6 @@ use Faker\Generator as FakerGeneratorAlias;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class CommentTest
- *
  * @package App\Tests\Entity
  * @group   entities
  *
@@ -36,8 +34,6 @@ class CommentTest extends TestCase
     }
 
     /**
-     * Implement testGetId().
-     *
      * @covers ::getId
      * @return void
      * @throws Exception
@@ -48,8 +44,6 @@ class CommentTest extends TestCase
     }
 
     /**
-     * Implement testGetSetSeries().
-     *
      * @covers ::getSeries
      * @covers ::setSeries
      * @return void
@@ -63,8 +57,6 @@ class CommentTest extends TestCase
     }
 
     /**
-     * Implement testGetSetUser().
-     *
      * @covers ::getUser
      * @covers ::setUser
      * @return void
@@ -78,8 +70,6 @@ class CommentTest extends TestCase
     }
 
     /**
-     * Implement testGetSetText().
-     *
      * @covers ::getText
      * @covers ::setText
      * @return void

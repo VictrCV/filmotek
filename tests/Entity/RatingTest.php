@@ -11,8 +11,6 @@ use Faker\Generator as FakerGeneratorAlias;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class RatingTest
- *
  * @package App\Tests\Entity
  * @group   entities
  *
@@ -36,8 +34,6 @@ class RatingTest extends TestCase
     }
 
     /**
-     * Implement testGetId().
-     *
      * @covers ::getId
      * @return void
      * @throws Exception
@@ -48,8 +44,6 @@ class RatingTest extends TestCase
     }
 
     /**
-     * Implement testGetSetSeries().
-     *
      * @covers ::getSeries
      * @covers ::setSeries
      * @return void
@@ -63,8 +57,6 @@ class RatingTest extends TestCase
     }
 
     /**
-     * Implement testGetSetUser().
-     *
      * @covers ::getUser
      * @covers ::setUser
      * @return void
@@ -78,8 +70,6 @@ class RatingTest extends TestCase
     }
 
     /**
-     * Implement testGetSetValue().
-     *
      * @covers ::getValue
      * @covers ::setValue
      * @return void
@@ -90,5 +80,22 @@ class RatingTest extends TestCase
         $value = self::$faker->numberBetween(1, 5);
         self::$rating->setValue($value);
         self::assertEquals($value, self::$rating->getValue());
+    }
+
+    /**
+     * @covers ::jsonSerialize
+     * @return void
+     * @throws Exception
+     */
+    public function testJsonSerialize(): void
+    {
+        $vars = [
+            'id' => self::$rating->getId(),
+            Rating::VALUE_ATTR => self::$rating->getValue(),
+            Rating::SERIES_ATTR => self::$rating->getSeries(),
+            Rating::USER_ATTR => self::$rating->getUser(),
+        ];
+
+        self::assertEquals($vars, self::$rating->jsonSerialize());
     }
 }
