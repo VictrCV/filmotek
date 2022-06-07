@@ -93,8 +93,7 @@ class UserApiController extends AbstractController
      */
     public function optionsAction(): Response
     {
-        $methods = ['POST'];
-        $methods[] = 'OPTIONS';
+        $methods = ['OPTIONS', 'POST'];
 
         return new Response(
             null,

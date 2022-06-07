@@ -8,8 +8,6 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class SeriesApiControllerTest
- *
  * @package App\Tests\ApiController
  * @group   controllers
  *
