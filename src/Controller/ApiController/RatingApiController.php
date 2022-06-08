@@ -100,7 +100,7 @@ class RatingApiController extends AbstractController
      */
     public function optionsAction(): Response
     {
-        $methods = ['OPTIONS', 'POST', 'GET'];
+        $methods = ['OPTIONS', 'POST', 'GET', 'PUT'];
 
         return new Response(
             null,
@@ -140,6 +140,61 @@ class RatingApiController extends AbstractController
         if (empty($rating)) {
             return Utils::errorMessage(Response::HTTP_NOT_FOUND, 'Rating not found.');
         }
+
+        return Utils::apiResponse(
+            Response::HTTP_OK,
+            [Rating::RATING_ATTR => $rating]
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @param int $ratingId
+     * @return Response
+     * @Route(path="/{ratingId}", name="put", methods={"PUT"})
+     */
+    public function putAction(Request $request, int $ratingId): Response
+    {
+        $rating = $this->entityManager
+            ->getRepository(Rating::class)
+            ->find($ratingId);
+
+        if (!isset($rating)) {
+            return Utils::errorMessage(Response::HTTP_NOT_FOUND, 'Rating not found.');
+        }
+
+        $body = $request->getContent();
+        $data = json_decode($body, true);
+
+        if (isset($data[Rating::VALUE_ATTR])) {
+            $rating->setValue($data[Rating::VALUE_ATTR]);
+        }
+
+        if (isset($data[Rating::SERIES_ATTR])) {
+            $series = $this->entityManager
+                ->getRepository(Series::class)
+                ->find($data[Rating::SERIES_ATTR]);
+            if (!isset($series)) {
+                $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Series does not exist.");
+            }
+            $rating->setSeries($series);
+        }
+
+        if (isset($data[Rating::USER_ATTR])) {
+            $user = $this->entityManager
+                ->getRepository(User::class)
+                ->find($data[Rating::USER_ATTR]);
+            if (!isset($user)) {
+                $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "User does not exist.");
+            }
+            $rating->setUser($user);
+        }
+
+        if (isset($badRequest)) {
+            return $badRequest;
+        }
+
+        $this->entityManager->flush();
 
         return Utils::apiResponse(
             Response::HTTP_OK,

@@ -259,7 +259,7 @@ paths:
             Location:
               $ref: '#/components/headers/Location'
         '400':
-          $ref: '#/components/responses/400_BadRequest_Response_Rating_Post'
+          $ref: '#/components/responses/400_BadRequest_Response_Rating_Post_Put'
         '422':
           $ref: '#/components/responses/422_UnprocessableEntity_Response'
     options:
@@ -292,6 +292,30 @@ paths:
           headers:
             Location:
               $ref: '#/components/headers/Location'
+        '404':
+          $ref: '#/components/responses/404_Resource_Not_Found_Response'
+  /rating/{ratingId}:
+    parameters:
+      - $ref: '#/components/parameters/ratingId'
+    put:
+      tags: [ '⭐ Rating' ]
+      summary: Updates the Rating resource.
+      description: 'Updates the rating identified by `ratingId`.'
+      operationId: rating_api_put
+      requestBody:
+        $ref: '#/components/requestBodies/RatingRequestBody'
+      responses:
+        '200':
+          description: Rating
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rating'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '400':
+          $ref: '#/components/responses/400_BadRequest_Response_Rating_Post_Put'
         '404':
           $ref: '#/components/responses/404_Resource_Not_Found_Response'
 components:
@@ -520,7 +544,7 @@ components:
           examples:
             response-400-series-list:
               $ref: '#/components/examples/response-400-series-list'
-    400_BadRequest_Response_Rating_Post:
+    400_BadRequest_Response_Rating_Post_Put:
       description: "`BAD REQUEST`: series or user does not exist, or series already exists in list"
       content:
         application/json:
@@ -530,7 +554,7 @@ components:
             response-400-series-list:
               $ref: '#/components/examples/response-400-rating'
     400_BadRequest_Response_SeriesList_Put:
-      description: "`BAD REQUEST`: wrong type or series does not exist"
+      description: "`BAD REQUEST`: wrong type, or series or user does not exist"
       content:
         application/json:
           schema:
@@ -717,6 +741,12 @@ components:
       name: seriesListId
       in: path
       description: 'series list Id'
+      required: true
+      schema: { "type": "integer", pattern: '^\d+$' }
+    ratingId:
+      name: ratingId
+      in: path
+      description: 'rating Id'
       required: true
       schema: { "type": "integer", pattern: '^\d+$' }
     typeQuery:
