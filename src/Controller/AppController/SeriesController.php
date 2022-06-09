@@ -2,9 +2,11 @@
 
 namespace App\Controller\AppController;
 
+use App\Controller\ApiController\RatingApiController;
 use App\Controller\ApiController\SeriesApiController;
 use App\Controller\ApiController\SeriesListApiController;
 use App\Controller\ApiController\UserApiController;
+use App\Entity\Rating;
 use App\Entity\Series;
 use App\Entity\SeriesList;
 use App\Form\TemporaryMarksType;
@@ -25,16 +27,19 @@ class SeriesController extends AbstractController
     protected HttpClientInterface $client;
     protected SeriesApiController $seriesApiController;
     protected SeriesListApiController $seriesListApiController;
+    protected RatingApiController $ratingApiController;
 
     public function __construct(
         HttpClientInterface     $client,
         SeriesApiController     $seriesApiController,
-        SeriesListApiController $seriesListApiController
+        SeriesListApiController $seriesListApiController,
+        RatingApiController     $ratingApiController
     )
     {
         $this->client = $client;
         $this->seriesApiController = $seriesApiController;
         $this->seriesListApiController = $seriesListApiController;
+        $this->ratingApiController = $ratingApiController;
     }
 
     /**
@@ -46,7 +51,7 @@ class SeriesController extends AbstractController
      */
     public function series(Request $request, string $list, string $apiId): RedirectResponse|Response
     {
-        $session = $request->getSession();
+        $userId = $request->getSession()->get(UserApiController::USER_ID);
 
         $series = $this->getSeries($apiId);
         if (!isset($series)) {
@@ -54,11 +59,10 @@ class SeriesController extends AbstractController
             return $this->redirectToRoute($list);
         }
 
-        if (isset($series['id']) && $session->get(UserApiController::USER_ID) !== null) {
-            $userId = $session->get(UserApiController::USER_ID);
-
+        if (isset($series['id']) && $userId !== null) {
             $inFavourites = $this->isSeriesInList($userId, SeriesList::FAVOURITES, $series['id']);
             $inIncompatibleList = $this->isSeriesInIncompatibleList($userId, $series['id']);
+            $userRating = $this->getUserRating($userId, $series['id']);
 
             if ($list != 'search') {
                 $seriesList = $this->getSeriesList($list, $userId, $series['id']);
@@ -72,6 +76,7 @@ class SeriesController extends AbstractController
         } else {
             $inFavourites = false;
             $inIncompatibleList = false;
+            $userRating = null;
             $seriesList = null;
         }
 
@@ -88,7 +93,7 @@ class SeriesController extends AbstractController
             $seriesList['id'],
             $series[Series::IS_FILM_ATTR]
         );
-        if(isset($submitTemporaryMarksForm)) {
+        if (isset($submitTemporaryMarksForm)) {
             $seriesList = $submitTemporaryMarksForm;
         }
 
@@ -97,7 +102,8 @@ class SeriesController extends AbstractController
             'series' => $series,
             'inFavourites' => $inFavourites,
             'inIncompatibleList' => $inIncompatibleList,
-            'seriesList' => $seriesList
+            'seriesList' => $seriesList,
+            'userRating' => $userRating
         ]);
     }
 
@@ -216,5 +222,19 @@ class SeriesController extends AbstractController
         }
 
         return $seriesList ?? null;
+    }
+
+    protected function getUserRating(int $userId, int $seriesId): ?array
+    {
+        $request = Request::create(
+            RatingApiController::RATING_GET_BY_USER_ROUTE . $userId,
+            'GET',
+            [Rating::SERIES_ATTR => $seriesId]
+        );
+        $response = $this->ratingApiController->getByUserAction($request, $userId);
+
+        return $response->getStatusCode() == Response::HTTP_OK
+            ? json_decode($response->getContent(), true)[Rating::RATING_ATTR][0]
+            : null;
     }
 }
