@@ -70,35 +70,34 @@ class SeriesController extends AbstractController
                     $this->addFlash('error', 'Oops! Something went wrong and the series could not be loaded.');
                     return $this->redirectToRoute($list);
                 }
-            } else {
-                $seriesList = null;
+
+                $temporaryMarksForm = $this->createForm(TemporaryMarksType::class);
+
+                if ($series[Series::IS_FILM_ATTR]) {
+                    $temporaryMarksForm->remove(SeriesList::SEASON_ATTR);
+                    $temporaryMarksForm->remove(SeriesList::EPISODE_ATTR);
+                }
+
+                $temporaryMarksForm->handleRequest($request);
+                $submitTemporaryMarksForm = $this->submitTemporaryMarksForm(
+                    $temporaryMarksForm,
+                    $seriesList['id'],
+                    $series[Series::IS_FILM_ATTR]
+                );
+                if (isset($submitTemporaryMarksForm)) {
+                    $seriesList = $submitTemporaryMarksForm;
+                }
             }
-        } else {
-            $inFavourites = false;
-            $inIncompatibleList = false;
-            $userRating = null;
-            $seriesList = null;
         }
 
-        $temporaryMarksForm = $this->createForm(TemporaryMarksType::class);
-
-        if ($series[Series::IS_FILM_ATTR]) {
-            $temporaryMarksForm->remove(SeriesList::SEASON_ATTR);
-            $temporaryMarksForm->remove(SeriesList::EPISODE_ATTR);
-        }
-
-        $temporaryMarksForm->handleRequest($request);
-        $submitTemporaryMarksForm = $this->submitTemporaryMarksForm(
-            $temporaryMarksForm,
-            $seriesList['id'],
-            $series[Series::IS_FILM_ATTR]
-        );
-        if (isset($submitTemporaryMarksForm)) {
-            $seriesList = $submitTemporaryMarksForm;
-        }
+        $inFavourites = $inFavourites ?? false;
+        $inIncompatibleList = $inIncompatibleList ?? false;
+        $userRating = $userRating ?? null;
+        $seriesList = $seriesList ?? null;
+        $temporaryMarksFormView = isset($temporaryMarksForm) ? $temporaryMarksForm->createView() : null;
 
         return $this->render('series/series.html.twig', [
-            'temporaryMarksForm' => $temporaryMarksForm->createView(),
+            'temporaryMarksForm' => $temporaryMarksFormView,
             'series' => $series,
             'inFavourites' => $inFavourites,
             'inIncompatibleList' => $inIncompatibleList,
