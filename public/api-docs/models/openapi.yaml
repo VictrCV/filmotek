@@ -318,6 +318,26 @@ paths:
           $ref: '#/components/responses/400_BadRequest_Response_Rating_Post_Put'
         '404':
           $ref: '#/components/responses/404_Resource_Not_Found_Response'
+  /rating/average_rating/{seriesId}:
+    parameters:
+      - $ref: '#/components/parameters/seriesId'
+    get:
+      tags: [ '⭐ Rating' ]
+      summary: Retrieves a the average rating value of a series.
+      description: 'Returns the average rating value of a series identified by its `seriesId`.'
+      operationId: rating_api_get_average_rating
+      responses:
+        '200':
+          description: Average rating value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AverageRating'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '404':
+          $ref: '#/components/responses/404_Resource_Not_Found_Response'
 components:
   headers:
     Location:
@@ -502,6 +522,12 @@ components:
               href: /api/v1/rating
             self:
               href: /api/v1/rating/33
+    AverageRating:
+      description: 'Average rating value'
+      type: number
+      format: float
+      example:
+        averageRating: 2.5
     Message:
       type: object
       description: HTTP response message
@@ -735,6 +761,12 @@ components:
       name: userId
       in: path
       description: 'user Id'
+      required: true
+      schema: { "type": "integer", pattern: '^\d+$' }
+    seriesId:
+      name: seriesId
+      in: path
+      description: 'series Id'
       required: true
       schema: { "type": "integer", pattern: '^\d+$' }
     seriesListId:

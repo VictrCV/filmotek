@@ -20,6 +20,8 @@ class RatingApiController extends AbstractController
 {
     public const RATING_API_ROUTE = '/api/v1/rating';
     public const RATING_GET_BY_USER_ROUTE = self::RATING_API_ROUTE . '/user/';
+    public const RATING_GET_AVERAGE_RATING_ROUTE = self::RATING_API_ROUTE . '/average_rating/';
+    public const AVERAGE_RATING = 'averageRating';
 
     private const HEADER_CACHE_CONTROL = 'Cache-Control';
     private const HEADER_ALLOW = 'Allow';
@@ -199,6 +201,34 @@ class RatingApiController extends AbstractController
         return Utils::apiResponse(
             Response::HTTP_OK,
             [Rating::RATING_ATTR => $rating]
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @param int $seriesId
+     * @return Response
+     * @Route(path="/average_rating/{seriesId}", name="getAverageSeriesRating", methods={"GET"})
+     */
+    public function getAverageRatingAction(Request $request, int $seriesId): Response
+    {
+        $queryBuilder = $this->entityManager
+            ->getRepository(Rating::class)
+            ->createQueryBuilder('r');
+        $rating = $queryBuilder
+            ->select($queryBuilder->expr()->avg('r.value'))
+            ->where('r.series = :series')
+            ->setParameter('series', $seriesId)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        if (!isset($rating)) {
+            return Utils::errorMessage(Response::HTTP_NOT_FOUND, 'Rating not found.');
+        }
+
+        return Utils::apiResponse(
+            Response::HTTP_OK,
+            [self::AVERAGE_RATING => floatval($rating)]
         );
     }
 }
