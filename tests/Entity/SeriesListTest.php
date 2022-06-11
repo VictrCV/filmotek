@@ -13,8 +13,6 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class SeriesListTest
- *
  * @package App\Tests\Entity
  * @group   entities
  *
@@ -38,8 +36,6 @@ class SeriesListTest extends TestCase
     }
 
     /**
-     * Implement testGetId().
-     *
      * @return void
      * @throws Exception
      */
@@ -51,8 +47,6 @@ class SeriesListTest extends TestCase
     }
 
     /**
-     * Implement testGetId().
-     *
      * @covers ::getId
      * @return void
      * @throws Exception
@@ -63,8 +57,6 @@ class SeriesListTest extends TestCase
     }
 
     /**
-     * Implement testGetSetSeries().
-     *
      * @covers ::getSeries
      * @covers ::setSeries
      * @return void
@@ -78,8 +70,6 @@ class SeriesListTest extends TestCase
     }
 
     /**
-     * Implement testGetSetUser().
-     *
      * @covers ::getUser
      * @covers ::setUser
      * @return void
@@ -93,8 +83,6 @@ class SeriesListTest extends TestCase
     }
 
     /**
-     * Implement testGetSetType().
-     *
      * @covers ::getType
      * @covers ::setType
      * @return void
@@ -111,8 +99,6 @@ class SeriesListTest extends TestCase
     }
 
     /**
-     * Implement testGetSetTime().
-     *
      * @covers ::getTime
      * @covers ::setTime
      * @return void
@@ -127,8 +113,6 @@ class SeriesListTest extends TestCase
     }
 
     /**
-     * Implement testGetSetEpisode().
-     *
      * @covers ::getEpisode
      * @covers ::setEpisode
      * @return void
@@ -142,8 +126,6 @@ class SeriesListTest extends TestCase
     }
 
     /**
-     * Implement testGetSetSeason().
-     *
      * @covers ::getSeason
      * @covers ::setSeason
      * @return void
@@ -157,8 +139,6 @@ class SeriesListTest extends TestCase
     }
 
     /**
-     * Implement testJsonSerialize().
-     *
      * @covers ::jsonSerialize
      * @return void
      * @throws Exception

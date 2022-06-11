@@ -4,44 +4,99 @@
     <div class="container mt-5 pt-5 color-text">
         <div class="row">
             <div class="col-4">
-                <img src="{{ series.imageUrl }}" class="cover-large">
+                <img src="{{ series.imageUrl }}" class="cover-large pe-3">
             </div>
             <div class="col-8">
                 <h1 class="text-center pb-5">{{ series.title }}</h1>
                 {% if (app.session.get('jwt') != null) %}
                     {% if (app.request.attributes.get('_route_params')['list'] == 'in_progress') %}
-                        <div class="row justify-content-center">
+                        {{ form_start(temporaryMarksForm) }}
+                        <div class="row justify-content-center align-items-end mb-5">
                             {% if not series.isFilm %}
                                 <div class="col-2">
-                                    <label class="align-middle">Season</label>
+                                    {{ form_row(temporaryMarksForm.season, {'value': seriesList.season}) }}
                                 </div>
                                 <div class="col-2">
-                                    <label class="align-middle">Episode</label>
+                                    {{ form_row(temporaryMarksForm.episode, {'value': seriesList.episode}) }}
                                 </div>
                             {% endif %}
-                            <div class="col-4">
-                                <label class="align-middle">Time</label>
-                            </div>
-                        </div>
-                        <div class="row justify-content-center mb-5">
-                            {% if not series.isFilm %}
-                                <div class="col-2 d-inline-flex text-center">
-                                    <input type="number" min="1" class="form-control" id="season" value="{{ seriesList.season }}">
-                                </div>
-                                <div class="col-2 text-center">
-                                    <input type="number" min="1" class="form-control" id="episode" value="{{ seriesList.episode }}">
-                                </div>
-                            {% endif %}
-                            <div class="col-2 text-center">
-                                <input type="time" step="1" class="form-control" id="time" value="{{ seriesList.time }}">
+                            <div class="col-3">
+                                {{ form_row(temporaryMarksForm.time, {'value': seriesList.time}) }}
                             </div>
                             <div class="col-2">
-                                <a class="btn btn-form" role="button"
-                                   href="">
-                                    Save changes
-                                </a>
+                                {{ form_row(temporaryMarksForm.save) }}
                             </div>
                         </div>
+                        {{ form_end(temporaryMarksForm) }}
+                    {% endif %}
+                    {% if app.request.attributes.get('_route_params')['list'] != 'search' %}
+                        <form method="POST" action="{{ path('rating_save', {
+                        'list': app.request.attributes.get('_route_params')['list'],
+                        'apiId': series.apiId}) }}">
+                    {% endif %}
+                    <div class="row justify-content-center">
+                        <div class="col-5 text-center">
+                            <label class="userStarsLabel" for="globalStars">Global rating</label>
+                        </div>
+                        {% if app.request.attributes.get('_route_params')['list'] != 'search' %}
+                            <div class="col-5 text-center">
+                                <label class="userStarsLabel" for="userStars">My rating</label>
+                                <button class="btn btn-form" id="star-btn" type="submit">
+                                    <span class="material-icons align-middle">save</span>
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="row justify-content-center mb-5">
+                        <div class="col-5 text-center stars" id="globalStars">
+                            <input disabled class="star star-5" id="averageStar5" type="radio" name="globalStar" value="5"
+                                    {% if averageRating != null and averageRating == 5 %} checked {% endif %}/>
+                            <label class="star star-5" for="averageStar5"></label>
+
+                            <input disabled class="star" id="averageStar4" type="radio" name="globalStar" value="4"
+                                    {% if averageRating != null and averageRating == 4 %} checked {% endif %}/>
+                            <label class="star" for="averageStar4"></label>
+
+                            <input disabled class="star" id="averageStar3" type="radio" name="globalStar" value="3"
+                                    {% if averageRating != null and averageRating == 3 %} checked {% endif %}/>
+                            <label class="star" for="averageStar3"></label>
+
+                            <input disabled class="star" id="averageStar2" type="radio" name="globalStar" value="2"
+                                    {% if averageRating != null and averageRating == 2 %} checked {% endif %}/>
+                            <label class="star" for="averageStar2"></label>
+
+                            <input disabled class="star star-1" id="averageStar1" type="radio" name="globalStar" value="1"
+                                    {% if averageRating != null and averageRating == 1 %} checked {% endif %}/>
+                            <label class="star star-1" for="averageStar1"></label>
+                        </div>
+                        {% if app.request.attributes.get('_route_params')['list'] != 'search' %}
+                            <div class="col-5 text-center stars" id="userStars">
+                                <input type="hidden" name="seriesId" value="{{ series.id }}"/>
+
+                                <input class="star star-5" id="userStar5" type="radio" name="userStar" value="5"
+                                        {% if userRating != null and userRating.value == 5 %} checked {% endif %}/>
+                                <label class="star star-5" for="userStar5"></label>
+
+                                <input class="star" id="userStar4" type="radio" name="userStar" value="4"
+                                        {% if userRating != null and userRating.value == 4 %} checked {% endif %}/>
+                                <label class="star" for="userStar4"></label>
+
+                                <input class="star" id="userStar3" type="radio" name="userStar" value="3"
+                                        {% if userRating != null and userRating.value == 3 %} checked {% endif %}/>
+                                <label class="star" for="userStar3"></label>
+
+                                <input class="star" id="userStar2" type="radio" name="userStar" value="2"
+                                        {% if userRating != null and userRating.value == 2 %} checked {% endif %}/>
+                                <label class="star" for="userStar2"></label>
+
+                                <input class="star star-1" id="userStar1" type="radio" name="userStar" value="1"
+                                        {% if userRating != null and userRating.value == 1 %} checked {% endif %}/>
+                                <label class="star star-1" for="userStar1"></label>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% if app.request.attributes.get('_route_params')['list'] != 'search' %}
+                        </form>
                     {% endif %}
                     <div class="row mb-4">
                         {% if inFavourites == false %}
@@ -56,24 +111,24 @@
                             </div>
                         {% endif %}
                         {% if inIncompatibleList == false %}
-                        <div class="col-3">
-                            <a class="btn btn-form" role="button"
-                               href="{{ path('series_list_post', {
-                                   'list': app.request.attributes.get('_route_params')['list'],
-                                   'type': 'toWatch',
-                                   'apiId': series.apiId}) }}">
-                                Add to "To watch"
-                            </a>
-                        </div>
-                        <div class="col-3">
-                            <a class="btn btn-form" role="button"
-                               href="{{ path('series_list_post', {
-                                   'list': app.request.attributes.get('_route_params')['list'],
-                                   'type': 'inProgress',
-                                   'apiId': series.apiId}) }}">
-                                Add to "In progress"
-                            </a>
-                        </div>
+                            <div class="col-3">
+                                <a class="btn btn-form" role="button"
+                                   href="{{ path('series_list_post', {
+                                       'list': app.request.attributes.get('_route_params')['list'],
+                                       'type': 'toWatch',
+                                       'apiId': series.apiId}) }}">
+                                    Add to "To watch"
+                                </a>
+                            </div>
+                            <div class="col-3">
+                                <a class="btn btn-form" role="button"
+                                   href="{{ path('series_list_post', {
+                                       'list': app.request.attributes.get('_route_params')['list'],
+                                       'type': 'inProgress',
+                                       'apiId': series.apiId}) }}">
+                                    Add to "In progress"
+                                </a>
+                            </div>
                         {% endif %}
                         {% if app.request.attributes.get('_route_params')['list'] == 'to_watch' %}
                             <div class="col-3">
