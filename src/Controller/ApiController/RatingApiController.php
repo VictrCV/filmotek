@@ -23,6 +23,8 @@ class RatingApiController extends AbstractController
     public const RATING_GET_AVERAGE_RATING_ROUTE = self::RATING_API_ROUTE . '/average_rating/';
     public const AVERAGE_RATING = 'averageRating';
 
+    public const RATING_NOT_FOUND_MESSAGE = 'Rating not found.';
+
     private const HEADER_CACHE_CONTROL = 'Cache-Control';
     private const HEADER_ALLOW = 'Allow';
 
@@ -140,7 +142,7 @@ class RatingApiController extends AbstractController
             ->execute();
 
         if (empty($rating)) {
-            return Utils::errorMessage(Response::HTTP_NOT_FOUND, 'Rating not found.');
+            return Utils::errorMessage(Response::HTTP_NOT_FOUND, self::RATING_NOT_FOUND_MESSAGE);
         }
 
         return Utils::apiResponse(
@@ -162,7 +164,7 @@ class RatingApiController extends AbstractController
             ->find($ratingId);
 
         if (!isset($rating)) {
-            return Utils::errorMessage(Response::HTTP_NOT_FOUND, 'Rating not found.');
+            return Utils::errorMessage(Response::HTTP_NOT_FOUND, self::RATING_NOT_FOUND_MESSAGE);
         }
 
         $body = $request->getContent();
@@ -223,7 +225,7 @@ class RatingApiController extends AbstractController
             ->getSingleScalarResult();
 
         if (!isset($rating)) {
-            return Utils::errorMessage(Response::HTTP_NOT_FOUND, 'Rating not found.');
+            return Utils::errorMessage(Response::HTTP_NOT_FOUND, self::RATING_NOT_FOUND_MESSAGE);
         }
 
         return Utils::apiResponse(
