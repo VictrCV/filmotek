@@ -64,9 +64,7 @@ class SeriesController extends AbstractController
             $inIncompatibleList = $this->isSeriesInIncompatibleList($userId, $series['id']);
             $averageRating = $this->getAverageRating($series['id']);
 
-            if (isset($averageRating)) {
-                $averageRating = round($averageRating);
-            }
+            $averageRating = isset($averageRating) ? round($averageRating) : null;
 
             if ($list != 'search') {
                 $seriesList = $this->getSeriesList($list, $userId, $series['id']);
@@ -89,13 +87,13 @@ class SeriesController extends AbstractController
                     $seriesList['id'],
                     $series[Series::IS_FILM_ATTR]
                 );
-                if (isset($submitTemporaryMarksForm)) {
-                    $seriesList = $submitTemporaryMarksForm;
-                }
+
+                $seriesList = $submitTemporaryMarksForm;
+                $temporaryMarksFormView = $temporaryMarksForm->createView();
             }
         }
 
-        $temporaryMarksFormView = isset($temporaryMarksForm) ? $temporaryMarksForm->createView() : null;
+        $temporaryMarksFormView = $temporaryMarksFormView ?? null;
         $inFavourites = $inFavourites ?? false;
         $inIncompatibleList = $inIncompatibleList ?? false;
         $seriesList = $seriesList ?? null;
