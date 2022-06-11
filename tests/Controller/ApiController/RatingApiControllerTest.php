@@ -323,4 +323,59 @@ class RatingApiControllerTest extends BaseTestCase
         self::assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         self::assertFalse($response->isSuccessful());
     }
+
+    /**
+     * @depends testPostRatingAction201Created
+     * @covers ::getAverageRatingAction
+     * @return void
+     * @throws Exception
+     */
+    public function testGetAverageSeriesRatingAction200Ok(array $rating)
+    {
+        $seriesId = $rating[Rating::SERIES_ATTR]['id'];
+        $userId = self::createUser()['id'];
+
+        $data = [
+            Rating::VALUE_ATTR => self::$faker->numberBetween(1, 5),
+            Rating::SERIES_ATTR => $seriesId,
+            Rating::USER_ATTR => $userId
+        ];
+
+        self::$client->request(
+            'POST',
+            RatingApiController::RATING_API_ROUTE,
+            [], [], [],
+            json_encode($data)
+        );
+
+        self::$client->request(
+            'GET',
+            RatingApiController::RATING_GET_AVERAGE_RATING_ROUTE . $seriesId,
+        );
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        self::assertTrue($response->isSuccessful());
+        self::assertJson($response->getContent());
+        $averageRatingResponse = json_decode($response->getContent(), true)[RatingApiController::AVERAGE_RATING];
+        $averageRating = ($rating[Rating::VALUE_ATTR] + $data[Rating::VALUE_ATTR]) / 2;
+        self::assertEquals($averageRating, $averageRatingResponse);
+    }
+
+    /**
+     * @covers ::getAverageRatingAction
+     * @return void
+     * @throws Exception
+     */
+    public function testGetAverageSeriesRatingAction404NotFound()
+    {
+        self::$client->request(
+            'GET',
+            RatingApiController::RATING_GET_AVERAGE_RATING_ROUTE . -1,
+        );
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
 }
