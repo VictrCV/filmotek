@@ -31,41 +31,71 @@
                     {% endif %}
                     {% if app.request.attributes.get('_route_params')['list'] != 'search' %}
                         <form method="POST" action="{{ path('rating_save', {
-                            'list': app.request.attributes.get('_route_params')['list'],
-                            'apiId': series.apiId}) }}">
-                            <div class="row justify-content-center">
-                                <div class="col-5 text-center">
-                                    <label class="userStarsLabel" for="userStars">My rating</label>
-                                    <button class="btn btn-form" id="star-btn" type="submit">
-                                        <span class="material-icons align-middle">save</span>
-                                    </button>
-                                </div>
+                        'list': app.request.attributes.get('_route_params')['list'],
+                        'apiId': series.apiId}) }}">
+                    {% endif %}
+                    <div class="row justify-content-center">
+                        <div class="col-5 text-center">
+                            <label class="userStarsLabel" for="globalStars">Global rating</label>
+                        </div>
+                        {% if app.request.attributes.get('_route_params')['list'] != 'search' %}
+                            <div class="col-5 text-center">
+                                <label class="userStarsLabel" for="userStars">My rating</label>
+                                <button class="btn btn-form" id="star-btn" type="submit">
+                                    <span class="material-icons align-middle">save</span>
+                                </button>
                             </div>
-                            <div class="row justify-content-center mb-5">
-                                <div class="col-5 text-center stars" id="userStars">
-                                    <input type="hidden" name="seriesId" value="{{ series.id }}"/>
+                        {% endif %}
+                    </div>
+                    <div class="row justify-content-center mb-5">
+                        <div class="col-5 text-center stars" id="globalStars">
+                            <input disabled class="star star-5" id="averageStar5" type="radio" name="globalStar" value="5"
+                                    {% if averageRating != null and averageRating == 5 %} checked {% endif %}/>
+                            <label class="star star-5" for="averageStar5"></label>
 
-                                    <input class="star star-5" id="star-5" type="radio" name="star" value="5"
-                                            {% if userRating != null and userRating.value == 5 %} checked {% endif %}/>
-                                    <label class="star star-5" for="star-5"></label>
+                            <input disabled class="star" id="averageStar4" type="radio" name="globalStar" value="4"
+                                    {% if averageRating != null and averageRating == 4 %} checked {% endif %}/>
+                            <label class="star" for="averageStar4"></label>
 
-                                    <input class="star" id="star-4" type="radio" name="star" value="4"
-                                            {% if userRating != null and userRating.value == 4 %} checked {% endif %}/>
-                                    <label class="star" for="star-4"></label>
+                            <input disabled class="star" id="averageStar3" type="radio" name="globalStar" value="3"
+                                    {% if averageRating != null and averageRating == 3 %} checked {% endif %}/>
+                            <label class="star" for="averageStar3"></label>
 
-                                    <input class="star" id="star-3" type="radio" name="star" value="3"
-                                            {% if userRating != null and userRating.value == 3 %} checked {% endif %}/>
-                                    <label class="star" for="star-3"></label>
+                            <input disabled class="star" id="averageStar2" type="radio" name="globalStar" value="2"
+                                    {% if averageRating != null and averageRating == 2 %} checked {% endif %}/>
+                            <label class="star" for="averageStar2"></label>
 
-                                    <input class="star" id="star-2" type="radio" name="star" value="2"
-                                            {% if userRating != null and userRating.value == 2 %} checked {% endif %}/>
-                                    <label class="star" for="star-2"></label>
+                            <input disabled class="star star-1" id="averageStar1" type="radio" name="globalStar" value="1"
+                                    {% if averageRating != null and averageRating == 1 %} checked {% endif %}/>
+                            <label class="star star-1" for="averageStar1"></label>
+                        </div>
+                        {% if app.request.attributes.get('_route_params')['list'] != 'search' %}
+                            <div class="col-5 text-center stars" id="userStars">
+                                <input type="hidden" name="seriesId" value="{{ series.id }}"/>
 
-                                    <input class="star star-1" id="star-1" type="radio" name="star" value="1"
-                                            {% if userRating != null and userRating.value == 1 %} checked {% endif %}/>
-                                    <label class="star star-1" for="star-1"></label>
-                                </div>
+                                <input class="star star-5" id="userStar5" type="radio" name="userStar" value="5"
+                                        {% if userRating != null and userRating.value == 5 %} checked {% endif %}/>
+                                <label class="star star-5" for="userStar5"></label>
+
+                                <input class="star" id="userStar4" type="radio" name="userStar" value="4"
+                                        {% if userRating != null and userRating.value == 4 %} checked {% endif %}/>
+                                <label class="star" for="userStar4"></label>
+
+                                <input class="star" id="userStar3" type="radio" name="userStar" value="3"
+                                        {% if userRating != null and userRating.value == 3 %} checked {% endif %}/>
+                                <label class="star" for="userStar3"></label>
+
+                                <input class="star" id="userStar2" type="radio" name="userStar" value="2"
+                                        {% if userRating != null and userRating.value == 2 %} checked {% endif %}/>
+                                <label class="star" for="userStar2"></label>
+
+                                <input class="star star-1" id="userStar1" type="radio" name="userStar" value="1"
+                                        {% if userRating != null and userRating.value == 1 %} checked {% endif %}/>
+                                <label class="star star-1" for="userStar1"></label>
                             </div>
+                        {% endif %}
+                    </div>
+                    {% if app.request.attributes.get('_route_params')['list'] != 'search' %}
                         </form>
                     {% endif %}
                     <div class="row mb-4">

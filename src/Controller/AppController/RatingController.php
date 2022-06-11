@@ -33,7 +33,7 @@ class RatingController extends AbstractController
      */
     public function saveRating(Request $request, string $list, string $apiId): RedirectResponse|Response
     {
-        $value = $_POST["star"];
+        $value = $_POST["userStar"];
         $seriesId = $_POST["seriesId"];
         $userId = $request->getSession()->get(UserApiController::USER_ID);
 

@@ -62,7 +62,11 @@ class SeriesController extends AbstractController
         if (isset($series['id']) && $userId !== null) {
             $inFavourites = $this->isSeriesInList($userId, SeriesList::FAVOURITES, $series['id']);
             $inIncompatibleList = $this->isSeriesInIncompatibleList($userId, $series['id']);
-            $userRating = $this->getUserRating($userId, $series['id']);
+            $averageRating = $this->getAverageRating($series['id']);
+
+            if (isset($averageRating)) {
+                $averageRating = round($averageRating);
+            }
 
             if ($list != 'search') {
                 $seriesList = $this->getSeriesList($list, $userId, $series['id']);
@@ -71,8 +75,9 @@ class SeriesController extends AbstractController
                     return $this->redirectToRoute($list);
                 }
 
-                $temporaryMarksForm = $this->createForm(TemporaryMarksType::class);
+                $userRating = $this->getUserRating($userId, $series['id']);
 
+                $temporaryMarksForm = $this->createForm(TemporaryMarksType::class);
                 if ($series[Series::IS_FILM_ATTR]) {
                     $temporaryMarksForm->remove(SeriesList::SEASON_ATTR);
                     $temporaryMarksForm->remove(SeriesList::EPISODE_ATTR);
@@ -90,11 +95,12 @@ class SeriesController extends AbstractController
             }
         }
 
+        $temporaryMarksFormView = isset($temporaryMarksForm) ? $temporaryMarksForm->createView() : null;
         $inFavourites = $inFavourites ?? false;
         $inIncompatibleList = $inIncompatibleList ?? false;
-        $userRating = $userRating ?? null;
         $seriesList = $seriesList ?? null;
-        $temporaryMarksFormView = isset($temporaryMarksForm) ? $temporaryMarksForm->createView() : null;
+        $userRating = $userRating ?? null;
+        $averageRating = $averageRating ?? null;
 
         return $this->render('series/series.html.twig', [
             'temporaryMarksForm' => $temporaryMarksFormView,
@@ -102,7 +108,8 @@ class SeriesController extends AbstractController
             'inFavourites' => $inFavourites,
             'inIncompatibleList' => $inIncompatibleList,
             'seriesList' => $seriesList,
-            'userRating' => $userRating
+            'userRating' => $userRating,
+            'averageRating' => $averageRating
         ]);
     }
 
@@ -234,6 +241,19 @@ class SeriesController extends AbstractController
 
         return $response->getStatusCode() == Response::HTTP_OK
             ? json_decode($response->getContent(), true)[Rating::RATING_ATTR][0]
+            : null;
+    }
+
+    protected function getAverageRating(int $seriesId): ?float
+    {
+        $request = Request::create(
+            RatingApiController::RATING_GET_AVERAGE_RATING_ROUTE . $seriesId,
+            'GET'
+        );
+        $response = $this->ratingApiController->getAverageRatingAction($request, $seriesId);
+
+        return $response->getStatusCode() == Response::HTTP_OK
+            ? json_decode($response->getContent(), true)[RatingApiController::AVERAGE_RATING]
             : null;
     }
 }
