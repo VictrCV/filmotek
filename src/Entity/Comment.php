@@ -20,6 +20,8 @@ class Comment implements JsonSerializable
     public const SERIES_ATTR = 'series';
     public const USER_ATTR = 'user';
 
+    public const DATETIME_FORMAT = 'd-m-Y H:i';
+
     /**
      * @var int
      *
@@ -122,7 +124,7 @@ class Comment implements JsonSerializable
     public function jsonSerialize(): mixed
     {
         $vars = get_object_vars($this);
-        $vars[Comment::DATETIME_ATTR] = $this->getDatetime()->format('d-m-Y H:i');
+        $vars[Comment::DATETIME_ATTR] = $this->getDatetime()->format(self::DATETIME_FORMAT);
 
         return $vars;
     }

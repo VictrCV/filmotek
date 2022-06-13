@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class SeriesApiController
  * @package App\Controller\ApiController
  * @Route(path=SeriesApiController::SERIES_API_ROUTE, name="series_api_")
  */

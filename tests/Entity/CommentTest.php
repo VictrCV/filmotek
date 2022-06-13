@@ -5,6 +5,7 @@ namespace App\Tests\Entity;
 use App\Entity\Comment;
 use App\Entity\Series;
 use App\Entity\User;
+use DateTime;
 use Exception;
 use Faker\Factory as FakerFactoryAlias;
 use Faker\Generator as FakerGeneratorAlias;
@@ -31,6 +32,16 @@ class CommentTest extends TestCase
     {
         self::$comment = new Comment();
         self::$faker = FakerFactoryAlias::create();
+    }
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    public function testConstructor(): void
+    {
+        $comment = new Comment();
+        self::assertNotEmpty($comment->getDatetime());
     }
 
     /**
@@ -110,6 +121,5 @@ class CommentTest extends TestCase
             Comment::USER_ATTR => self::$comment->getUser(),
         ];
         self::assertEquals($vars, self::$comment->jsonSerialize());
-        var_dump(self::$comment->jsonSerialize());
     }
 }

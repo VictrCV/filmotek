@@ -16,7 +16,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 
 /**
- * Class UserApiController
  * @package App\Controller\ApiController
  * @Route(path=UserApiController::USER_API_ROUTE, name="user_api_")
  */

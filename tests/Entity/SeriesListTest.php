@@ -42,7 +42,7 @@ class SeriesListTest extends TestCase
     public function testConstructor(): void
     {
         $seriesList = new SeriesList();
-        $defaultTime = DateTime::createFromFormat("H:i:s", "00:00:00");
+        $defaultTime = DateTime::createFromFormat(SeriesList::TIME_FORMAT, "00:00:00");
         self::assertEquals($defaultTime, $seriesList->getTime());
     }
 
@@ -107,7 +107,7 @@ class SeriesListTest extends TestCase
     public function testGetSetTime(): void
     {
         $datetime = self::$faker->time();
-        $time = DateTime::createFromFormat("H:i:s", $datetime);
+        $time = DateTime::createFromFormat(SeriesList::TIME_FORMAT, $datetime);
         self::$seriesList->setTime($time);
         self::assertEquals($time, self::$seriesList->getTime());
     }
@@ -152,7 +152,7 @@ class SeriesListTest extends TestCase
             SeriesList::USER_ATTR => self::$seriesList->getUser(),
             SeriesList::SEASON_ATTR => self::$seriesList->getSeason(),
             SeriesList::EPISODE_ATTR => self::$seriesList->getEpisode(),
-            SeriesList::TIME_ATTR => self::$seriesList->getTime()->format('H:i:s'),
+            SeriesList::TIME_ATTR => self::$seriesList->getTime()->format(SeriesList::TIME_FORMAT),
         ];
         self::assertEquals($vars, self::$seriesList->jsonSerialize());
     }
