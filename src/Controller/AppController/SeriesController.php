@@ -203,7 +203,7 @@ class SeriesController extends AbstractController
     {
         if ($temporaryMarksForm->isSubmitted() && $temporaryMarksForm->isValid()) {
             $formData = $temporaryMarksForm->getData();
-            $data = [SeriesList::TIME_ATTR => $formData[SeriesList::TIME_ATTR]->format('H:i:s')];
+            $data = [SeriesList::TIME_ATTR => $formData[SeriesList::TIME_ATTR]->format(SeriesList::TIME_FORMAT)];
 
             if (!$isFilm) {
                 $data[SeriesList::SEASON_ATTR] = $formData[SeriesList::SEASON_ATTR];

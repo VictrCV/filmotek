@@ -28,6 +28,8 @@ class SeriesList implements JsonSerializable
     public const EPISODE_ATTR = 'episode';
     public const TIME_ATTR = 'time';
 
+    public const TIME_FORMAT = 'H:i:s';
+
     /**
      * @var int
      *
@@ -87,7 +89,7 @@ class SeriesList implements JsonSerializable
 
     public function __construct()
     {
-        $this->setTime(DateTime::createFromFormat("H:i:s", "00:00:00"));
+        $this->setTime(DateTime::createFromFormat(SeriesList::TIME_FORMAT, "00:00:00"));
     }
 
     public function getId(): ?int
@@ -159,12 +161,12 @@ class SeriesList implements JsonSerializable
         return $this;
     }
 
-    public function getTime(): ?DateTimeInterface
+    public function getTime(): ?DateTime
     {
         return $this->time;
     }
 
-    public function setTime(?DateTimeInterface $time): self
+    public function setTime(?DateTime $time): self
     {
         $this->time = $time;
 
@@ -174,7 +176,7 @@ class SeriesList implements JsonSerializable
     public function jsonSerialize(): mixed
     {
         $vars = get_object_vars($this);
-        $vars[SeriesList::TIME_ATTR] = $this->getTime()->format('H:i:s');
+        $vars[SeriesList::TIME_ATTR] = $this->getTime()->format(self::TIME_FORMAT);
 
         return $vars;
     }
