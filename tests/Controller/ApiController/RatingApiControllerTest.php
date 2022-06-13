@@ -325,27 +325,38 @@ class RatingApiControllerTest extends BaseTestCase
     }
 
     /**
-     * @depends testPostRatingAction201Created
      * @covers ::getAverageRatingAction
      * @return void
      * @throws Exception
      */
-    public function testGetAverageSeriesRatingAction200Ok(array $rating)
+    public function testGetAverageSeriesRatingAction200Ok()
     {
-        $seriesId = $rating[Rating::SERIES_ATTR]['id'];
-        $userId = self::createUser()['id'];
+        $seriesId = self::createSeries()['id'];
 
-        $data = [
+        $data1 = [
             Rating::VALUE_ATTR => self::$faker->numberBetween(1, 5),
             Rating::SERIES_ATTR => $seriesId,
-            Rating::USER_ATTR => $userId
+            Rating::USER_ATTR => self::createUser()['id']
         ];
 
         self::$client->request(
             'POST',
             RatingApiController::RATING_API_ROUTE,
             [], [], [],
-            json_encode($data)
+            json_encode($data1)
+        );
+
+        $data2 = [
+            Rating::VALUE_ATTR => self::$faker->numberBetween(1, 5),
+            Rating::SERIES_ATTR => $seriesId,
+            Rating::USER_ATTR => self::createUser()['id']
+        ];
+
+        self::$client->request(
+            'POST',
+            RatingApiController::RATING_API_ROUTE,
+            [], [], [],
+            json_encode($data2)
         );
 
         self::$client->request(
@@ -358,7 +369,7 @@ class RatingApiControllerTest extends BaseTestCase
         self::assertTrue($response->isSuccessful());
         self::assertJson($response->getContent());
         $averageRatingResponse = json_decode($response->getContent(), true)[RatingApiController::AVERAGE_RATING];
-        $averageRating = ($rating[Rating::VALUE_ATTR] + $data[Rating::VALUE_ATTR]) / 2;
+        $averageRating = ($data1[Rating::VALUE_ATTR] + $data2[Rating::VALUE_ATTR]) / 2;
         self::assertEquals($averageRating, $averageRatingResponse);
     }
 
