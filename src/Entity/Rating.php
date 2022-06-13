@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * Rating
@@ -10,8 +11,13 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="rating", indexes={@ORM\Index(name="FK_D889262264B64DCC", columns={"userId"}), @ORM\Index(name="FK_D8892622F891D8C1", columns={"seriesId"})})
  * @ORM\Entity
  */
-class Rating
+class Rating implements JsonSerializable
 {
+    public const RATING_ATTR = 'rating';
+    public const VALUE_ATTR = 'value';
+    public const SERIES_ATTR = 'series';
+    public const USER_ATTR = 'user';
+
     /**
      * @var int
      *
@@ -22,9 +28,9 @@ class Rating
     private $id;
 
     /**
-     * @var bool
+     * @var int
      *
-     * @ORM\Column(name="value", type="boolean", nullable=false)
+     * @ORM\Column(name="value", type="smallint", nullable=false)
      */
     private $value;
 
@@ -53,12 +59,12 @@ class Rating
         return $this->id;
     }
 
-    public function getValue(): ?bool
+    public function getValue(): ?int
     {
         return $this->value;
     }
 
-    public function setValue(bool $value): self
+    public function setValue(int $value): self
     {
         $this->value = $value;
 
@@ -89,5 +95,8 @@ class Rating
         return $this;
     }
 
-
+    public function jsonSerialize(): mixed
+    {
+        return get_object_vars($this);
+    }
 }

@@ -71,7 +71,7 @@ trait Utils
                 Series::TITLE_ATTR => $series['titleText']['text'],
                 Series::IS_FILM_ATTR => !$series['titleType']['isSeries'],
                 Series::SYNOPSIS_ATTR => $series['plot']['plotText']['plainText'],
-                Series::IMAGE_URL_ATTR => $series['primaryImage']['url'],
+                Series::IMAGE_URL_ATTR => $series['primaryImage']['url']
             ];
         }
         return null;

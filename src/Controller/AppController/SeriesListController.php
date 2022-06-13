@@ -19,13 +19,14 @@ class SeriesListController extends SeriesController
 {
 
     /**
-     * @Route("/series-list/post/{type}/{apiId}", name="series_list_post")
+     * @Route("{list}/series_list/post/{type}/{apiId}", name="series_list_post")
      * @param Request $request
+     * @param string $list
      * @param string $type
      * @param string $apiId
      * @return RedirectResponse|Response
      */
-    public function postSeriesList(Request $request, string $type, string $apiId): RedirectResponse|Response
+    public function postSeriesList(Request $request, string $list, string $type, string $apiId): RedirectResponse|Response
     {
         $session = $request->getSession();
 
@@ -39,7 +40,10 @@ class SeriesListController extends SeriesController
 
             if (!isset($series)) {
                 $this->addFlash('error', 'Oops! Something went wrong and the series could not be obtained.');
-                return $this->redirectToRoute('search', []);
+                return $this->redirectToRoute('series', [
+                    'list' => $list,
+                    Series::API_ID_ATTR => $apiId
+                ]);
             }
 
             $data = [
@@ -62,10 +66,9 @@ class SeriesListController extends SeriesController
                 $series = json_decode($response->getContent(), true)[Series::SERIES_ATTR];
             } else {
                 $this->addFlash('error', 'Oops! Something went wrong and the series could not be created.');
-                return $this->render('series/series.html.twig', [
-                    'series' => $series,
-                    'inFavourites' => false,
-                    'inIncompatibleList' => false
+                return $this->redirectToRoute('series', [
+                    'list' => $list,
+                    Series::API_ID_ATTR => $apiId
                 ]);
             }
         } else {
@@ -81,28 +84,104 @@ class SeriesListController extends SeriesController
         $request = Request::create(
             SeriesListApiController::SERIES_LIST_API_ROUTE,
             'POST',
-            [], [], [],
-            ['HTTP_Authorization' => $session->get(UserController::JWT_SESSION_KEY)],
+            [], [], [], [],
             json_encode($data)
         );
         $response = $this->seriesListApiController->postAction($request);
-
-        $inFavourites = $this->isSeriesInList(
-            $session->get(UserApiController::USER_ID),
-            SeriesList::FAVOURITES,
-            $series['id']);
-        $inIncompatibleList = $this->isSeriesInIncompatibleList(
-            $session->get(UserApiController::USER_ID),
-            $series['id']);
 
         if ($response->getStatusCode() != Response::HTTP_CREATED) {
             $this->addFlash('error', 'Oops! Something went wrong and the series could not be added to list.');
         }
 
-        return $this->render('series/series.html.twig', [
-            'series' => $series,
-            'inFavourites' => $inFavourites,
-            'inIncompatibleList' => $inIncompatibleList
+        return $this->redirectToRoute('series', [
+            'list' => $list,
+            Series::API_ID_ATTR => $apiId
         ]);
+    }
+
+    /**
+     * @param int $userId
+     * @param string $type
+     * @return RedirectResponse|Response
+     */
+    protected function loadSeriesList(int $userId, string $type): RedirectResponse|Response
+    {
+        $request = Request::create(
+            SeriesListApiController::SERIES_LIST_GET_BY_USER_ROUTE . $userId,
+            'GET',
+            [SeriesList::TYPE_ATTR => $type]
+        );
+        $response = $this->seriesListApiController->getByUserAction($request, $userId);
+
+        if ($response->getStatusCode() == Response::HTTP_NOT_FOUND) {
+            return $this->render('series-list/series-list.html.twig', [
+                'seriesList' => [],
+            ]);
+        } else if ($response->getStatusCode() != Response::HTTP_OK) {
+            $this->addFlash('error', 'Oops! Something went wrong and the ' . $type . ' series list could not be obtained.');
+            return $this->redirectToRoute('search', []);
+        }
+
+        $seriesList = json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR];
+        return $this->render('series-list/series-list.html.twig', [
+            'seriesList' => $seriesList,
+        ]);
+    }
+
+    /**
+     * @Route("{list}/series_list/start_watching/{apiId}/{seriesListId}", name="series_list_start_watching")
+     * @param string $list
+     * @param string $apiId
+     * @param int $seriesListId
+     * @return RedirectResponse|Response
+     */
+    public function startWatching(string $list, string $apiId, int $seriesListId): RedirectResponse|Response
+    {
+        $request = Request::create(
+            SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesListId,
+            'PUT',
+            [], [], [], [],
+            json_encode([SeriesList::TYPE_ATTR => SeriesList::IN_PROGRESS])
+        );
+        $response = $this->seriesListApiController->putAction($request, $seriesListId);
+
+        if ($response->getStatusCode() != Response::HTTP_OK) {
+            $this->addFlash('error', 'Oops! Something went wrong and it was not possible to start watching the series.');
+            return $this->redirectToRoute('series', [
+                'list' => $list,
+                Series::API_ID_ATTR => $apiId
+            ]);
+        }
+
+        return $this->redirectToRoute('series', [
+            'list' => 'in_progress',
+            Series::API_ID_ATTR => $apiId
+        ]);
+    }
+
+    /**
+     * @Route("{list}/series_list/delete/{apiId}/{seriesListId}", name="series_list_delete")
+     * @param string $list
+     * @param string $apiId
+     * @param int $seriesListId
+     * @return RedirectResponse|Response
+     */
+    public function deleteSeriesList(string $list, string $apiId, int $seriesListId): RedirectResponse|Response
+    {
+        $request = Request::create(
+            SeriesListApiController::SERIES_LIST_API_ROUTE . '/' . $seriesListId,
+            'DELETE'
+        );
+        $response = $this->seriesListApiController->deleteAction($request, $seriesListId);
+
+        if ($response->getStatusCode() != Response::HTTP_NO_CONTENT) {
+            $this->addFlash('error', 'Oops! Something went wrong and it was not possible to start watching the series.');
+            return $this->redirectToRoute('series', [
+                'list' => $list,
+                Series::API_ID_ATTR => $apiId
+            ]);
+        }
+
+        return $this->redirectToRoute($list);
     }
 }

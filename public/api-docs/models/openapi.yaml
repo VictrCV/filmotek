@@ -22,6 +22,8 @@ tags:
     description: 'Series management'
   - name: '🗃️️ Series list'
     description: 'Series list management'
+  - name: '⭐ Rating'
+    description: 'Rating management'
 paths:
   /users:
     post:
@@ -29,8 +31,6 @@ paths:
       summary: Creates a User resource.
       description: 'Creates a new user'
       operationId: user_api_post
-      security:
-        - FilmotekApiSecurity: [ ]
       requestBody:
         $ref: '#/components/requestBodies/UserRequestBody'
       responses:
@@ -94,8 +94,6 @@ paths:
               parameters:
                 token: '$response.body#/access_token'
               description: 'The `access_token` value returned in the response must be appended to the `Authorization: Bearer ` header in all operations.'
-        '401':
-          $ref: '#/components/responses/401_Unauthorized_Response'
         '422':
           $ref: '#/components/responses/422_UnprocessableEntity_Response'
   /series:
@@ -104,8 +102,6 @@ paths:
       summary: Creates a Series resource.
       description: 'Creates a new series'
       operationId: series_api_post
-      security:
-        - FilmotekApiSecurity: [ ]
       requestBody:
         $ref: '#/components/requestBodies/SeriesRequestBody'
       responses:
@@ -139,10 +135,8 @@ paths:
     get:
       tags: [ '🎞️ Series' ]
       summary: Retrieves a Series resource based on its apiId.
-      description: 'Returns the result identified by `apiId`.'
+      description: 'Returns the series identified by `apiId`.'
       operationId: series_api_get_by_api_id
-      security:
-        - FilmotekApiSecurity: [ ]
       responses:
         '200':
           description: Series
@@ -161,8 +155,6 @@ paths:
       summary: Creates a Series list resource.
       description: 'Creates a new series list'
       operationId: series_list_api_post
-      security:
-        - FilmotekApiSecurity: [ ]
       requestBody:
         $ref: '#/components/requestBodies/SeriesListRequestBody'
       responses:
@@ -176,9 +168,7 @@ paths:
             Location:
               $ref: '#/components/headers/Location'
         '400':
-          $ref: '#/components/responses/400_BadRequest_Response_SeriesList'
-        '403':
-          $ref: '#/components/responses/403_Forbidden_Response'
+          $ref: '#/components/responses/400_BadRequest_Response_SeriesList_Post'
         '422':
           $ref: '#/components/responses/422_UnprocessableEntity_Response'
     options:
@@ -192,25 +182,157 @@ paths:
           headers:
             Allow:
               $ref: '#/components/headers/Allow'
-  /series-list/user/{user}:
+  /series-list/user/{userId}:
     parameters:
-      - $ref: '#/components/parameters/user'
+      - $ref: '#/components/parameters/userId'
       - $ref: '#/components/parameters/typeQuery'
-      - $ref: '#/components/parameters/seriesQuery'
+      - $ref: '#/components/parameters/seriesIdQuery'
     get:
       tags: [ '🗃️️ Series list' ]
       summary: Retrieves a Series list resource based on its user.
-      description: 'Returns the result identified by `user` and, optionally, by `type` and/or `series`.'
+      description: 'Returns the series list identified by `user` and, optionally, by `type` and/or `series`.'
       operationId: series_list_api_get_by_user
-      security:
-        - FilmotekApiSecurity: [ ]
       responses:
         '200':
           description: SeriesList
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Series'
+                $ref: '#/components/schemas/SeriesList'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '404':
+          $ref: '#/components/responses/404_Resource_Not_Found_Response'
+  /series-list/{seriesListId}:
+    parameters:
+      - $ref: '#/components/parameters/seriesListId'
+    put:
+      tags: [ '🗃️️ Series list' ]
+      summary: Updates the Series list resource.
+      description: 'Updates the series list identified by `seriesListId`.'
+      operationId: series_list_api_put
+      requestBody:
+        $ref: '#/components/requestBodies/SeriesListRequestBody'
+      responses:
+        '200':
+          description: SeriesList
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeriesList'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '400':
+          $ref: '#/components/responses/400_BadRequest_Response_SeriesList_Put'
+        '404':
+          $ref: '#/components/responses/404_Resource_Not_Found_Response'
+    delete:
+      tags: [ '🗃️️ Series list' ]
+      summary: Removes the Series list resource.
+      description: 'Deletes the series list identified by `seriesListId`.'
+      operationId: series_list_api_delete
+      security:
+        - MiWApiSecurity: [ ]
+      responses:
+        '204':
+          description: 'Series list deleted &lt;Response body is empty&gt;'
+        '404':
+          $ref: '#/components/responses/404_Resource_Not_Found_Response'
+  /rating:
+    post:
+      tags: [ '⭐ Rating' ]
+      summary: Creates a Rating resource.
+      description: 'Creates a new rating'
+      operationId: rating_api_post
+      requestBody:
+        $ref: '#/components/requestBodies/RatingRequestBody'
+      responses:
+        '201':
+          description: '`Created`: rating created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rating'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '400':
+          $ref: '#/components/responses/400_BadRequest_Response_Rating_Post_Put'
+        '422':
+          $ref: '#/components/responses/422_UnprocessableEntity_Response'
+    options:
+      tags: [ '⭐ Rating' ]
+      summary: Provides the list of HTTP supported methods.
+      description: 'Return a `Allow` header with a comma separated list of HTTP supported methods.'
+      operationId: series_list_api_options
+      responses:
+        '204':
+          description: '`Allow` header &lt;Response body is empty&gt;'
+          headers:
+            Allow:
+              $ref: '#/components/headers/Allow'
+  /rating/user/{userId}:
+    parameters:
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/seriesIdQuery'
+    get:
+      tags: [ '⭐ Rating' ]
+      summary: Retrieves a Rating resource based on its user.
+      description: 'Returns the rating identified by `user` and, optionally, by `series`.'
+      operationId: rating_api_get_by_user
+      responses:
+        '200':
+          description: Rating
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rating'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '404':
+          $ref: '#/components/responses/404_Resource_Not_Found_Response'
+  /rating/{ratingId}:
+    parameters:
+      - $ref: '#/components/parameters/ratingId'
+    put:
+      tags: [ '⭐ Rating' ]
+      summary: Updates the Rating resource.
+      description: 'Updates the rating identified by `ratingId`.'
+      operationId: rating_api_put
+      requestBody:
+        $ref: '#/components/requestBodies/RatingRequestBody'
+      responses:
+        '200':
+          description: Rating
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rating'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '400':
+          $ref: '#/components/responses/400_BadRequest_Response_Rating_Post_Put'
+        '404':
+          $ref: '#/components/responses/404_Resource_Not_Found_Response'
+  /rating/average_rating/{seriesId}:
+    parameters:
+      - $ref: '#/components/parameters/seriesId'
+    get:
+      tags: [ '⭐ Rating' ]
+      summary: Retrieves a the average rating value of a series.
+      description: 'Returns the average rating value of a series identified by its `seriesId`.'
+      operationId: rating_api_get_average_rating
+      responses:
+        '200':
+          description: Average rating value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AverageRating'
           headers:
             Location:
               $ref: '#/components/headers/Location'
@@ -282,6 +404,48 @@ components:
           description: 'Series imageUrl'
           type: string
           format: string
+        _links:
+          description: link relations
+          type: object
+          properties:
+            parent:
+              type: object
+              properties: { "href": { "type": "string", "format": "url" } }
+            self:
+              type: object
+              properties: { "href": { "type": "string", "format": "url" } }
+      example:
+        series:
+          id: 1212
+          apiId: 'tt0944947'
+          title: 'Game of Thrones'
+          isFilm: false
+          synopsis: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.'
+          imageUrl: 'https://m.media-amazon.com/images/M/MV5BYTRiNDQwYzAtMzVlZS00NTI5LWJjYjUtMzkwNTUzMWMxZTllXkEyXkFqcGdeQXVyNDIzMzcwNjc@._V1_.jpg'
+          _links:
+            parent:
+              href: /api/v1/series
+            self:
+              href: /api/v1/series/1202
+    SeriesList:
+      type: object
+      properties:
+        id:
+          description: 'Series list Id'
+          type: integer
+          format: int64
+        type:
+          description: 'Series list type'
+          type: string
+          format: string
+        series:
+          description: 'Series list series Id'
+          type: integer
+          format: int64
+        user:
+          description: 'Series list user Id'
+          type: integer
+          format: int64
         season:
           description: 'Series season'
           type: integer
@@ -306,37 +470,35 @@ components:
               properties: { "href": { "type": "string", "format": "url" } }
       example:
         series:
-          id: 1212
-          apiId: 'tt0944947'
-          title: 'Game of Thrones'
-          isFilm: false
-          synopsis: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.'
-          imageUrl: 'https://m.media-amazon.com/images/M/MV5BYTRiNDQwYzAtMzVlZS00NTI5LWJjYjUtMzkwNTUzMWMxZTllXkEyXkFqcGdeQXVyNDIzMzcwNjc@._V1_.jpg'
+          id: 33
+          type: 'favourites'
+          series: 52
+          user: 17
           season: 3
           episode: 9
           time: '00:35:00'
           _links:
             parent:
-              href: /api/v1/series
+              href: /api/v1/series-list
             self:
-              href: /api/v1/series/1202
-    SeriesList:
+              href: /api/v1/series-list/33
+    Rating:
       type: object
       properties:
         id:
-          description: 'Series list Id'
+          description: 'Rating Id'
           type: integer
           format: int64
         type:
-          description: 'Series list type'
-          type: string
-          format: string
+          description: 'Rating value'
+          type: integer
+          format: int32
         series:
-          description: 'Series list series'
+          description: 'Series list series Id'
           type: integer
           format: int64
         user:
-          description: 'Series list user'
+          description: 'Series list user Id'
           type: integer
           format: int64
         _links:
@@ -352,14 +514,20 @@ components:
       example:
         series:
           id: 33
-          type: 'favourites'
+          value: 3
           series: 52
           user: 17
           _links:
             parent:
-              href: /api/v1/series-list
+              href: /api/v1/rating
             self:
-              href: /api/v1/series-list/33
+              href: /api/v1/rating/33
+    AverageRating:
+      description: 'Average rating value'
+      type: number
+      format: float
+      example:
+        averageRating: 2.5
     Message:
       type: object
       description: HTTP response message
@@ -393,8 +561,26 @@ components:
           examples:
             response-400-series:
               $ref: '#/components/examples/response-400-series'
-    400_BadRequest_Response_SeriesList:
+    400_BadRequest_Response_SeriesList_Post:
       description: "`BAD REQUEST`: wrong type, series or user does not exist, or series already exists in list"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+          examples:
+            response-400-series-list:
+              $ref: '#/components/examples/response-400-series-list'
+    400_BadRequest_Response_Rating_Post_Put:
+      description: "`BAD REQUEST`: series or user does not exist, or series already exists in list"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+          examples:
+            response-400-series-list:
+              $ref: '#/components/examples/response-400-rating'
+    400_BadRequest_Response_SeriesList_Put:
+      description: "`BAD REQUEST`: wrong type, or series or user does not exist"
       content:
         application/json:
           schema:
@@ -495,27 +681,12 @@ components:
                 description: 'Series imageUrl'
                 type: string
                 format: string
-              season:
-                description: 'Series season'
-                type: integer
-                format: int32
-              episode:
-                description: 'Series episode'
-                type: integer
-                format: int32
-              time:
-                description: 'Series time'
-                type: string
-                format: date-time
             example:
               apiId: 'tt0944947'
               title: 'Game of Thrones'
               isFilm: false
               synopsis: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.'
               imageUrl: 'https://m.media-amazon.com/images/M/MV5BYTRiNDQwYzAtMzVlZS00NTI5LWJjYjUtMzkwNTUzMWMxZTllXkEyXkFqcGdeQXVyNDIzMzcwNjc@._V1_.jpg'
-              season: 3
-              episode: 9
-              time: '00:35:00'
     SeriesListRequestBody:
       description: '`Series list` data'
       required: true
@@ -529,15 +700,54 @@ components:
                 type: string
                 format: string
               series:
-                description: 'Series list series'
+                description: 'Series list series Id'
                 type: integer
                 format: int64
               user:
-                description: 'Series list user'
-                type: string
+                description: 'Series list user Id'
+                type: integer
                 format: int64
+              season:
+                description: 'Series season'
+                type: integer
+                format: int32
+              episode:
+                description: 'Series episode'
+                type: integer
+                format: int32
+              time:
+                description: 'Series time'
+                type: string
+                format: date-time
             example:
               type: favourites
+              series: 52
+              user: 17
+              season: 3
+              episode: 9
+              time: '00:35:00'
+    RatingRequestBody:
+      description: '`Rating` data'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              value:
+                description: 'Rating value'
+                type: integer
+                format: int32
+              series:
+                description: 'Series list series Id'
+                type: integer
+                format: int64
+              user:
+                description: 'Series list user Id'
+                type: integer
+                format: int64
+            example:
+              value: 4
               series: 52
               user: 17
   parameters:
@@ -547,10 +757,28 @@ components:
       description: 'apiId of Series'
       required: true
       schema: { "type": "string", pattern: '^tt\d{7}$' }
-    user:
-      name: user
+    userId:
+      name: userId
       in: path
       description: 'user Id'
+      required: true
+      schema: { "type": "integer", pattern: '^\d+$' }
+    seriesId:
+      name: seriesId
+      in: path
+      description: 'series Id'
+      required: true
+      schema: { "type": "integer", pattern: '^\d+$' }
+    seriesListId:
+      name: seriesListId
+      in: path
+      description: 'series list Id'
+      required: true
+      schema: { "type": "integer", pattern: '^\d+$' }
+    ratingId:
+      name: ratingId
+      in: path
+      description: 'rating Id'
       required: true
       schema: { "type": "integer", pattern: '^\d+$' }
     typeQuery:
@@ -558,8 +786,8 @@ components:
       in: query
       description: 'type'
       required: false
-      schema: { "type": "string", pattern: '^[A-Za-z]{10}$' }
-    seriesQuery:
+      schema: { "type": "string", pattern: '^[A-Za-z]{7,10}$' }
+    seriesIdQuery:
       name: series
       in: query
       description: 'series Id'
@@ -578,6 +806,10 @@ components:
       value:
         code: 400
         message: 'BAD REQUEST: Wrong type.'
+    response-400-rating:
+      value:
+        code: 400
+        message: 'BAD REQUEST: Series does not exist.'
     response-401:
       value:
         code: 401
@@ -598,8 +830,3 @@ components:
       value:
         code: 422
         message: 'UNPROCESSABLE ENTITY: Missing data.'
-  securitySchemes:
-    FilmotekApiSecurity:
-      type: http
-      bearerFormat: JWT
-      scheme: bearer

@@ -6,9 +6,9 @@ use App\Entity\Series;
 use App\Entity\SeriesList;
 use App\Entity\User;
 use App\Utility\Utils;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +23,8 @@ class SeriesListApiController extends AbstractController
 {
     public const SERIES_LIST_API_ROUTE = '/api/v1/series-list';
     public const SERIES_LIST_GET_BY_USER_ROUTE = self::SERIES_LIST_API_ROUTE . '/user/';
+
+    public const SERIES_LIST_NOT_FOUND_MESSAGE = 'Series list not found.';
 
     private const HEADER_CACHE_CONTROL = 'Cache-Control';
     private const HEADER_ALLOW = 'Allow';
@@ -41,11 +43,6 @@ class SeriesListApiController extends AbstractController
      * @param Request $request
      * @return Response
      * @Route(path="", name="post", methods={"POST"})
-     * @Security(
-     *     expression="is_granted('IS_AUTHENTICATED_FULLY')",
-     *     statusCode=401,
-     *     message="`Unauthorized`: Invalid credentials."
-     * )
      */
     public function postAction(Request $request): Response
     {
@@ -58,19 +55,31 @@ class SeriesListApiController extends AbstractController
 
         $seriesList = new SeriesList();
 
+        if (isset($data[SeriesList::SEASON_ATTR])) {
+            $seriesList->setSeason($data[SeriesList::SEASON_ATTR]);
+        }
+
+        if (isset($data[SeriesList::EPISODE_ATTR])) {
+            $seriesList->setEpisode($data[SeriesList::EPISODE_ATTR]);
+        }
+
+        if (isset($data[SeriesList::TIME_ATTR])) {
+            $seriesList->setTime(DateTime::createFromFormat("H:i:s", $data[SeriesList::TIME_ATTR]));
+        }
+
         try {
             $seriesList->setType($data[SeriesList::TYPE_ATTR]);
 
             $series = $this->entityManager
                 ->getRepository(Series::class)
-                ->find(intval($data[SeriesList::SERIES_ATTR]));
+                ->find($data[SeriesList::SERIES_ATTR]);
 
             $user = $this->entityManager
                 ->getRepository(User::class)
-                ->find(intval($data[SeriesList::USER_ATTR]));
+                ->find($data[SeriesList::USER_ATTR]);
 
             $badRequest = $this->postActionCheckBadRequest($seriesList->getType(), $series, $user);
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Wrong type.");
         }
 
@@ -148,8 +157,7 @@ class SeriesListApiController extends AbstractController
      */
     public function optionsAction(): Response
     {
-        $methods = ['POST', 'GET'];
-        $methods[] = 'OPTIONS';
+        $methods = ['OPTIONS', 'POST', 'GET', 'PUT', 'DELETE'];
 
         return new Response(
             null,
@@ -163,18 +171,18 @@ class SeriesListApiController extends AbstractController
 
     /**
      * @param Request $request
-     * @param string $user
+     * @param int $userId
      * @return Response
-     * @Route(path="/user/{user}", name="getByUser", methods={"GET"})
+     * @Route(path="/user/{userId}", name="getByUser", methods={"GET"})
      */
-    public function getByUserAction(Request $request, string $user): Response
+    public function getByUserAction(Request $request, int $userId): Response
     {
         $params = $request->query;
         $query = $this->entityManager
             ->getRepository(SeriesList::class)
             ->createQueryBuilder('sl')
             ->where('sl.user = :user')
-            ->setParameter('user', $user);
+            ->setParameter('user', $userId);
 
         if ($params->get(SeriesList::TYPE_ATTR) !== null) {
             $query = $query
@@ -193,12 +201,105 @@ class SeriesListApiController extends AbstractController
             ->execute();
 
         if (empty($seriesList)) {
-            return Utils::errorMessage(Response::HTTP_NOT_FOUND, 'Series list not found.');
+            return Utils::errorMessage(Response::HTTP_NOT_FOUND, self::SERIES_LIST_NOT_FOUND_MESSAGE);
         }
 
         return Utils::apiResponse(
             Response::HTTP_OK,
             [SeriesList::SERIES_LIST_ATTR => $seriesList]
         );
+    }
+
+    /**
+     * @param Request $request
+     * @param int $seriesListId
+     * @return Response
+     * @Route(path="/{seriesListId}", name="put", methods={"PUT"})
+     */
+    public function putAction(Request $request, int $seriesListId): Response
+    {
+        $seriesList = $this->entityManager
+            ->getRepository(SeriesList::class)
+            ->find($seriesListId);
+
+        if (!isset($seriesList)) {
+            return Utils::errorMessage(Response::HTTP_NOT_FOUND, self::SERIES_LIST_NOT_FOUND_MESSAGE);
+        }
+
+        $body = $request->getContent();
+        $data = json_decode($body, true);
+
+        if (isset($data[SeriesList::TYPE_ATTR])) {
+            try {
+                $seriesList->setType($data[SeriesList::TYPE_ATTR]);
+            } catch (InvalidArgumentException) {
+                $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Wrong type.");
+            }
+        }
+
+        if (isset($data[SeriesList::SERIES_ATTR])) {
+            $series = $this->entityManager
+                ->getRepository(Series::class)
+                ->find($data[SeriesList::SERIES_ATTR]);
+            if (!isset($series)) {
+                $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Series does not exist.");
+            }
+            $seriesList->setSeries($series);
+        }
+
+        if (isset($data[SeriesList::USER_ATTR])) {
+            $user = $this->entityManager
+                ->getRepository(User::class)
+                ->find($data[SeriesList::USER_ATTR]);
+            if (!isset($user)) {
+                $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "User does not exist.");
+            }
+            $seriesList->setUser($user);
+        }
+
+        if (isset($badRequest)) {
+            return $badRequest;
+        }
+
+        if (isset($data[SeriesList::SEASON_ATTR])) {
+            $seriesList->setSeason($data[SeriesList::SEASON_ATTR]);
+        }
+
+        if (isset($data[SeriesList::EPISODE_ATTR])) {
+            $seriesList->setEpisode($data[SeriesList::EPISODE_ATTR]);
+        }
+
+        if (isset($data[SeriesList::TIME_ATTR])) {
+            $seriesList->setTime(DateTime::createFromFormat("H:i:s", $data[SeriesList::TIME_ATTR]));
+        }
+
+        $this->entityManager->flush();
+
+        return Utils::apiResponse(
+            Response::HTTP_OK,
+            [SeriesList::SERIES_LIST_ATTR => $seriesList]
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @param int $seriesListId
+     * @return Response
+     * @Route(path="/{seriesListId}", name="delete", methods={"DELETE"})
+     */
+    public function deleteAction(Request $request, int $seriesListId): Response
+    {
+        $seriesList = $this->entityManager
+            ->getRepository(SeriesList::class)
+            ->find($seriesListId);
+
+        if (!isset($seriesList)) {
+            return Utils::errorMessage(Response::HTTP_NOT_FOUND, self::SERIES_LIST_NOT_FOUND_MESSAGE);
+        }
+
+        $this->entityManager->remove($seriesList);
+        $this->entityManager->flush();
+
+        return Utils::apiResponse(Response::HTTP_NO_CONTENT);
     }
 }

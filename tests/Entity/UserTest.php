@@ -9,8 +9,6 @@ use Faker\Generator as FakerGeneratorAlias;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class UserTest
- *
  * @package App\Tests\Entity
  * @group   entities
  *
@@ -34,8 +32,6 @@ class UserTest extends TestCase
     }
 
     /**
-     * Implement testGetId().
-     *
      * @covers ::getId
      * @return void
      * @throws Exception
@@ -46,8 +42,6 @@ class UserTest extends TestCase
     }
 
     /**
-     * Implement testGetSetUsername().
-     *
      * @covers ::getUsername
      * @covers ::setUsername
      * @return User
@@ -63,8 +57,6 @@ class UserTest extends TestCase
     }
 
     /**
-     * Implement testGetSetPassword().
-     *
      * @covers ::getPassword
      * @covers ::setPassword
      * @return User
@@ -80,8 +72,6 @@ class UserTest extends TestCase
     }
 
     /**
-     * Implement testGetRoles().
-     *
      * @covers ::getRoles
      * @return void
      * @throws Exception
@@ -93,12 +83,10 @@ class UserTest extends TestCase
     }
 
     /**
-     * Implement testEraseCredentials().
-     *
      * @depends testGetSetPassword
      * @covers ::eraseCredentials
+     * @param User $user
      * @return void
-     * @throws Exception
      */
     public function testEraseCredentials(User $user): void
     {
@@ -107,12 +95,10 @@ class UserTest extends TestCase
     }
 
     /**
-     * Implement testGetUserIdentifier().
-     *
      * @depends testGetSetUsername
      * @covers ::getUserIdentifier
+     * @param User $user
      * @return void
-     * @throws Exception
      */
     public function testGetUserIdentifier(User $user): void
     {
@@ -120,8 +106,6 @@ class UserTest extends TestCase
     }
 
     /**
-     * Implement testJsonSerialize().
-     *
      * @covers ::jsonSerialize
      * @return void
      * @throws Exception

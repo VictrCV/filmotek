@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use DateTime;
-use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use JsonSerializable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -24,9 +22,6 @@ class Series implements JsonSerializable
     public const IS_FILM_ATTR = 'isFilm';
     public const SYNOPSIS_ATTR = 'synopsis';
     public const IMAGE_URL_ATTR = 'imageUrl';
-    public const SEASON_ATTR = 'season';
-    public const EPISODE_ATTR = 'episode';
-    public const TIME_ATTR = 'time';
 
     /**
      * @var int
@@ -71,27 +66,6 @@ class Series implements JsonSerializable
      * @ORM\Column(name="imageUrl", type="string", length=255, nullable=false)
      */
     private $imageUrl;
-
-    /**
-     * @var int|null
-     *
-     * @ORM\Column(name="season", type="integer", nullable=true)
-     */
-    private $season;
-
-    /**
-     * @var int|null
-     *
-     * @ORM\Column(name="episode", type="integer", nullable=true)
-     */
-    private $episode;
-
-    /**
-     * @var DateTime|null
-     *
-     * @ORM\Column(name="time", type="time", nullable=true)
-     */
-    private $time;
 
     public function getId(): ?int
     {
@@ -158,48 +132,8 @@ class Series implements JsonSerializable
         return $this;
     }
 
-    public function getSeason(): ?int
-    {
-        return $this->season;
-    }
-
-    public function setSeason(?int $season): self
-    {
-        $this->season = $season;
-
-        return $this;
-    }
-
-    public function getEpisode(): ?int
-    {
-        return $this->episode;
-    }
-
-    public function setEpisode(?int $episode): self
-    {
-        $this->episode = $episode;
-
-        return $this;
-    }
-
-    public function getTime(): ?DateTimeInterface
-    {
-        return $this->time;
-    }
-
-    public function setTime(?DateTimeInterface $time): self
-    {
-        $this->time = $time;
-
-        return $this;
-    }
-
     public function jsonSerialize(): mixed
     {
-        $vars = get_object_vars($this);
-        if($this->getTime() !== null) {
-            $vars[Series::TIME_ATTR] = $this->getTime()->format('H:i:s');
-        }
-        return $vars;
+        return get_object_vars($this);
     }
 }

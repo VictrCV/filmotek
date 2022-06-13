@@ -70,4 +70,22 @@ class BaseTestCase extends WebTestCase
         $response = self::$client->getResponse();
         return json_decode($response->getContent(), true)[Series::SERIES_ATTR];
     }
+
+    protected function createUser(): array
+    {
+        $data = [
+            User::USERNAME_ATTR => self::$faker->userName(),
+            User::PASSWORD_ATTR => self::$faker->password()
+        ];
+
+        self::$client->request(
+            'POST',
+            UserApiController::USER_API_ROUTE,
+            [], [], [],
+            json_encode($data)
+        );
+
+        $response = self::$client->getResponse();
+        return json_decode($response->getContent(), true)[User::USER_ATTR];
+    }
 }

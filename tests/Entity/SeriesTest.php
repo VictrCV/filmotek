@@ -3,15 +3,12 @@
 namespace App\Tests\Entity;
 
 use App\Entity\Series;
-use DateTime;
 use Exception;
 use Faker\Factory as FakerFactoryAlias;
 use Faker\Generator as FakerGeneratorAlias;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class SeriesTest
- *
  * @package App\Tests\Entity
  * @group   entities
  *
@@ -35,8 +32,6 @@ class SeriesTest extends TestCase
     }
 
     /**
-     * Implement testGetId().
-     *
      * @covers ::getId
      * @return void
      * @throws Exception
@@ -47,54 +42,6 @@ class SeriesTest extends TestCase
     }
 
     /**
-     * Implement testGetSetTime().
-     *
-     * @covers ::getTime
-     * @covers ::setTime
-     * @return void
-     * @throws Exception
-     */
-    public function testGetSetTime(): void
-    {
-        $datetime = self::$faker->time();
-        $time = DateTime::createFromFormat("H:i:s", $datetime);
-        self::$series->setTime($time);
-        self::assertEquals($time, self::$series->getTime());
-    }
-
-    /**
-     * Implement testGetSetEpisode().
-     *
-     * @covers ::getEpisode
-     * @covers ::setEpisode
-     * @return void
-     * @throws Exception
-     */
-    public function testGetSetEpisode(): void
-    {
-        $episode = self::$faker->randomNumber();
-        self::$series->setEpisode($episode);
-        self::assertEquals($episode, self::$series->getEpisode());
-    }
-
-    /**
-     * Implement testGetSetSeason().
-     *
-     * @covers ::getSeason
-     * @covers ::setSeason
-     * @return void
-     * @throws Exception
-     */
-    public function testGetSetSeason(): void
-    {
-        $season = self::$faker->randomNumber();
-        self::$series->setSeason($season);
-        self::assertEquals($season, self::$series->getSeason());
-    }
-
-    /**
-     * Implement testGetSetIsFilm().
-     *
      * @covers ::getIsFilm
      * @covers ::setIsFilm
      * @return void
@@ -108,8 +55,6 @@ class SeriesTest extends TestCase
     }
 
     /**
-     * Implement testGetSetApiId().
-     *
      * @covers ::getApiId
      * @covers ::setApiId
      * @return void
@@ -123,8 +68,6 @@ class SeriesTest extends TestCase
     }
 
     /**
-     * Implement testGetSetImageUrl().
-     *
      * @covers ::getImageUrl
      * @covers ::setImageUrl
      * @return void
@@ -138,8 +81,6 @@ class SeriesTest extends TestCase
     }
 
     /**
-     * Implement testGetSetTitle().
-     *
      * @covers ::getTitle
      * @covers ::setTitle
      * @return void
@@ -153,8 +94,6 @@ class SeriesTest extends TestCase
     }
 
     /**
-     * Implement testGetSetSynopsis().
-     *
      * @covers ::getSynopsis
      * @covers ::setSynopsis
      * @return void
@@ -168,8 +107,6 @@ class SeriesTest extends TestCase
     }
 
     /**
-     * Implement testJsonSerialize().
-     *
      * @covers ::jsonSerialize
      * @return void
      * @throws Exception
@@ -183,13 +120,7 @@ class SeriesTest extends TestCase
             Series::IS_FILM_ATTR => self::$series->getIsFilm(),
             Series::SYNOPSIS_ATTR => self::$series->getSynopsis(),
             Series::IMAGE_URL_ATTR => self::$series->getImageUrl(),
-            Series::SEASON_ATTR => self::$series->getSeason(),
-            Series::EPISODE_ATTR => self::$series->getEpisode(),
-            Series::TIME_ATTR => self::$series->getTime(),
         ];
-        if(self::$series->getTime() !== null) {
-            $vars[Series::TIME_ATTR] = self::$series->getTime()->format('H:i:s');
-        }
 
         self::assertEquals($vars, self::$series->jsonSerialize());
     }
