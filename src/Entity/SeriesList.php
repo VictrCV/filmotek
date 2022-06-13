@@ -159,12 +159,12 @@ class SeriesList implements JsonSerializable
         return $this;
     }
 
-    public function getTime(): ?DateTimeInterface
+    public function getTime(): ?DateTime
     {
         return $this->time;
     }
 
-    public function setTime(?DateTimeInterface $time): self
+    public function setTime(?DateTime $time): self
     {
         $this->time = $time;
 
