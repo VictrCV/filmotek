@@ -142,4 +142,32 @@ class CommentApiControllerTest extends BaseTestCase
         self::assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         self::assertFalse($response->isSuccessful());
     }
+
+    /**
+     * @covers ::postAction
+     * @return void
+     * @throws Exception
+     */
+    public function testPostCommentAction400BadRequestInvalidText()
+    {
+        $seriesId = self::createSeries()['id'];
+        $userId = self::createUser()['id'];
+
+        $data = [
+            Comment::TEXT_ATTR => '    ',
+            Comment::SERIES_ATTR => $seriesId,
+            Comment::USER_ATTR => $userId
+        ];
+
+        self::$client->request(
+            'POST',
+            CommentApiController::COMMENT_API_ROUTE,
+            [], [], [],
+            json_encode($data)
+        );
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
 }
