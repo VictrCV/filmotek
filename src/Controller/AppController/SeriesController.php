@@ -70,8 +70,6 @@ class SeriesController extends AbstractController
             $inIncompatibleList = $this->isSeriesInIncompatibleList($userId, $series['id']);
             $averageRating = $this->getAverageRating($series['id']);
 
-            $averageRating = isset($averageRating) ? round($averageRating) : null;
-
             if ($list != 'search') {
                 $seriesList = $this->getSeriesList($list, $userId, $series['id']);
                 if (!isset($seriesList)) {
@@ -81,12 +79,7 @@ class SeriesController extends AbstractController
 
                 $userRating = $this->getUserRating($userId, $series['id']);
 
-                $temporaryMarksForm = $this->createForm(TemporaryMarksType::class);
-                if ($series[Series::IS_FILM_ATTR]) {
-                    $temporaryMarksForm->remove(SeriesList::SEASON_ATTR);
-                    $temporaryMarksForm->remove(SeriesList::EPISODE_ATTR);
-                }
-
+                $temporaryMarksForm = $this->createTemporaryMarksForm($series[Series::IS_FILM_ATTR]);
                 $temporaryMarksForm->handleRequest($request);
                 $submitTemporaryMarksForm = $this->submitTemporaryMarksForm(
                     $temporaryMarksForm,
@@ -290,8 +283,22 @@ class SeriesController extends AbstractController
         );
         $response = $this->ratingApiController->getAverageRatingAction($request, $seriesId);
 
-        return $response->getStatusCode() == Response::HTTP_OK
-            ? json_decode($response->getContent(), true)[RatingApiController::AVERAGE_RATING]
-            : null;
+        if ($response->getStatusCode() == Response::HTTP_OK) {
+            $averageRating = json_decode($response->getContent(), true)[RatingApiController::AVERAGE_RATING];
+            $roundedAverageRating = round($averageRating);
+        }
+
+        return $roundedAverageRating ?? null;
+    }
+
+    protected function createTemporaryMarksForm(bool $isFilm): FormInterface
+    {
+        $temporaryMarksForm = $this->createForm(TemporaryMarksType::class);
+        if ($isFilm) {
+            $temporaryMarksForm->remove(SeriesList::SEASON_ATTR);
+            $temporaryMarksForm->remove(SeriesList::EPISODE_ATTR);
+        }
+
+        return $temporaryMarksForm;
     }
 }
