@@ -99,7 +99,7 @@ class CommentApiControllerTest extends BaseTestCase
         $userId = self::createUser()['id'];
 
         $data = [
-            Comment::TEXT_ATTR => self::$faker->sentences(),
+            Comment::TEXT_ATTR => self::$faker->text(),
             Comment::SERIES_ATTR => -1,
             Comment::USER_ATTR => $userId
         ];
@@ -126,7 +126,7 @@ class CommentApiControllerTest extends BaseTestCase
         $seriesId = self::createSeries()['id'];
 
         $data = [
-            Comment::TEXT_ATTR => self::$faker->sentences(),
+            Comment::TEXT_ATTR => self::$faker->text(),
             Comment::SERIES_ATTR => $seriesId,
             Comment::USER_ATTR => -1
         ];

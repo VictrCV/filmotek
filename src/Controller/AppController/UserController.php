@@ -36,12 +36,6 @@ class UserController extends AbstractController
         $session = $request->getSession();
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
-        $form->add('sign-up', SubmitType::class, [
-            'label' => 'Sign up',
-            'attr' => [
-                'class' => 'btn-form'
-            ],
-        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
