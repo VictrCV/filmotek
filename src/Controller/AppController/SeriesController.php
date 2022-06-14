@@ -2,13 +2,16 @@
 
 namespace App\Controller\AppController;
 
+use App\Controller\ApiController\CommentApiController;
 use App\Controller\ApiController\RatingApiController;
 use App\Controller\ApiController\SeriesApiController;
 use App\Controller\ApiController\SeriesListApiController;
 use App\Controller\ApiController\UserApiController;
+use App\Entity\Comment;
 use App\Entity\Rating;
 use App\Entity\Series;
 use App\Entity\SeriesList;
+use App\Form\CommentType;
 use App\Form\TemporaryMarksType;
 use App\Utility\Utils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,18 +31,21 @@ class SeriesController extends AbstractController
     protected SeriesApiController $seriesApiController;
     protected SeriesListApiController $seriesListApiController;
     protected RatingApiController $ratingApiController;
+    protected CommentApiController $commentApiController;
 
     public function __construct(
         HttpClientInterface     $client,
         SeriesApiController     $seriesApiController,
         SeriesListApiController $seriesListApiController,
-        RatingApiController     $ratingApiController
+        RatingApiController     $ratingApiController,
+        CommentApiController    $commentApiController
     )
     {
         $this->client = $client;
         $this->seriesApiController = $seriesApiController;
         $this->seriesListApiController = $seriesListApiController;
         $this->ratingApiController = $ratingApiController;
+        $this->commentApiController = $commentApiController;
     }
 
     /**
@@ -88,12 +94,21 @@ class SeriesController extends AbstractController
                     $series[Series::IS_FILM_ATTR]
                 );
 
-                $seriesList = $submitTemporaryMarksForm;
+                if (isset($submitTemporaryMarksForm)) {
+                    $seriesList = $submitTemporaryMarksForm;
+                }
                 $temporaryMarksFormView = $temporaryMarksForm->createView();
+
+                $commentForm = $this->createForm(CommentType::class);
+                $commentForm->handleRequest($request);
+                $this->submitCommentForm($commentForm, $series['id'], $userId);
+
+                $commentFormView = $commentForm->createView();
             }
         }
 
         $temporaryMarksFormView = $temporaryMarksFormView ?? null;
+        $commentFormView = $commentFormView ?? null;
         $inFavourites = $inFavourites ?? false;
         $inIncompatibleList = $inIncompatibleList ?? false;
         $seriesList = $seriesList ?? null;
@@ -102,6 +117,7 @@ class SeriesController extends AbstractController
 
         return $this->render('series/series.html.twig', [
             'temporaryMarksForm' => $temporaryMarksFormView,
+            'commentForm' => $commentFormView,
             'series' => $series,
             'inFavourites' => $inFavourites,
             'inIncompatibleList' => $inIncompatibleList,
@@ -226,6 +242,30 @@ class SeriesController extends AbstractController
         }
 
         return $seriesList ?? null;
+    }
+
+    protected function submitCommentForm(FormInterface $commentForm, int $seriesId, int $userId)
+    {
+        if ($commentForm->isSubmitted() && $commentForm->isValid()) {
+            $formData = $commentForm->getData();
+            $data = [
+                Comment::TEXT_ATTR => $formData[Comment::TEXT_ATTR],
+                Comment::SERIES_ATTR => $seriesId,
+                Comment::USER_ATTR => $userId
+            ];
+
+            $request = Request::create(
+                CommentApiController::COMMENT_API_ROUTE,
+                'POST',
+                [], [], [], [],
+                json_encode($data)
+            );
+            $response = $this->commentApiController->postAction($request);
+
+            if ($response->getStatusCode() != Response::HTTP_CREATED) {
+                $this->addFlash('error', 'Oops! Something went wrong and it was not possible to create the comment.');
+            }
+        }
     }
 
     protected function getUserRating(int $userId, int $seriesId): ?array
