@@ -99,7 +99,7 @@ class CommentApiControllerTest extends BaseTestCase
         $userId = self::createUser()['id'];
 
         $data = [
-            Comment::TEXT_ATTR => self::$faker->sentences(),
+            Comment::TEXT_ATTR => self::$faker->text(),
             Comment::SERIES_ATTR => -1,
             Comment::USER_ATTR => $userId
         ];
@@ -126,9 +126,37 @@ class CommentApiControllerTest extends BaseTestCase
         $seriesId = self::createSeries()['id'];
 
         $data = [
-            Comment::TEXT_ATTR => self::$faker->sentences(),
+            Comment::TEXT_ATTR => self::$faker->text(),
             Comment::SERIES_ATTR => $seriesId,
             Comment::USER_ATTR => -1
+        ];
+
+        self::$client->request(
+            'POST',
+            CommentApiController::COMMENT_API_ROUTE,
+            [], [], [],
+            json_encode($data)
+        );
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
+
+    /**
+     * @covers ::postAction
+     * @return void
+     * @throws Exception
+     */
+    public function testPostCommentAction400BadRequestInvalidText()
+    {
+        $seriesId = self::createSeries()['id'];
+        $userId = self::createUser()['id'];
+
+        $data = [
+            Comment::TEXT_ATTR => '    ',
+            Comment::SERIES_ATTR => $seriesId,
+            Comment::USER_ATTR => $userId
         ];
 
         self::$client->request(

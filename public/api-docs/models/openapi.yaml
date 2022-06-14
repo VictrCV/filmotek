@@ -660,7 +660,7 @@ components:
             response-400-series-list:
               $ref: '#/components/examples/response-400-rating'
     400_BadRequest_Response_Comment_Post:
-      description: "`BAD REQUEST`: series or user does not exist"
+      description: "`BAD REQUEST`: series or user does not exist, or invalid text"
       content:
         application/json:
           schema:

@@ -240,23 +240,29 @@ class SeriesController extends AbstractController
     protected function submitCommentForm(FormInterface $commentForm, int $seriesId, int $userId)
     {
         if ($commentForm->isSubmitted() && $commentForm->isValid()) {
-            $formData = $commentForm->getData();
-            $data = [
-                Comment::TEXT_ATTR => $formData[Comment::TEXT_ATTR],
-                Comment::SERIES_ATTR => $seriesId,
-                Comment::USER_ATTR => $userId
-            ];
 
-            $request = Request::create(
-                CommentApiController::COMMENT_API_ROUTE,
-                'POST',
-                [], [], [], [],
-                json_encode($data)
-            );
-            $response = $this->commentApiController->postAction($request);
+            $text = $commentForm->getData()[Comment::TEXT_ATTR];
 
-            if ($response->getStatusCode() != Response::HTTP_CREATED) {
-                $this->addFlash('error', 'Oops! Something went wrong and it was not possible to create the comment.');
+            if (preg_match(CommentApiController::TEXT_REGEX, $text)) {
+                $data = [
+                    Comment::TEXT_ATTR => $text,
+                    Comment::SERIES_ATTR => $seriesId,
+                    Comment::USER_ATTR => $userId
+                ];
+
+                $request = Request::create(
+                    CommentApiController::COMMENT_API_ROUTE,
+                    'POST',
+                    [], [], [], [],
+                    json_encode($data)
+                );
+                $response = $this->commentApiController->postAction($request);
+
+                if ($response->getStatusCode() != Response::HTTP_CREATED) {
+                    $this->addFlash('error', 'Oops! Something went wrong and it was not possible to create the comment.');
+                }
+            } else {
+                $this->addFlash('error', 'The comment must contain at least one non-whitespace character.');
             }
         }
     }

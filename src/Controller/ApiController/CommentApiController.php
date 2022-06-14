@@ -20,6 +20,8 @@ class CommentApiController extends AbstractController
 {
     public const COMMENT_API_ROUTE = '/api/v1/comment';
 
+    public const TEXT_REGEX = '/(.*\S)/';
+
     private const HEADER_CACHE_CONTROL = 'Cache-Control';
     private const HEADER_ALLOW = 'Allow';
 
@@ -43,8 +45,12 @@ class CommentApiController extends AbstractController
         $body = $request->getContent();
         $data = json_decode($body, true);
 
-        if (empty($data[Comment::TEXT_ATTR]) || !isset($data[Comment::SERIES_ATTR], $data[Comment::USER_ATTR])) {
+        if (!isset($data[Comment::TEXT_ATTR], $data[Comment::SERIES_ATTR], $data[Comment::USER_ATTR])) {
             return Utils::errorMessage(Response::HTTP_UNPROCESSABLE_ENTITY, "Missing data.");
+        }
+
+        if (!preg_match(self::TEXT_REGEX, $data[Comment::TEXT_ATTR])) {
+            $badRequest = Utils::errorMessage(Response::HTTP_BAD_REQUEST, "Text must contain at least one non-whitespace character.");
         }
 
         $series = $this->entityManager
