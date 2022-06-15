@@ -19,6 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CommentApiController extends AbstractController
 {
     public const COMMENT_API_ROUTE = '/api/v1/comment';
+    public const COMMENT_GET_BY_SERIES_ROUTE = self::COMMENT_API_ROUTE . '/series/';
 
     public const TEXT_REGEX = '/(.*\S)/';
 
@@ -93,7 +94,7 @@ class CommentApiController extends AbstractController
      */
     public function optionsAction(): Response
     {
-        $methods = ['OPTIONS', 'POST'];
+        $methods = ['OPTIONS', 'POST', 'GET'];
 
         return new Response(
             null,
@@ -102,6 +103,32 @@ class CommentApiController extends AbstractController
                 self::HEADER_ALLOW => implode(', ', $methods),
                 self::HEADER_CACHE_CONTROL => 'public, inmutable'
             ]
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @param int $seriesId
+     * @return Response
+     * @Route(path="/series/{seriesId}", name="getBySeries", methods={"GET"})
+     */
+    public function getBySeriesAction(Request $request, int $seriesId): Response
+    {
+        $comment = $this->entityManager
+            ->getRepository(Comment::class)
+            ->createQueryBuilder('c')
+            ->where('c.series = :series')
+            ->setParameter('series', $seriesId)
+            ->getQuery()
+            ->execute();
+
+        if (empty($comment)) {
+            return Utils::errorMessage(Response::HTTP_NOT_FOUND, 'Comments not found');
+        }
+
+        return Utils::apiResponse(
+            Response::HTTP_OK,
+            [Comment::COMMENT_ATTR => $comment]
         );
     }
 }
