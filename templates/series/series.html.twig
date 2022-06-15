@@ -162,13 +162,20 @@
         </div>
         <h2 class="mt-5">Comments</h2>
         <hr class="border border-1 mt-1 mb-4">
-        {% if (app.session.get('jwt') != null) %}
+        {% if app.session.get('jwt') != null and app.request.attributes.get('_route_params')['list'] != 'search' %}
             {{ form_start(commentForm) }}
             {{ form_row(commentForm.text) }}
             <div class="text-end">
                 {{ form_row(commentForm.comment) }}
             </div>
             {{ form_end(commentForm) }}
+        {% endif %}
+        {% if comments != null %}
+            {% for comment in comments %}
+                <h5 class="mb-0"><strong>{{ comment.user.username }}</strong></h5>
+                <h6 class="mb-1"><small>{{ comment.datetime }}</small></h6>
+                <p class="mb-4 text-justify">{{ comment.text }}</p>
+            {% endfor %}
         {% endif %}
     </div>
 {% endblock %}
