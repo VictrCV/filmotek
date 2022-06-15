@@ -170,4 +170,42 @@ class CommentApiControllerTest extends BaseTestCase
         self::assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         self::assertFalse($response->isSuccessful());
     }
+
+    /**
+     * @depends testPostCommentAction201Created
+     * @covers ::getBySeriesAction
+     * @return void
+     * @throws Exception
+     */
+    public function testGetCommentBySeriesAction200Ok(array $comment)
+    {
+        self::$client->request(
+            'GET',
+            CommentApiController::COMMENT_GET_BY_SERIES_ROUTE . $comment[Comment::SERIES_ATTR]['id'],
+        );
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        self::assertTrue($response->isSuccessful());
+        self::assertJson($response->getContent());
+        $commentResponse = json_decode($response->getContent(), true)[Comment::COMMENT_ATTR];
+        self::assertEquals($comment['id'], $commentResponse[0]['id']);
+    }
+
+    /**
+     * @covers ::getBySeriesAction
+     * @return void
+     * @throws Exception
+     */
+    public function testGetSeriesListBySeriesAction404NotFound()
+    {
+        self::$client->request(
+            'GET',
+            CommentApiController::COMMENT_GET_BY_SERIES_ROUTE . -1,
+        );
+        $response = self::$client->getResponse();
+
+        self::assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
+        self::assertFalse($response->isSuccessful());
+    }
 }
