@@ -153,6 +153,11 @@ label.star:before {
     padding-right: 10px;
 }
 
-.text-justify {
+.comment-text {
     text-align: justify;
+    white-space: pre-wrap;
+}
+
+.comment-input {
+    height: 100px;
 }
