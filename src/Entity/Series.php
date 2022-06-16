@@ -22,6 +22,7 @@ class Series implements JsonSerializable
     public const IS_FILM_ATTR = 'isFilm';
     public const SYNOPSIS_ATTR = 'synopsis';
     public const IMAGE_URL_ATTR = 'imageUrl';
+    public const GENRES_ATTR = 'genres';
 
     /**
      * @var int
@@ -66,6 +67,13 @@ class Series implements JsonSerializable
      * @ORM\Column(name="imageUrl", type="string", length=255, nullable=false)
      */
     private $imageUrl;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="genres", type="text", length=0, nullable=false)
+     */
+    private $genres;
 
     public function getId(): ?int
     {
@@ -132,8 +140,21 @@ class Series implements JsonSerializable
         return $this;
     }
 
+    public function getGenres(): ?array
+    {
+        return json_decode($this->genres, true);
+    }
+
+    public function setGenres(array $genres): void
+    {
+        $this->genres = json_encode($genres);
+    }
+
     public function jsonSerialize(): mixed
     {
-        return get_object_vars($this);
+        $vars = get_object_vars($this);
+        $vars[Series::GENRES_ATTR] = $this->getGenres();
+
+        return $vars;
     }
 }

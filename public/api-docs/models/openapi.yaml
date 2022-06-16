@@ -465,6 +465,12 @@ components:
           description: 'Series imageUrl'
           type: string
           format: string
+        genres:
+          description: 'Series genres'
+          type: array
+          items: {
+            type: string
+          }
         _links:
           description: link relations
           type: object
@@ -483,6 +489,7 @@ components:
           isFilm: false
           synopsis: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.'
           imageUrl: 'https://m.media-amazon.com/images/M/MV5BYTRiNDQwYzAtMzVlZS00NTI5LWJjYjUtMzkwNTUzMWMxZTllXkEyXkFqcGdeQXVyNDIzMzcwNjc@._V1_.jpg'
+          genres: ['Action', 'Adventure', 'Drama', 'Fantasy']
           _links:
             parent:
               href: /api/v1/series
@@ -840,12 +847,19 @@ components:
                 description: 'Series imageUrl'
                 type: string
                 format: string
+              genres:
+                description: 'Series genres'
+                type: array
+                items: {
+                  type: string
+                }
             example:
               apiId: 'tt0944947'
               title: 'Game of Thrones'
               isFilm: false
               synopsis: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.'
               imageUrl: 'https://m.media-amazon.com/images/M/MV5BYTRiNDQwYzAtMzVlZS00NTI5LWJjYjUtMzkwNTUzMWMxZTllXkEyXkFqcGdeQXVyNDIzMzcwNjc@._V1_.jpg'
+              genres: ['Action', 'Adventure', 'Drama', 'Fantasy']
     SeriesListRequestBody:
       description: '`Series list` data'
       required: true

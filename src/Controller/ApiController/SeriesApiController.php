@@ -43,7 +43,7 @@ class SeriesApiController extends AbstractController
         $data = json_decode($body, true);
 
         if (!isset($data[Series::API_ID_ATTR], $data[Series::TITLE_ATTR], $data[Series::IS_FILM_ATTR],
-            $data[Series::SYNOPSIS_ATTR], $data[Series::IMAGE_URL_ATTR])) {
+            $data[Series::SYNOPSIS_ATTR], $data[Series::IMAGE_URL_ATTR], $data[Series::GENRES_ATTR])) {
             return Utils::errorMessage(Response::HTTP_UNPROCESSABLE_ENTITY, "Missing data.");
         }
 
@@ -53,6 +53,7 @@ class SeriesApiController extends AbstractController
         $series->setIsFilm($data[Series::IS_FILM_ATTR]);
         $series->setSynopsis($data[Series::SYNOPSIS_ATTR]);
         $series->setImageUrl($data[Series::IMAGE_URL_ATTR]);
+        $series->setGenres($data[Series::GENRES_ATTR]);
 
         $seriesExists = $this->entityManager
             ->getRepository(Series::class)
