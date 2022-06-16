@@ -51,7 +51,8 @@ class SeriesListController extends SeriesController
                 Series::TITLE_ATTR => $series[Series::TITLE_ATTR],
                 Series::IS_FILM_ATTR => $series[Series::IS_FILM_ATTR],
                 Series::SYNOPSIS_ATTR => $series[Series::SYNOPSIS_ATTR],
-                Series::IMAGE_URL_ATTR => $series[Series::IMAGE_URL_ATTR]
+                Series::IMAGE_URL_ATTR => $series[Series::IMAGE_URL_ATTR],
+                Series::GENRES_ATTR => $series[Series::GENRES_ATTR]
             ];
 
             $request = Request::create(

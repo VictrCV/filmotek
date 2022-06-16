@@ -107,12 +107,32 @@ class SeriesTest extends TestCase
     }
 
     /**
+     * @covers ::getGenres
+     * @covers ::setGenres
+     * @return void
+     * @throws Exception
+     */
+    public function testGetSetGenres(): void
+    {
+        for($i=0;$i<3;$i++){
+            $genres[] = self::$faker->word();
+        }
+        self::$series->setGenres($genres);
+        self::assertEquals($genres, self::$series->getGenres());
+    }
+
+    /**
      * @covers ::jsonSerialize
      * @return void
      * @throws Exception
      */
     public function testJsonSerialize(): void
     {
+        for($i=0;$i<3;$i++){
+            $genres[] = self::$faker->word();
+        }
+        self::$series->setGenres($genres);
+
         $vars = [
             'id' => self::$series->getId(),
             Series::API_ID_ATTR => self::$series->getApiId(),
@@ -120,6 +140,7 @@ class SeriesTest extends TestCase
             Series::IS_FILM_ATTR => self::$series->getIsFilm(),
             Series::SYNOPSIS_ATTR => self::$series->getSynopsis(),
             Series::IMAGE_URL_ATTR => self::$series->getImageUrl(),
+            Series::GENRES_ATTR => self::$series->getGenres()
         ];
 
         self::assertEquals($vars, self::$series->jsonSerialize());

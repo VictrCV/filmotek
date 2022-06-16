@@ -60,6 +60,9 @@ class BaseTestCase extends WebTestCase
             Series::SYNOPSIS_ATTR => self::$faker->sentence(30),
             Series::IMAGE_URL_ATTR => self::$faker->imageUrl()
         ];
+        for($i=0;$i<3;$i++){
+            $data[Series::GENRES_ATTR][] = self::$faker->word();
+        }
 
         self::$client->request(
             'POST',
