@@ -67,7 +67,6 @@ class SeriesController extends AbstractController
 
         if (isset($series['id'])) {
             $averageRating = $this->getAverageRating($series['id']);
-            $comments = $this->getComments($series['id']);
 
             if ($userId !== null) {
                 $inFavourites = $this->isSeriesInList($userId, SeriesList::FAVOURITES, $series['id']);
@@ -102,6 +101,7 @@ class SeriesController extends AbstractController
                     $commentFormView = $commentForm->createView();
                 }
             }
+            $comments = $this->getComments($series['id']);
         }
 
         $temporaryMarksFormView = $temporaryMarksFormView ?? null;
