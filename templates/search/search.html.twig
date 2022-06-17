@@ -9,12 +9,12 @@
         <div class="row search-form">
             <div class="col" style="align-content: center">
                 {{ form(form) }}
+                {% if app.session.get('jwt') != null %}
+                    <a class="btn btn-form" role="button" href="{{ path('recommendation') }}">
+                        Give me a recommendation
+                    </a>
+                {% endif %}
             </div>
-            {% if app.session.get('jwt') != null %}
-                <a class="btn btn-form" role="button" href="{{ path('recommendation') }}">
-                    Give me a recommendation
-                </a>
-            {% endif %}
         </div>
     </div>
 {% endblock %}
