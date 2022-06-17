@@ -136,31 +136,29 @@ class RecommendationController extends AbstractController
             foreach ($recommendedSeries as $series) {
                 $seriesExists = array_search(
                     $series['id'],
-                    array_column(
-                        array_slice($topSeries, 0, self::RECOMMENDED_SERIES),
-                        'id'
-                    ));
+                    array_column($topSeries, 'id')
+                );
                 if ($seriesExists !== false) {
                     unset($topSeries[$seriesExists]);
+                    $topSeries = array_values($topSeries);
                 }
             }
 
             foreach ($seriesArray as $series) {
                 $seriesExists = array_search(
                     $series[Series::API_ID_ATTR],
-                    array_column(
-                        array_slice($topSeries, 0, self::RECOMMENDED_SERIES),
-                        'id'
-                    ));
+                    array_column($topSeries, 'id')
+                );
                 if ($seriesExists !== false) {
                     unset($topSeries[$seriesExists]);
+                    $topSeries = array_values($topSeries);
                 }
             }
 
             $recommendedSeries = array_merge(
                 $recommendedSeries,
-                array_slice($topSeries, 0, self::RECOMMENDED_SERIES
-                ));
+                array_slice($topSeries, 0, self::RECOMMENDED_SERIES)
+            );
         } else {
             $this->addFlash('error', 'Oops! Something went wrong and some recommended series could not be obtained.');
         }
