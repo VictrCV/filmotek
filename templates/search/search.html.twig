@@ -10,6 +10,11 @@
             <div class="col" style="align-content: center">
                 {{ form(form) }}
             </div>
+            {% if app.session.get('jwt') != null %}
+                <a class="btn btn-form" role="button" href="{{ path('recommendation') }}">
+                    Give me a recommendation
+                </a>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
