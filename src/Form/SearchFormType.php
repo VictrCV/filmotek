@@ -81,7 +81,7 @@ class SearchFormType extends AbstractType implements EventSubscriberInterface
                 'Set title and/or genre',
                 0,
                 null,
-                'Set title and/or genre.'
+                'Set title and/or genre'
             );
         }
     }

@@ -91,6 +91,10 @@
     width: 200px;
 }
 
+.cover-title {
+    width: 200px;
+}
+
 .cover-large {
     max-width: 100%;
 }

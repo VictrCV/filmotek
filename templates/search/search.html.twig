@@ -2,13 +2,17 @@
 {% block body %}
     {{ parent() }}
     <div class="filmotek-title">
-        <img src="{{ asset('img/logo.png') }}" class="filmotek-logo">
+        <img src="{{ asset('img/logo.png') }}" class="filmotek-logo" alt="filmotek-logo">
         <u>Filmotek</u>
     </div>
     <div class="container mt-3 color-text search-container">
         {{ form_start(form) }}
+        <div class="mb-1">
+            {{ form_errors(form) }}
+        </div>
         <div class="input-group mb-3 mx-auto">
             {{ form_widget(form.title) }}
+            {{ form_errors(form.title) }}
             {{ form_widget(form.search) }}
         </div>
         <div class="row justify-content-center mb-4">
