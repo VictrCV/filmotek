@@ -36,25 +36,21 @@
     font-weight: bold;
 }
 
-.filmotek-font {
-    font-family: 'Koulen', cursive;
-}
-
 .filmotek-title {
     color: var(--secondary-light);
-    font-size: 100px;
+    font-size: 5.5vw;
     text-align: center;
-    padding-top: 10%;
+    margin-top: 10%;
     font-family: 'Koulen', cursive;
 }
 
-.filmotek-search-logo {
-    width: 100px;
+.filmotek-logo {
+    width: 6%;
     height: auto;
 }
 
 .filmotek-navbar-logo {
-    width: 20px;
+    width: 8%;
     height: auto;
 }
 
@@ -80,14 +76,13 @@
     box-shadow: none !important;
 }
 
+.btn-form:hover {
+    box-shadow: rgba(255, 255, 255, 0.2) 0 0 29px 0 !important;
+}
+
 .sign-up-form {
     padding-top: 50px;
     width: 25%;
-    color: var(--secondary-light) !important;
-}
-
-.search-form {
-    width: 25% !important;
     color: var(--secondary-light) !important;
 }
 
@@ -166,4 +161,8 @@ label.star:before {
 
 .comment-input {
     height: 100px;
+}
+
+.search-container {
+    width: 35% !important;
 }
