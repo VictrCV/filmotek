@@ -48,8 +48,14 @@
     font-family: 'Koulen', cursive;
 }
 
-.filmotek-logo {
-    font-size: 100px !important;
+.filmotek-search-logo {
+    width: 100px;
+    height: auto;
+}
+
+.filmotek-navbar-logo {
+    width: 20px;
+    height: auto;
 }
 
 .btn-sign-up,
