@@ -40,7 +40,6 @@
     color: var(--secondary-light);
     font-size: 5.5vw;
     text-align: center;
-    margin-top: 10%;
     font-family: 'Koulen', cursive;
 }
 
@@ -80,10 +79,12 @@
     box-shadow: rgba(255, 255, 255, 0.2) 0 0 29px 0 !important;
 }
 
+.mt-10{
+    margin-top: 10%;
+}
+
 .sign-up-form {
-    padding-top: 50px;
     width: 25%;
-    color: var(--secondary-light) !important;
 }
 
 .cover {

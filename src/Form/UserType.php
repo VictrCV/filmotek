@@ -25,10 +25,10 @@ class UserType extends AbstractType
                 'first_options' => array('label' => 'Password'),
                 'second_options' => array('label' => 'Repeat password'),
             ))
-            ->add('sign-up', SubmitType::class, [
+            ->add('sign_up', SubmitType::class, [
                 'label' => 'Sign up',
                 'attr' => [
-                    'class' => 'btn-form'
+                    'class' => 'btn btn-form px-5 mt-2'
                 ],
             ]);
     }
