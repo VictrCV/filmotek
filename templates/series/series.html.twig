@@ -9,37 +9,36 @@
             </div>
             <div class="col-8">
                 <h1 class="text-center pb-5">{{ series.title }}</h1>
-                {% if (app.session.get('jwt') != null) %}
-                    {% if (app.request.attributes.get('_route_params')['list'] == 'in_progress') %}
-                        {{ form_start(temporaryMarksForm) }}
-                        <div class="row justify-content-center align-items-end mb-5">
-                            {% if not series.isFilm %}
-                                <div class="col-2">
-                                    {{ form_row(temporaryMarksForm.season, {'value': seriesList.season}) }}
-                                </div>
-                                <div class="col-2">
-                                    {{ form_row(temporaryMarksForm.episode, {'value': seriesList.episode}) }}
-                                </div>
-                            {% endif %}
-                            <div class="col-3">
-                                {{ form_row(temporaryMarksForm.time, {'value': seriesList.time}) }}
+                {% if (app.request.attributes.get('_route_params')['list'] == 'in_progress') %}
+                    {{ form_start(temporaryMarksForm) }}
+                    <div class="row justify-content-center align-items-end mb-5">
+                        {% if not series.isFilm %}
+                            <div class="col-2">
+                                {{ form_row(temporaryMarksForm.season, {'value': seriesList.season}) }}
                             </div>
-                            <div class="col-1">
-                                {{ form_row(temporaryMarksForm.save) }}
+                            <div class="col-2">
+                                {{ form_row(temporaryMarksForm.episode, {'value': seriesList.episode}) }}
                             </div>
+                        {% endif %}
+                        <div class="col-3">
+                            {{ form_row(temporaryMarksForm.time, {'value': seriesList.time}) }}
                         </div>
-                        {{ form_end(temporaryMarksForm) }}
-                    {% endif %}
-                    {% if app.request.attributes.get('_route_params')['list'] != 'search' %}
-                        <form method="POST" action="{{ path('rating_save', {
-                        'list': app.request.attributes.get('_route_params')['list'],
-                        'apiId': series.apiId}) }}">
+                        <div class="col-1">
+                            {{ form_row(temporaryMarksForm.save) }}
+                        </div>
+                    </div>
+                    {{ form_end(temporaryMarksForm) }}
+                {% endif %}
+                {% if app.request.attributes.get('_route_params')['list'] != 'search' %}
+                <form method="POST" action="{{ path('rating_save', {
+                    'list': app.request.attributes.get('_route_params')['list'],
+                    'apiId': series.apiId}) }}">
                     {% endif %}
                     <div class="row justify-content-center">
                         <div class="col-5 text-center">
                             <label class="userStarsLabel" for="globalStars">Global rating</label>
                         </div>
-                        {% if app.request.attributes.get('_route_params')['list'] != 'search' %}
+                        {% if (app.request.attributes.get('_route_params')['list'] != 'search') %}
                             <div class="col-5 text-center">
                                 <label class="userStarsLabel" for="userStars">My rating</label>
                                 <button class="btn btn-save material-icons" id="star-btn" type="submit">
@@ -98,9 +97,8 @@
                             </div>
                         {% endif %}
                     </div>
-                    {% if app.request.attributes.get('_route_params')['list'] != 'search' %}
-                        </form>
-                    {% endif %}
+                </form>
+                {% if (app.session.get('jwt') != null) %}
                     <div class="row mb-4">
                         {% if inFavourites == false %}
                             <div class="col-3">
