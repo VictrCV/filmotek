@@ -1,55 +1,56 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     {{ parent() }}
-    <div class="container mt-5 pt-5 color-text">
+    <div class="container my-5 py-5 color-text">
         <div class="row">
             <div class="col-4">
-                <img src="{{ series.imageUrl }}" class="cover-large pe-3">
+                <img src="{{ series.imageUrl }}" class="cover-large pe-3" alt=""
+                     onerror="this.src='{{ asset('img/image_not_found.png') }}'">
             </div>
             <div class="col-8">
                 <h1 class="text-center pb-5">{{ series.title }}</h1>
-                {% if (app.session.get('jwt') != null) %}
-                    {% if (app.request.attributes.get('_route_params')['list'] == 'in_progress') %}
-                        {{ form_start(temporaryMarksForm) }}
-                        <div class="row justify-content-center align-items-end mb-5">
-                            {% if not series.isFilm %}
-                                <div class="col-2">
-                                    {{ form_row(temporaryMarksForm.season, {'value': seriesList.season}) }}
-                                </div>
-                                <div class="col-2">
-                                    {{ form_row(temporaryMarksForm.episode, {'value': seriesList.episode}) }}
-                                </div>
-                            {% endif %}
-                            <div class="col-3">
-                                {{ form_row(temporaryMarksForm.time, {'value': seriesList.time}) }}
+                {% if (app.request.attributes.get('_route_params')['list'] == 'in_progress') %}
+                    {{ form_start(temporaryMarksForm) }}
+                    <div class="row justify-content-center align-items-end mb-5">
+                        {% if not series.isFilm %}
+                            <div class="col-2">
+                                {{ form_row(temporaryMarksForm.season, {'value': seriesList.season}) }}
                             </div>
                             <div class="col-2">
-                                {{ form_row(temporaryMarksForm.save) }}
+                                {{ form_row(temporaryMarksForm.episode, {'value': seriesList.episode}) }}
                             </div>
+                        {% endif %}
+                        <div class="col-3">
+                            {{ form_row(temporaryMarksForm.time, {'value': seriesList.time}) }}
                         </div>
-                        {{ form_end(temporaryMarksForm) }}
-                    {% endif %}
-                    {% if app.request.attributes.get('_route_params')['list'] != 'search' %}
-                        <form method="POST" action="{{ path('rating_save', {
-                        'list': app.request.attributes.get('_route_params')['list'],
-                        'apiId': series.apiId}) }}">
+                        <div class="col-1">
+                            {{ form_row(temporaryMarksForm.save) }}
+                        </div>
+                    </div>
+                    {{ form_end(temporaryMarksForm) }}
+                {% endif %}
+                {% if app.request.attributes.get('_route_params')['list'] != 'search' %}
+                <form method="POST" action="{{ path('rating_save', {
+                    'list': app.request.attributes.get('_route_params')['list'],
+                    'apiId': series.apiId}) }}">
                     {% endif %}
                     <div class="row justify-content-center">
                         <div class="col-5 text-center">
                             <label class="userStarsLabel" for="globalStars">Global rating</label>
                         </div>
-                        {% if app.request.attributes.get('_route_params')['list'] != 'search' %}
+                        {% if (app.request.attributes.get('_route_params')['list'] != 'search') %}
                             <div class="col-5 text-center">
                                 <label class="userStarsLabel" for="userStars">My rating</label>
-                                <button class="btn btn-form" id="star-btn" type="submit">
-                                    <span class="material-icons align-middle">save</span>
+                                <button class="btn btn-save material-icons" id="star-btn" type="submit">
+                                    save
                                 </button>
                             </div>
                         {% endif %}
                     </div>
                     <div class="row justify-content-center mb-5">
                         <div class="col-5 text-center stars" id="globalStars">
-                            <input disabled class="star star-5" id="averageStar5" type="radio" name="globalStar" value="5"
+                            <input disabled class="star star-5" id="averageStar5" type="radio" name="globalStar"
+                                   value="5"
                                     {% if averageRating != null and averageRating == 5 %} checked {% endif %}/>
                             <label class="star star-5" for="averageStar5"></label>
 
@@ -65,7 +66,8 @@
                                     {% if averageRating != null and averageRating == 2 %} checked {% endif %}/>
                             <label class="star" for="averageStar2"></label>
 
-                            <input disabled class="star star-1" id="averageStar1" type="radio" name="globalStar" value="1"
+                            <input disabled class="star star-1" id="averageStar1" type="radio" name="globalStar"
+                                   value="1"
                                     {% if averageRating != null and averageRating == 1 %} checked {% endif %}/>
                             <label class="star star-1" for="averageStar1"></label>
                         </div>
@@ -95,9 +97,8 @@
                             </div>
                         {% endif %}
                     </div>
-                    {% if app.request.attributes.get('_route_params')['list'] != 'search' %}
-                        </form>
-                    {% endif %}
+                </form>
+                {% if (app.session.get('jwt') != null) %}
                     <div class="row mb-4">
                         {% if inFavourites == false %}
                             <div class="col-3">
@@ -115,7 +116,7 @@
                                 <a class="btn btn-form" role="button"
                                    href="{{ path('series_list_post', {
                                        'list': app.request.attributes.get('_route_params')['list'],
-                                       'type': 'toWatch',
+                                       'type': 'to_watch',
                                        'apiId': series.apiId}) }}">
                                     Add to "To watch"
                                 </a>
@@ -124,7 +125,7 @@
                                 <a class="btn btn-form" role="button"
                                    href="{{ path('series_list_post', {
                                        'list': app.request.attributes.get('_route_params')['list'],
-                                       'type': 'inProgress',
+                                       'type': 'in_progress',
                                        'apiId': series.apiId}) }}">
                                     Add to "In progress"
                                 </a>
@@ -158,6 +159,26 @@
                 <p>{{ series.synopsis }}</p>
             </div>
         </div>
+        <h2 class="mt-5">Comments</h2>
+        <hr class="border border-1 mt-1 mb-4">
+        {% if app.session.get('jwt') != null and app.request.attributes.get('_route_params')['list'] != 'search' %}
+            {{ form_start(commentForm) }}
+            <div class="mb-1">
+                {{ form_errors(commentForm) }}
+            </div>
+            {{ form_row(commentForm.text) }}
+            <div class="text-end">
+                {{ form_row(commentForm.comment) }}
+            </div>
+            {{ form_end(commentForm) }}
+        {% endif %}
+        {% if comments != null %}
+            {% for comment in comments|reverse %}
+                <h5 class="mb-0"><strong>{{ comment.user.username }}</strong></h5>
+                <h6 class="mb-1"><small>{{ comment.datetime }}</small></h6>
+                <p class="mb-4 comment-text">{{ comment.text }}</p>
+            {% endfor %}
+        {% endif %}
     </div>
 {% endblock %}
 {% block sectiontitle %}Series{% endblock %}

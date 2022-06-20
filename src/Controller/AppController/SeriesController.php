@@ -2,13 +2,16 @@
 
 namespace App\Controller\AppController;
 
+use App\Controller\ApiController\CommentApiController;
 use App\Controller\ApiController\RatingApiController;
 use App\Controller\ApiController\SeriesApiController;
 use App\Controller\ApiController\SeriesListApiController;
 use App\Controller\ApiController\UserApiController;
+use App\Entity\Comment;
 use App\Entity\Rating;
 use App\Entity\Series;
 use App\Entity\SeriesList;
+use App\Form\CommentType;
 use App\Form\TemporaryMarksType;
 use App\Utility\Utils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,18 +31,21 @@ class SeriesController extends AbstractController
     protected SeriesApiController $seriesApiController;
     protected SeriesListApiController $seriesListApiController;
     protected RatingApiController $ratingApiController;
+    protected CommentApiController $commentApiController;
 
     public function __construct(
         HttpClientInterface     $client,
         SeriesApiController     $seriesApiController,
         SeriesListApiController $seriesListApiController,
-        RatingApiController     $ratingApiController
+        RatingApiController     $ratingApiController,
+        CommentApiController    $commentApiController
     )
     {
         $this->client = $client;
         $this->seriesApiController = $seriesApiController;
         $this->seriesListApiController = $seriesListApiController;
         $this->ratingApiController = $ratingApiController;
+        $this->commentApiController = $commentApiController;
     }
 
     /**
@@ -59,55 +65,69 @@ class SeriesController extends AbstractController
             return $this->redirectToRoute($list);
         }
 
-        if (isset($series['id']) && $userId !== null) {
-            $inFavourites = $this->isSeriesInList($userId, SeriesList::FAVOURITES, $series['id']);
-            $inIncompatibleList = $this->isSeriesInIncompatibleList($userId, $series['id']);
+        if (isset($series['id'])) {
             $averageRating = $this->getAverageRating($series['id']);
 
-            $averageRating = isset($averageRating) ? round($averageRating) : null;
+            if ($userId !== null) {
+                $inFavourites = $this->isSeriesInList($userId, SeriesList::FAVOURITES, $series['id']);
+                $inIncompatibleList = $this->isSeriesInIncompatibleList($userId, $series['id']);
 
-            if ($list != 'search') {
-                $seriesList = $this->getSeriesList($list, $userId, $series['id']);
-                if (!isset($seriesList)) {
-                    $this->addFlash('error', 'Oops! Something went wrong and the series could not be loaded.');
-                    return $this->redirectToRoute($list);
+                if ($list != SearchController::SEARCH_LIST) {
+                    $seriesList = $this->getSeriesList($list, $userId, $series['id']);
+                    if (!isset($seriesList)) {
+                        $this->addFlash('error', 'Oops! Something went wrong and the series could not be loaded.');
+                        return $this->redirectToRoute($list);
+                    }
+
+                    $userRating = $this->getUserRating($userId, $series['id']);
+
+                    $temporaryMarksForm = $this->createTemporaryMarksForm($series[Series::IS_FILM_ATTR]);
+                    $temporaryMarksForm->handleRequest($request);
+                    $submitTemporaryMarksForm = $this->submitTemporaryMarksForm(
+                        $temporaryMarksForm,
+                        $seriesList['id'],
+                        $series[Series::IS_FILM_ATTR]
+                    );
+                    $temporaryMarksFormView = $temporaryMarksForm->createView();
+
+                    $commentForm = $this->createForm(CommentType::class);
+                    $commentForm->handleRequest($request);
+                    $comment = $this->submitCommentForm($commentForm, $series['id'], $userId);
+
+                    $commentFormView = $commentForm->createView();
                 }
-
-                $userRating = $this->getUserRating($userId, $series['id']);
-
-                $temporaryMarksForm = $this->createForm(TemporaryMarksType::class);
-                if ($series[Series::IS_FILM_ATTR]) {
-                    $temporaryMarksForm->remove(SeriesList::SEASON_ATTR);
-                    $temporaryMarksForm->remove(SeriesList::EPISODE_ATTR);
-                }
-
-                $temporaryMarksForm->handleRequest($request);
-                $submitTemporaryMarksForm = $this->submitTemporaryMarksForm(
-                    $temporaryMarksForm,
-                    $seriesList['id'],
-                    $series[Series::IS_FILM_ATTR]
-                );
-
-                $seriesList = $submitTemporaryMarksForm;
-                $temporaryMarksFormView = $temporaryMarksForm->createView();
             }
+            $comments = $this->getComments($series['id']);
+        }
+
+        if (isset($submitTemporaryMarksForm)) {
+            $seriesList = $submitTemporaryMarksForm;
+        }
+
+        if (isset($comment)) {
+            $commentForm = $this->createForm(CommentType::class);
+            $commentFormView = $commentForm->createView();
         }
 
         $temporaryMarksFormView = $temporaryMarksFormView ?? null;
+        $commentFormView = $commentFormView ?? null;
         $inFavourites = $inFavourites ?? false;
         $inIncompatibleList = $inIncompatibleList ?? false;
         $seriesList = $seriesList ?? null;
         $userRating = $userRating ?? null;
         $averageRating = $averageRating ?? null;
+        $comments = $comments ?? null;
 
         return $this->render('series/series.html.twig', [
             'temporaryMarksForm' => $temporaryMarksFormView,
+            'commentForm' => $commentFormView,
             'series' => $series,
             'inFavourites' => $inFavourites,
             'inIncompatibleList' => $inIncompatibleList,
             'seriesList' => $seriesList,
             'userRating' => $userRating,
-            'averageRating' => $averageRating
+            'averageRating' => $averageRating,
+            'comments' => $comments
         ]);
     }
 
@@ -130,11 +150,8 @@ class SeriesController extends AbstractController
         if ($response->getStatusCode() == Response::HTTP_OK) {
             $series = Utils::rapidapiJsonToSeriesArray($response->getContent());
         }
-        if (isset($series)) {
-            return $series;
-        }
 
-        return null;
+        return $series ?? null;
     }
 
     protected function isSeriesInList(int $userId, string $type, int $seriesId): bool
@@ -203,7 +220,7 @@ class SeriesController extends AbstractController
     {
         if ($temporaryMarksForm->isSubmitted() && $temporaryMarksForm->isValid()) {
             $formData = $temporaryMarksForm->getData();
-            $data = [SeriesList::TIME_ATTR => $formData[SeriesList::TIME_ATTR]->format('H:i:s')];
+            $data = [SeriesList::TIME_ATTR => $formData[SeriesList::TIME_ATTR]->format(SeriesList::TIME_FORMAT)];
 
             if (!$isFilm) {
                 $data[SeriesList::SEASON_ATTR] = $formData[SeriesList::SEASON_ATTR];
@@ -228,6 +245,35 @@ class SeriesController extends AbstractController
         return $seriesList ?? null;
     }
 
+    protected function submitCommentForm(FormInterface $commentForm, int $seriesId, int $userId): ?array
+    {
+        if ($commentForm->isSubmitted() && $commentForm->isValid()) {
+            $text = $commentForm->getData()[Comment::TEXT_ATTR];
+
+            $data = [
+                Comment::TEXT_ATTR => $text,
+                Comment::SERIES_ATTR => $seriesId,
+                Comment::USER_ATTR => $userId
+            ];
+
+            $request = Request::create(
+                CommentApiController::COMMENT_API_ROUTE,
+                'POST',
+                [], [], [], [],
+                json_encode($data)
+            );
+            $response = $this->commentApiController->postAction($request);
+
+            if ($response->getStatusCode() == Response::HTTP_CREATED) {
+                $comment = json_decode($response->getContent(), true)[Comment::COMMENT_ATTR];
+            } else {
+                $this->addFlash('error', 'Oops! Something went wrong and it was not possible to create the comment.');
+            }
+        }
+
+        return $comment ?? null;
+    }
+
     protected function getUserRating(int $userId, int $seriesId): ?array
     {
         $request = Request::create(
@@ -250,8 +296,37 @@ class SeriesController extends AbstractController
         );
         $response = $this->ratingApiController->getAverageRatingAction($request, $seriesId);
 
-        return $response->getStatusCode() == Response::HTTP_OK
-            ? json_decode($response->getContent(), true)[RatingApiController::AVERAGE_RATING]
-            : null;
+        if ($response->getStatusCode() == Response::HTTP_OK) {
+            $averageRating = json_decode($response->getContent(), true)[RatingApiController::AVERAGE_RATING];
+            $roundedAverageRating = round($averageRating);
+        }
+
+        return $roundedAverageRating ?? null;
+    }
+
+    protected function createTemporaryMarksForm(bool $isFilm): FormInterface
+    {
+        $temporaryMarksForm = $this->createForm(TemporaryMarksType::class);
+        if ($isFilm) {
+            $temporaryMarksForm->remove(SeriesList::SEASON_ATTR);
+            $temporaryMarksForm->remove(SeriesList::EPISODE_ATTR);
+        }
+
+        return $temporaryMarksForm;
+    }
+
+    protected function getComments(int $seriesId): ?array
+    {
+        $request = Request::create(
+            CommentApiController::COMMENT_GET_BY_SERIES_ROUTE . $seriesId,
+            'GET'
+        );
+        $response = $this->commentApiController->getBySeriesAction($request, $seriesId);
+
+        if ($response->getStatusCode() == Response::HTTP_OK) {
+            $comments = json_decode($response->getContent(), true)[Comment::COMMENT_ATTR];
+        }
+
+        return $comments ?? null;
     }
 }

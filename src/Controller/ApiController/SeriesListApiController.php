@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class SeriesListApiController
  * @package App\Controller\ApiController
  * @Route(path=SeriesListApiController::SERIES_LIST_API_ROUTE, name="series_list_api_")
  */
@@ -64,7 +63,7 @@ class SeriesListApiController extends AbstractController
         }
 
         if (isset($data[SeriesList::TIME_ATTR])) {
-            $seriesList->setTime(DateTime::createFromFormat("H:i:s", $data[SeriesList::TIME_ATTR]));
+            $seriesList->setTime(DateTime::createFromFormat(SeriesList::TIME_FORMAT, $data[SeriesList::TIME_ATTR]));
         }
 
         try {
@@ -270,7 +269,7 @@ class SeriesListApiController extends AbstractController
         }
 
         if (isset($data[SeriesList::TIME_ATTR])) {
-            $seriesList->setTime(DateTime::createFromFormat("H:i:s", $data[SeriesList::TIME_ATTR]));
+            $seriesList->setTime(DateTime::createFromFormat(SeriesList::TIME_FORMAT, $data[SeriesList::TIME_ATTR]));
         }
 
         $this->entityManager->flush();

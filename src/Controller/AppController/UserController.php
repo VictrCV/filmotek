@@ -7,7 +7,6 @@ use App\Entity\User;
 use App\Form\LoginType;
 use App\Form\UserType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,12 +35,6 @@ class UserController extends AbstractController
         $session = $request->getSession();
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
-        $form->add('sign-up', SubmitType::class, [
-            'label' => 'Sign up',
-            'attr' => [
-                'class' => 'btn-form'
-            ],
-        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

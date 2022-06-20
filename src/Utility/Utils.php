@@ -64,16 +64,22 @@ trait Utils
 
     public static function rapidapiJsonToSeriesArray(string $jsonContent): ?array
     {
-        $series = json_decode($jsonContent, true)['results'];
-        if (isset($series)) {
-            return [
-                Series::API_ID_ATTR => $series['id'],
-                Series::TITLE_ATTR => $series['titleText']['text'],
-                Series::IS_FILM_ATTR => !$series['titleType']['isSeries'],
-                Series::SYNOPSIS_ATTR => $series['plot']['plotText']['plainText'],
-                Series::IMAGE_URL_ATTR => $series['primaryImage']['url']
+        $rapidapiSeries = json_decode($jsonContent, true)['results'];
+        if (isset($rapidapiSeries)) {
+            $series = [
+                Series::API_ID_ATTR => $rapidapiSeries['id'],
+                Series::TITLE_ATTR => $rapidapiSeries['titleText']['text'],
+                Series::IS_FILM_ATTR => !$rapidapiSeries['titleType']['isSeries'],
+                Series::SYNOPSIS_ATTR => $rapidapiSeries['plot']['plotText']['plainText'],
+                Series::IMAGE_URL_ATTR => $rapidapiSeries['primaryImage']['url']
             ];
+
+            foreach ($rapidapiSeries['genres']['genres'] as $genre) {
+                $genres[] = $genre['id'];
+            }
+            $series[Series::GENRES_ATTR] = $genres ?? null;
         }
-        return null;
+
+        return $series ?? null;
     }
 }

@@ -52,6 +52,9 @@ class SeriesApiControllerTest extends BaseTestCase
             Series::SYNOPSIS_ATTR => self::$faker->sentence(30),
             Series::IMAGE_URL_ATTR => self::$faker->imageUrl()
         ];
+        for ($i = 0; $i < 3; $i++) {
+            $data[Series::GENRES_ATTR][] = self::$faker->word();
+        }
 
         self::$client->request(
             'POST',
@@ -59,19 +62,19 @@ class SeriesApiControllerTest extends BaseTestCase
             [], [], [],
             json_encode($data)
         );
-
         $response = self::$client->getResponse();
 
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         self::assertTrue($response->isSuccessful());
         self::assertJson($response->getContent());
-        $series = json_decode($response->getContent(), true);
-        self::assertNotEmpty($series[Series::SERIES_ATTR]['id']);
-        self::assertSame($data[Series::API_ID_ATTR], $series[Series::SERIES_ATTR][Series::API_ID_ATTR]);
-        self::assertSame($data[Series::TITLE_ATTR], $series[Series::SERIES_ATTR][Series::TITLE_ATTR]);
-        self::assertSame($data[Series::IS_FILM_ATTR], $series[Series::SERIES_ATTR][Series::IS_FILM_ATTR]);
-        self::assertSame($data[Series::SYNOPSIS_ATTR], $series[Series::SERIES_ATTR][Series::SYNOPSIS_ATTR]);
-        self::assertSame($data[Series::IMAGE_URL_ATTR], $series[Series::SERIES_ATTR][Series::IMAGE_URL_ATTR]);
+        $series = json_decode($response->getContent(), true)[Series::SERIES_ATTR];
+        self::assertNotEmpty($series['id']);
+        self::assertEquals($data[Series::API_ID_ATTR], $series[Series::API_ID_ATTR]);
+        self::assertEquals($data[Series::TITLE_ATTR], $series[Series::TITLE_ATTR]);
+        self::assertEquals($data[Series::IS_FILM_ATTR], $series[Series::IS_FILM_ATTR]);
+        self::assertEquals($data[Series::SYNOPSIS_ATTR], $series[Series::SYNOPSIS_ATTR]);
+        self::assertEquals($data[Series::IMAGE_URL_ATTR], $series[Series::IMAGE_URL_ATTR]);
+        self::assertEquals($data[Series::GENRES_ATTR], $series[Series::GENRES_ATTR]);
 
         return $data;
     }

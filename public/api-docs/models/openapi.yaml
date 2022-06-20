@@ -24,6 +24,8 @@ tags:
     description: 'Series list management'
   - name: '⭐ Rating'
     description: 'Rating management'
+  - name: '💬 Comment'
+    description: 'Comment management'
 paths:
   /users:
     post:
@@ -266,7 +268,7 @@ paths:
       tags: [ '⭐ Rating' ]
       summary: Provides the list of HTTP supported methods.
       description: 'Return a `Allow` header with a comma separated list of HTTP supported methods.'
-      operationId: series_list_api_options
+      operationId: rating_api_options
       responses:
         '204':
           description: '`Allow` header &lt;Response body is empty&gt;'
@@ -323,7 +325,7 @@ paths:
       - $ref: '#/components/parameters/seriesId'
     get:
       tags: [ '⭐ Rating' ]
-      summary: Retrieves a the average rating value of a series.
+      summary: Retrieves the average rating value of a series.
       description: 'Returns the average rating value of a series identified by its `seriesId`.'
       operationId: rating_api_get_average_rating
       responses:
@@ -333,6 +335,65 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AverageRating'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '404':
+          $ref: '#/components/responses/404_Resource_Not_Found_Response'
+  /comment:
+    post:
+      tags: [ '💬 Comment' ]
+      summary: Creates a Comment resource.
+      description: 'Creates a new comment'
+      operationId: comment_api_post
+      requestBody:
+        $ref: '#/components/requestBodies/CommentRequestBody'
+      responses:
+        '201':
+          description: '`Created`: comment created'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+        '400':
+          $ref: '#/components/responses/400_BadRequest_Response_Comment_Post'
+        '422':
+          $ref: '#/components/responses/422_UnprocessableEntity_Response'
+    options:
+      tags: [ '💬 Comment' ]
+      summary: Provides the list of HTTP supported methods.
+      description: 'Return a `Allow` header with a comma separated list of HTTP supported methods.'
+      operationId: comment_api_options
+      responses:
+        '204':
+          description: '`Allow` header &lt;Response body is empty&gt;'
+          headers:
+            Allow:
+              $ref: '#/components/headers/Allow'
+  /comment/series/{seriesId}:
+    parameters:
+      - $ref: '#/components/parameters/seriesId'
+    get:
+      tags: [ '💬 Comment' ]
+      summary: Retrieves the collection Comment resources of a series.
+      description: 'Returns all the comments of a series identified by its `seriesId`.'
+      operationId: comment_api_get_by_series
+      responses:
+        '200':
+          description: Comment
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  comment:
+                    description: 'Comments array'
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CommentArrayItem'
           headers:
             Location:
               $ref: '#/components/headers/Location'
@@ -404,6 +465,12 @@ components:
           description: 'Series imageUrl'
           type: string
           format: string
+        genres:
+          description: 'Series genres'
+          type: array
+          items: {
+            type: string
+          }
         _links:
           description: link relations
           type: object
@@ -422,6 +489,7 @@ components:
           isFilm: false
           synopsis: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.'
           imageUrl: 'https://m.media-amazon.com/images/M/MV5BYTRiNDQwYzAtMzVlZS00NTI5LWJjYjUtMzkwNTUzMWMxZTllXkEyXkFqcGdeQXVyNDIzMzcwNjc@._V1_.jpg'
+          genres: ['Action', 'Adventure', 'Drama', 'Fantasy']
           _links:
             parent:
               href: /api/v1/series
@@ -494,11 +562,11 @@ components:
           type: integer
           format: int32
         series:
-          description: 'Series list series Id'
+          description: 'Rating series Id'
           type: integer
           format: int64
         user:
-          description: 'Series list user Id'
+          description: 'Rating user Id'
           type: integer
           format: int64
         _links:
@@ -528,6 +596,95 @@ components:
       format: float
       example:
         averageRating: 2.5
+    Comment:
+      type: object
+      properties:
+        id:
+          description: 'Comment Id'
+          type: integer
+          format: int64
+        text:
+          description: 'Rating text'
+          type: string
+          format: string
+        datetime:
+          description: 'Rating datetime'
+          type: string
+          format: date-time
+        series:
+          description: 'Comment series Id'
+          type: integer
+          format: int64
+        user:
+          description: 'Comment user Id'
+          type: integer
+          format: int64
+        _links:
+          description: link relations
+          type: object
+          properties:
+            parent:
+              type: object
+              properties: { "href": { "type": "string", "format": "url" } }
+            self:
+              type: object
+              properties: { "href": { "type": "string", "format": "url" } }
+      example:
+        comment:
+          id: 33
+          text: 'This series is awesome!'
+          datetime: '14-6-2022 19:30'
+          series: 52
+          user: 17
+          _links:
+            parent:
+              href: /api/v1/rating
+            self:
+              href: /api/v1/rating/33
+    CommentArrayItem:
+      type: object
+      properties:
+        id:
+          description: 'Comment Id'
+          type: integer
+          format: int64
+        text:
+          description: 'Rating text'
+          type: string
+          format: string
+        datetime:
+          description: 'Rating datetime'
+          type: string
+          format: date-time
+        series:
+          description: 'Comment series Id'
+          type: integer
+          format: int64
+        user:
+          description: 'Comment user Id'
+          type: integer
+          format: int64
+        _links:
+          description: link relations
+          type: object
+          properties:
+            parent:
+              type: object
+              properties: { "href": { "type": "string", "format": "url" } }
+            self:
+              type: object
+              properties: { "href": { "type": "string", "format": "url" } }
+      example:
+        id: 33
+        text: 'This series is awesome!'
+        datetime: '14-6-2022 19:30'
+        series: 52
+        user: 17
+        _links:
+          parent:
+            href: /api/v1/rating
+          self:
+            href: /api/v1/rating/33
     Message:
       type: object
       description: HTTP response message
@@ -572,6 +729,15 @@ components:
               $ref: '#/components/examples/response-400-series-list'
     400_BadRequest_Response_Rating_Post_Put:
       description: "`BAD REQUEST`: series or user does not exist, or series already exists in list"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+          examples:
+            response-400-series-list:
+              $ref: '#/components/examples/response-400-rating'
+    400_BadRequest_Response_Comment_Post:
+      description: "`BAD REQUEST`: series or user does not exist, or invalid text"
       content:
         application/json:
           schema:
@@ -681,12 +847,19 @@ components:
                 description: 'Series imageUrl'
                 type: string
                 format: string
+              genres:
+                description: 'Series genres'
+                type: array
+                items: {
+                  type: string
+                }
             example:
               apiId: 'tt0944947'
               title: 'Game of Thrones'
               isFilm: false
               synopsis: 'Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns after being dormant for millennia.'
               imageUrl: 'https://m.media-amazon.com/images/M/MV5BYTRiNDQwYzAtMzVlZS00NTI5LWJjYjUtMzkwNTUzMWMxZTllXkEyXkFqcGdeQXVyNDIzMzcwNjc@._V1_.jpg'
+              genres: ['Action', 'Adventure', 'Drama', 'Fantasy']
     SeriesListRequestBody:
       description: '`Series list` data'
       required: true
@@ -739,15 +912,39 @@ components:
                 type: integer
                 format: int32
               series:
-                description: 'Series list series Id'
+                description: 'Rating series Id'
                 type: integer
                 format: int64
               user:
-                description: 'Series list user Id'
+                description: 'Rating user Id'
                 type: integer
                 format: int64
             example:
               value: 4
+              series: 52
+              user: 17
+    CommentRequestBody:
+      description: '`Comment` data'
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              text:
+                description: 'Comment text'
+                type: string
+                format: string
+              series:
+                description: 'Comment series Id'
+                type: integer
+                format: int64
+              user:
+                description: 'Comment user Id'
+                type: integer
+                format: int64
+            example:
+              text: 'This series is awesome!'
               series: 52
               user: 17
   parameters:
