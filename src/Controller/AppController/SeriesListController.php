@@ -35,17 +35,43 @@ class SeriesListController extends SeriesController
         );
         $response = $this->seriesApiController->getByApiIdAction($request, $apiId);
 
-        if ($response->getStatusCode() == Response::HTTP_NOT_FOUND) {
-            $series = $this->getSeriesFromRapidapi($apiId);
+        $series = $response->getStatusCode() == Response::HTTP_NOT_FOUND
+            ? $this->createSeries($apiId)
+            : json_decode($response->getContent(), true)[Series::SERIES_ATTR];
 
-            if (!isset($series)) {
-                $this->addFlash('error', 'Oops! Something went wrong and the series could not be obtained.');
-                return $this->redirectToRoute('series', [
-                    'list' => $list,
-                    Series::API_ID_ATTR => $apiId
-                ]);
+        if (isset($series)) {
+            $data = [
+                SeriesList::TYPE_ATTR => $type,
+                SeriesList::SERIES_ATTR => $series['id'],
+                SeriesList::USER_ATTR => $session->get(UserApiController::USER_ID)
+            ];
+
+            $request = Request::create(
+                SeriesListApiController::SERIES_LIST_API_ROUTE,
+                'POST',
+                [], [], [], [],
+                json_encode($data)
+            );
+            $response = $this->seriesListApiController->postAction($request);
+
+            if ($response->getStatusCode() != Response::HTTP_CREATED) {
+                $this->addFlash('error', 'Oops! Something went wrong and the series could not be added to list.');
             }
+        }
 
+        return $this->redirectToRoute('series', [
+            'list' => $response->getStatusCode() == Response::HTTP_CREATED ? $type : $list,
+            Series::API_ID_ATTR => $apiId
+        ]);
+    }
+
+    protected function createSeries(string $apiId): ?array
+    {
+        $series = $this->getSeriesFromRapidapi($apiId);
+
+        if (!isset($series)) {
+            $this->addFlash('error', 'Oops! Something went wrong and the series could not be obtained.');
+        } else {
             $data = [
                 Series::API_ID_ATTR => $series[Series::API_ID_ATTR],
                 Series::TITLE_ATTR => $series[Series::TITLE_ATTR],
@@ -67,37 +93,10 @@ class SeriesListController extends SeriesController
                 $series = json_decode($response->getContent(), true)[Series::SERIES_ATTR];
             } else {
                 $this->addFlash('error', 'Oops! Something went wrong and the series could not be created.');
-                return $this->redirectToRoute('series', [
-                    'list' => $list,
-                    Series::API_ID_ATTR => $apiId
-                ]);
             }
-        } else {
-            $series = json_decode($response->getContent(), true)[Series::SERIES_ATTR];
         }
 
-        $data = [
-            SeriesList::TYPE_ATTR => $type,
-            SeriesList::SERIES_ATTR => $series['id'],
-            SeriesList::USER_ATTR => $session->get(UserApiController::USER_ID)
-        ];
-
-        $request = Request::create(
-            SeriesListApiController::SERIES_LIST_API_ROUTE,
-            'POST',
-            [], [], [], [],
-            json_encode($data)
-        );
-        $response = $this->seriesListApiController->postAction($request);
-
-        if ($response->getStatusCode() != Response::HTTP_CREATED) {
-            $this->addFlash('error', 'Oops! Something went wrong and the series could not be added to list.');
-        }
-
-        return $this->redirectToRoute('series', [
-            'list' => $response->getStatusCode() == Response::HTTP_CREATED ? $type : $list,
-            Series::API_ID_ATTR => $apiId
-        ]);
+        return $series ?? null;
     }
 
     /**
@@ -114,18 +113,15 @@ class SeriesListController extends SeriesController
         );
         $response = $this->seriesListApiController->getByUserAction($request, $userId);
 
-        if ($response->getStatusCode() == Response::HTTP_NOT_FOUND) {
-            return $this->render('series-list/series-list.html.twig', [
-                'seriesList' => [],
-            ]);
+        if ($response->getStatusCode() == Response::HTTP_OK) {
+            $seriesList = json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR];
         } else if ($response->getStatusCode() != Response::HTTP_OK) {
             $this->addFlash('error', 'Oops! Something went wrong and the ' . $type . ' series list could not be obtained.');
             return $this->redirectToRoute('search', []);
         }
 
-        $seriesList = json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR];
         return $this->render('series-list/series-list.html.twig', [
-            'seriesList' => $seriesList,
+            'seriesList' => $seriesList ?? [],
         ]);
     }
 
@@ -146,16 +142,14 @@ class SeriesListController extends SeriesController
         );
         $response = $this->seriesListApiController->putAction($request, $seriesListId);
 
-        if ($response->getStatusCode() != Response::HTTP_OK) {
+        if ($response->getStatusCode() == Response::HTTP_OK) {
+            $list = SeriesList::IN_PROGRESS;
+        } else {
             $this->addFlash('error', 'Oops! Something went wrong and it was not possible to start watching the series.');
-            return $this->redirectToRoute('series', [
-                'list' => $list,
-                Series::API_ID_ATTR => $apiId
-            ]);
         }
 
         return $this->redirectToRoute('series', [
-            'list' => 'in_progress',
+            'list' => $list,
             Series::API_ID_ATTR => $apiId
         ]);
     }

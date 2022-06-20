@@ -74,13 +74,12 @@ trait Utils
                 Series::IMAGE_URL_ATTR => $rapidapiSeries['primaryImage']['url']
             ];
 
-            foreach ($rapidapiSeries['genres']['genres'] as $genre){
+            foreach ($rapidapiSeries['genres']['genres'] as $genre) {
                 $genres[] = $genre['id'];
             }
             $series[Series::GENRES_ATTR] = $genres ?? null;
-
-            return $series;
         }
-        return null;
+
+        return $series ?? null;
     }
 }

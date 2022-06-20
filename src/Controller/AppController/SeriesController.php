@@ -72,7 +72,7 @@ class SeriesController extends AbstractController
                 $inFavourites = $this->isSeriesInList($userId, SeriesList::FAVOURITES, $series['id']);
                 $inIncompatibleList = $this->isSeriesInIncompatibleList($userId, $series['id']);
 
-                if ($list != 'search') {
+                if ($list != SearchController::SEARCH_LIST) {
                     $seriesList = $this->getSeriesList($list, $userId, $series['id']);
                     if (!isset($seriesList)) {
                         $this->addFlash('error', 'Oops! Something went wrong and the series could not be loaded.');
@@ -88,23 +88,25 @@ class SeriesController extends AbstractController
                         $seriesList['id'],
                         $series[Series::IS_FILM_ATTR]
                     );
-
-                    if (isset($submitTemporaryMarksForm)) {
-                        $seriesList = $submitTemporaryMarksForm;
-                    }
                     $temporaryMarksFormView = $temporaryMarksForm->createView();
 
                     $commentForm = $this->createForm(CommentType::class);
                     $commentForm->handleRequest($request);
                     $comment = $this->submitCommentForm($commentForm, $series['id'], $userId);
-                    if (isset($comment)) {
-                        $commentForm = $this->createForm(CommentType::class);
-                    }
 
                     $commentFormView = $commentForm->createView();
                 }
             }
             $comments = $this->getComments($series['id']);
+        }
+
+        if (isset($submitTemporaryMarksForm)) {
+            $seriesList = $submitTemporaryMarksForm;
+        }
+
+        if (isset($comment)) {
+            $commentForm = $this->createForm(CommentType::class);
+            $commentFormView = $commentForm->createView();
         }
 
         $temporaryMarksFormView = $temporaryMarksFormView ?? null;
@@ -148,11 +150,8 @@ class SeriesController extends AbstractController
         if ($response->getStatusCode() == Response::HTTP_OK) {
             $series = Utils::rapidapiJsonToSeriesArray($response->getContent());
         }
-        if (isset($series)) {
-            return $series;
-        }
 
-        return null;
+        return $series ?? null;
     }
 
     protected function isSeriesInList(int $userId, string $type, int $seriesId): bool
@@ -249,7 +248,6 @@ class SeriesController extends AbstractController
     protected function submitCommentForm(FormInterface $commentForm, int $seriesId, int $userId): ?array
     {
         if ($commentForm->isSubmitted() && $commentForm->isValid()) {
-
             $text = $commentForm->getData()[Comment::TEXT_ATTR];
 
             if (preg_match(CommentApiController::TEXT_REGEX, $text)) {
