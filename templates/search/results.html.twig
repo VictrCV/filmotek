@@ -1,14 +1,15 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     {{ parent() }}
-    <div class="d-flex flex-wrap justify-content-center mt-5 results">
+    <div class="d-flex flex-wrap justify-content-center align-items-center mt-5 results">
         {% for series in results %}
             {% if series.primaryImage != null and series.titleType != null and series.titleText != null and
-                series.plot != null and series.genres != null%}
-                <figure>
-                    <figcaption>{{ series.titleText.text }}</figcaption>
+                series.plot != null and series.genres != null %}
+                <figure class="text-center">
+                    <figcaption class="cover-title mx-5">{{ series.titleText.text }}</figcaption>
                     <a href="{{ path('series', {'list': 'search', 'apiId': series.id}) }}">
-                        <img src="{{ series.primaryImage.url }}" class="mx-5 mb-4 mt-2 cover">
+                        <img src="{{ series.primaryImage.url }}" class="mx-5 mb-4 mt-2 cover"
+                             alt="" onerror="this.src='{{ asset('img/image_not_found.png') }}'">
                     </a>
                 </figure>
             {% endif %}

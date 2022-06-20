@@ -39,9 +39,9 @@ class TemporaryMarksType extends AbstractType
                 ]
             ])
             ->add('save', SubmitType::class, [
-                'label' => 'Save changes',
+                'label' => 'save',
                 'attr' => [
-                    'class' => 'btn-form'
+                    'class' => 'btn btn-save material-icons mb-2'
                 ],
             ]);
     }

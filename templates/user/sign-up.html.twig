@@ -1,11 +1,17 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-{{ parent() }}
-    <div class="container d-flex justify-content-center" role="alert">
-        <div class="row sign-up-form ">
+    {{ parent() }}
+    <div class="container d-flex justify-content-center mt-10" role="alert">
+        <div class="row sign-up-form color-text">
             <div class="col">
-                {{ form(form) }}
+                {{ form_start(form) }}
+                {{ form_row(form.username) }}
+                {{ form_row(form.password) }}
+                <div class="text-center">
+                    {{ form_row(form.sign_up) }}
+                </div>
+                {{ form_end(form) }}
             </div>
         </div>
     </div>
