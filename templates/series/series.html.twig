@@ -165,6 +165,9 @@
         <hr class="border border-1 mt-1 mb-4">
         {% if app.session.get('jwt') != null and app.request.attributes.get('_route_params')['list'] != 'search' %}
             {{ form_start(commentForm) }}
+            <div class="mb-1">
+                {{ form_errors(commentForm) }}
+            </div>
             {{ form_row(commentForm.text) }}
             <div class="text-end">
                 {{ form_row(commentForm.comment) }}
