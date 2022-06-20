@@ -143,7 +143,7 @@ class SeriesListController extends SeriesController
         $response = $this->seriesListApiController->putAction($request, $seriesListId);
 
         if ($response->getStatusCode() == Response::HTTP_OK) {
-            $list = 'in_progress';
+            $list = SeriesList::IN_PROGRESS;
         } else {
             $this->addFlash('error', 'Oops! Something went wrong and it was not possible to start watching the series.');
         }

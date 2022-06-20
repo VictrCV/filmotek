@@ -15,6 +15,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  */
 class SearchController extends AbstractController
 {
+    public const SEARCH_LIST = 'search';
+
     public const RAPIDAPI_BASE_URL = 'https://moviesdatabase.p.rapidapi.com';
     public const RAPIDAPI_HOST = 'moviesdatabase.p.rapidapi.com';
 
