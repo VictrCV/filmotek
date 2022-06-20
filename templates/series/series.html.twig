@@ -172,7 +172,7 @@
             {{ form_end(commentForm) }}
         {% endif %}
         {% if comments != null %}
-            {% for comment in comments %}
+            {% for comment in comments|reverse %}
                 <h5 class="mb-0"><strong>{{ comment.user.username }}</strong></h5>
                 <h6 class="mb-1"><small>{{ comment.datetime }}</small></h6>
                 <p class="mb-4 comment-text">{{ comment.text }}</p>

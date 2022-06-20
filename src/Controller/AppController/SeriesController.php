@@ -96,7 +96,10 @@ class SeriesController extends AbstractController
 
                     $commentForm = $this->createForm(CommentType::class);
                     $commentForm->handleRequest($request);
-                    $this->submitCommentForm($commentForm, $series['id'], $userId);
+                    $comment = $this->submitCommentForm($commentForm, $series['id'], $userId);
+                    if (isset($comment)) {
+                        $commentForm = $this->createForm(CommentType::class);
+                    }
 
                     $commentFormView = $commentForm->createView();
                 }
@@ -243,7 +246,7 @@ class SeriesController extends AbstractController
         return $seriesList ?? null;
     }
 
-    protected function submitCommentForm(FormInterface $commentForm, int $seriesId, int $userId)
+    protected function submitCommentForm(FormInterface $commentForm, int $seriesId, int $userId): ?array
     {
         if ($commentForm->isSubmitted() && $commentForm->isValid()) {
 
@@ -264,13 +267,17 @@ class SeriesController extends AbstractController
                 );
                 $response = $this->commentApiController->postAction($request);
 
-                if ($response->getStatusCode() != Response::HTTP_CREATED) {
+                if ($response->getStatusCode() == Response::HTTP_CREATED) {
+                    $comment = json_decode($response->getContent(), true)[Comment::COMMENT_ATTR];
+                } else {
                     $this->addFlash('error', 'Oops! Something went wrong and it was not possible to create the comment.');
                 }
             } else {
                 $this->addFlash('error', 'The comment must contain at least one non-whitespace character.');
             }
         }
+
+        return $comment ?? null;
     }
 
     protected function getUserRating(int $userId, int $seriesId): ?array
