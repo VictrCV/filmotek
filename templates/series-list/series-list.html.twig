@@ -10,7 +10,7 @@
                     'apiId': series.series.apiId
                 }) }}">
                     <img src="{{ series.series.imageUrl }}" class="mx-5 mb-4 mt-2 cover"
-                         alt="{{ series.series.title }}">
+                         alt="" onerror="this.src='{{ asset('img/image_not_found.png') }}'">
                 </a>
             </figure>
         {% endfor %}

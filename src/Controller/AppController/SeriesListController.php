@@ -95,7 +95,7 @@ class SeriesListController extends SeriesController
         }
 
         return $this->redirectToRoute('series', [
-            'list' => $list,
+            'list' => $response->getStatusCode() == Response::HTTP_CREATED ? $type : $list,
             Series::API_ID_ATTR => $apiId
         ]);
     }

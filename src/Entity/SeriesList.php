@@ -17,8 +17,8 @@ use JsonSerializable;
 class SeriesList implements JsonSerializable
 {
     public const FAVOURITES = "favourites";
-    public const TO_WATCH = "toWatch";
-    public const IN_PROGRESS = "inProgress";
+    public const TO_WATCH = "to_watch";
+    public const IN_PROGRESS = "in_progress";
 
     public const SERIES_LIST_ATTR = 'series_list';
     public const TYPE_ATTR = 'type';

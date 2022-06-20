@@ -9,7 +9,7 @@
                     <figcaption class="cover-title mx-5">{{ series.titleText.text }}</figcaption>
                     <a href="{{ path('series', {'list': 'search', 'apiId': series.id}) }}">
                         <img src="{{ series.primaryImage.url }}" class="mx-5 mb-4 mt-2 cover"
-                             alt="{{ series.titleText.text }}">
+                             alt="" onerror="this.src='{{ asset('img/image_not_found.png') }}'">
                     </a>
                 </figure>
             {% endif %}

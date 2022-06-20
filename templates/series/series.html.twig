@@ -4,7 +4,7 @@
     <div class="container mt-5 pt-5 color-text">
         <div class="row">
             <div class="col-4">
-                <img src="{{ series.imageUrl }}" class="cover-large pe-3" alt="{{ series.title }}">
+                <img src="{{ series.imageUrl }}" class="cover-large pe-3" alt="" onerror="this.src='{{ asset('img/image_not_found.png') }}'">
             </div>
             <div class="col-8">
                 <h1 class="text-center pb-5">{{ series.title }}</h1>
@@ -117,7 +117,7 @@
                                 <a class="btn btn-form" role="button"
                                    href="{{ path('series_list_post', {
                                        'list': app.request.attributes.get('_route_params')['list'],
-                                       'type': 'toWatch',
+                                       'type': 'to_watch',
                                        'apiId': series.apiId}) }}">
                                     Add to "To watch"
                                 </a>
@@ -126,7 +126,7 @@
                                 <a class="btn btn-form" role="button"
                                    href="{{ path('series_list_post', {
                                        'list': app.request.attributes.get('_route_params')['list'],
-                                       'type': 'inProgress',
+                                       'type': 'in_progress',
                                        'apiId': series.apiId}) }}">
                                     Add to "In progress"
                                 </a>
