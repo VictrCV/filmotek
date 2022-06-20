@@ -75,8 +75,19 @@
     box-shadow: none !important;
 }
 
-.btn-form:hover {
+.btn-form:hover,
+.btn-save:hover {
     box-shadow: rgba(255, 255, 255, 0.2) 0 0 29px 0 !important;
+}
+
+.btn-save,
+.btn-save:focus {
+    background-color: unset !important;
+    color: var(--secondary-light) !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
 }
 
 .mt-10{
