@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\Entity
  * @ChangeTrackingPolicy("DEFERRED_EXPLICIT")
  *
- * @UniqueEntity(fields={"username"}, message="This username already exists.")
+ * @UniqueEntity(fields={"username"}, message="This username already exists")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSerializable
 {

@@ -250,28 +250,24 @@ class SeriesController extends AbstractController
         if ($commentForm->isSubmitted() && $commentForm->isValid()) {
             $text = $commentForm->getData()[Comment::TEXT_ATTR];
 
-            if (preg_match(CommentApiController::TEXT_REGEX, $text)) {
-                $data = [
-                    Comment::TEXT_ATTR => $text,
-                    Comment::SERIES_ATTR => $seriesId,
-                    Comment::USER_ATTR => $userId
-                ];
+            $data = [
+                Comment::TEXT_ATTR => $text,
+                Comment::SERIES_ATTR => $seriesId,
+                Comment::USER_ATTR => $userId
+            ];
 
-                $request = Request::create(
-                    CommentApiController::COMMENT_API_ROUTE,
-                    'POST',
-                    [], [], [], [],
-                    json_encode($data)
-                );
-                $response = $this->commentApiController->postAction($request);
+            $request = Request::create(
+                CommentApiController::COMMENT_API_ROUTE,
+                'POST',
+                [], [], [], [],
+                json_encode($data)
+            );
+            $response = $this->commentApiController->postAction($request);
 
-                if ($response->getStatusCode() == Response::HTTP_CREATED) {
-                    $comment = json_decode($response->getContent(), true)[Comment::COMMENT_ATTR];
-                } else {
-                    $this->addFlash('error', 'Oops! Something went wrong and it was not possible to create the comment.');
-                }
+            if ($response->getStatusCode() == Response::HTTP_CREATED) {
+                $comment = json_decode($response->getContent(), true)[Comment::COMMENT_ATTR];
             } else {
-                $this->addFlash('error', 'The comment must contain at least one non-whitespace character.');
+                $this->addFlash('error', 'Oops! Something went wrong and it was not possible to create the comment.');
             }
         }
 
