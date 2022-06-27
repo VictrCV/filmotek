@@ -115,7 +115,7 @@ class SeriesListController extends SeriesController
 
         if ($response->getStatusCode() == Response::HTTP_OK) {
             $seriesList = json_decode($response->getContent(), true)[SeriesList::SERIES_LIST_ATTR];
-        } else if ($response->getStatusCode() != Response::HTTP_OK) {
+        } else if ($response->getStatusCode() != Response::HTTP_NOT_FOUND) {
             $this->addFlash('error', 'Oops! Something went wrong and the ' . $type . ' series list could not be obtained.');
             return $this->redirectToRoute('search', []);
         }

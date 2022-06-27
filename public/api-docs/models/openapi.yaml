@@ -235,8 +235,6 @@ paths:
       summary: Removes the Series list resource.
       description: 'Deletes the series list identified by `seriesListId`.'
       operationId: series_list_api_delete
-      security:
-        - MiWApiSecurity: [ ]
       responses:
         '204':
           description: 'Series list deleted &lt;Response body is empty&gt;'

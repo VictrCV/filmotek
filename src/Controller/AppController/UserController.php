@@ -66,6 +66,7 @@ class UserController extends AbstractController
                 if ($response->getStatusCode() == Response::HTTP_OK) {
                     $token = $response->headers->get('Authorization');
                     $session->set(self::JWT_SESSION_KEY, $token);
+                    $session->set(UserApiController::USER_ID, json_decode($response->getContent(), true)[UserApiController::USER_ID]);
                     $session->set(User::USERNAME_ATTR, $user->getUsername());
 
                     return $this->redirectToRoute('search', []);
